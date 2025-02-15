@@ -117,13 +117,13 @@ export default {
   margin: 0;
   padding: 0;
 }
-html{
+template{
   font-family: Poppins, Segoe UI, sans-serif;
   font-size: 12pt;
   color: var(--text-color);
   text-align: center;
 }
-body{
+template{
   min-height: 100vh;
   background-image: url(bg.png);
   background-size: cover;
