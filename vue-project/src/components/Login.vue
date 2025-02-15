@@ -11,7 +11,9 @@
       </div>
       <div>
         <label for="password-input">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+            <path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/>
+          </svg>
         </label>
         <input type="password" v-model="password" id="password-input" placeholder="Password" required>
       </div>
@@ -23,58 +25,68 @@
 
 <script>
 import { ref } from 'vue';
-import { supabase } from '../lib/supabaseClient'
+import { useRouter } from 'vue-router';
+import { supabase } from '../lib/supabaseClient';
 
 export default {
   setup() {
     const email = ref('');
     const password = ref('');
     const errorMessage = ref('');
+    const router = useRouter(); // Using Vue Router
 
     const login = async () => {
       try {
-        const { user, error } = await supabase.auth.signIn({
+        const { error } = await supabase.auth.signInWithPassword({
           email: email.value,
           password: password.value,
         });
+
         if (error) throw error;
-        // Redirect or handle successful login
+
+        // Redirect to Home page on successful login
+        router.push('/home');
       } catch (error) {
         errorMessage.value = error.message;
       }
     };
 
     return { email, password, errorMessage, login };
-  },
+  }
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-:root{
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;600;900&display=swap');
+
+:root {
   --accent-color: #f8bdca;
   --base-color: white;
   --text-color: #c38592;
   --input-color: #F3F0FF;
 }
-*{
+
+* {
   margin: 0;
   padding: 0;
 }
-html{
+
+html {
   font-family: Poppins, Segoe UI, sans-serif;
   font-size: 12pt;
   color: var(--text-color);
   text-align: center;
 }
-body{
+
+body {
   min-height: 100vh;
   background-image: url(bgL.png);
   background-size: fill;
   background-position: left;
   overflow: hidden;
 }
-.wrapper{
+
+.wrapper {
   box-sizing: border-box;
   background-color: var(--base-color);
   height: 100vh;
@@ -87,12 +99,14 @@ body{
   justify-content: center;
   float: right;
 }
-h1{
+
+h1 {
   font-size: 3rem;
   font-weight: 900;
   text-transform: uppercase;
 }
-form{
+
+form {
   width: min(400px, 100%);
   margin-top: 20px;
   margin-bottom: 50px;
@@ -101,12 +115,14 @@ form{
   align-items: center;
   gap: 10px;
 }
-form > div{
+
+form > div {
   width: 100%;
   display: flex;
   justify-content: center;
 }
-form label{
+
+form label {
   flex-shrink: 0;
   height: 50px;
   width: 50px;
@@ -120,7 +136,8 @@ form label{
   font-size: 1.5rem;
   font-weight: 500;
 }
-form input{
+
+form input {
   box-sizing: border-box;
   flex-grow: 1;
   min-width: 0;
@@ -133,20 +150,25 @@ form input{
   background-color: var(--input-color);
   transition: 150ms ease;
 }
-form input:hover{
+
+form input:hover {
   border-color: var(--accent-color);
 }
-form input:focus{
+
+form input:focus {
   outline: none;
   border-color: var(--text-color);
 }
-div:has(input:focus) > label{
+
+div:has(input:focus) > label {
   background-color: var(--text-color);
 }
-form input::placeholder{
+
+form input::placeholder {
   color: var(--text-color);
 }
-form button{
+
+form button {
   margin-top: 10px;
   border: none;
   border-radius: 1000px;
@@ -159,33 +181,41 @@ form button{
   cursor: pointer;
   transition: 150ms ease;
 }
-form button:hover{
+
+form button:hover {
   background-color: var(--text-color);
 }
-form button:focus{
+
+form button:focus {
   outline: none;
   background-color: var(--text-color);
 }
-a{
+
+a {
   text-decoration: none;
   color: var(--accent-color);
 }
-a:hover{
+
+a:hover {
   text-decoration: underline;
 }
-@media(max-width: 1100px){
-  .wrapper{
+
+@media(max-width: 1100px) {
+  .wrapper {
     width: min(600px, 100%);
     border-radius: 0;
   }
 }
-form div.incorrect label{
+
+form div.incorrect label {
   background-color: #f06272;
 }
-form div.incorrect input{
+
+form div.incorrect input {
   border-color: #f06272;
 }
-#error-message{
-  color:#f06272;
+
+#error-message {
+  color: #f06272;
 }
 </style>

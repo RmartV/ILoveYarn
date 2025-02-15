@@ -1,15 +1,7 @@
-import { createApp } from 'vue'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
 
-import App from './App.vue'
-import Login from './components/Login.vue'
-import Signup from './components/Signup.vue'
-
-
-
-const app = createApp(App)
-
-app.component('login', Login)
-app.component('Signup', Signup)
-
-
-app.mount('#app')
+const app = createApp(App);
+app.use(router);
+app.mount('#app');
