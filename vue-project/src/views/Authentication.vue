@@ -45,14 +45,14 @@
     font-size: 12pt;
     color: #f8bdca;
     text-align: center;
+    justify-content: center;
     min-height: 100vh;
-    background-image: url(bgL.png);
     background-size: fill;
-    background-position: left;
     overflow: hidden;
   }
   
   .wrapper {
+    margin: auto;
     box-sizing: border-box;
     background-color: white;
     height: 100vh;
