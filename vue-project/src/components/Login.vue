@@ -93,7 +93,7 @@ export default {
 :root {
   --accent-color: #f8bdca;
   --base-color: white;
-  --text-color: #c38592;
+  --text-color: #f8bdca;
   --input-color: #F3F0FF;
 }
 
@@ -102,7 +102,7 @@ export default {
   padding: 0;
   font-family: Poppins, Segoe UI, sans-serif;
   font-size: 12pt;
-  color: var(--text-color);
+  color: #f8bdca;
   text-align: center;
   min-height: 100vh;
   background-image: url(bgL.png);
@@ -111,9 +111,9 @@ export default {
   overflow: hidden;
 }
 
-.wrapper {
+.page, .wrapper {
   box-sizing: border-box;
-  background-color: var(--base-color);
+  background-color: white;
   height: 100vh;
   width: max(40%, 600px);
   padding: 10px;
@@ -151,9 +151,9 @@ form label {
   flex-shrink: 0;
   height: 50px;
   width: 50px;
-  background-color: var(--accent-color);
-  fill: var(--base-color);
-  color: var(--base-color);
+  background-color: #f8bdca;
+  fill: white;
+  color: white;
   border-radius: 10px 0 0 10px;
   display: flex;
   justify-content: center;
@@ -170,27 +170,27 @@ form input {
   padding: 1em;
   font: inherit;
   border-radius: 0 10px 10px 0;
-  border: 2px solid var(--input-color);
+  border: 2px solid #F3F0FF;
   border-left: none;
-  background-color: var(--input-color);
+  background-color: #F3F0FF;
   transition: 150ms ease;
 }
 
 form input:hover {
-  border-color: var(--accent-color);
+  border-color: #f8bdca;
 }
 
 form input:focus {
   outline: none;
-  border-color: var(--text-color);
+  border-color: #f8bdca;
 }
 
 div:has(input:focus) > label {
-  background-color: var(--text-color);
+  background-color: #f8bdca;
 }
 
 form input::placeholder {
-  color: var(--text-color);
+  color: #f8bdca;
 }
 
 form button {
@@ -198,8 +198,8 @@ form button {
   border: none;
   border-radius: 1000px;
   padding: .85em 4em;
-  background-color: var(--accent-color);
-  color: var(--base-color);
+  background-color: #f8bdca;
+  color: white;
   font: inherit;
   font-weight: 600;
   text-transform: uppercase;
@@ -208,12 +208,12 @@ form button {
 }
 
 form button:hover {
-  background-color: var(--text-color);
+  background-color: #f8bdca;
 }
 
 form button:focus {
   outline: none;
-  background-color: var(--text-color);
+  background-color: #f8bdca;
 }
 
 form button:disabled {
@@ -223,7 +223,7 @@ form button:disabled {
 
 a {
   text-decoration: none;
-  color: var(--accent-color);
+  color: #f8bdca;
 }
 
 a:hover {
