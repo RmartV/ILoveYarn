@@ -1,4 +1,5 @@
 <template>
+  <div class="page">
   <div class="wrapper">
     <h1>Signup</h1>
     <p id="error-message">{{ errorMessage }}</p>
@@ -91,6 +92,7 @@
     </form>
     <p>Already have an Account? <router-link to="/login">login</router-link></p>
   </div>
+</div>
 </template>
 
 <script>
