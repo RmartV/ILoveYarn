@@ -4,30 +4,6 @@
     <p id="error-message">{{ errorMessage }}</p>
     <form @submit.prevent="signUp">
       <div :class="{ incorrect: hasError }">
-        <label for="firstname-input">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
-        </label>
-        <input 
-          type="text" 
-          v-model="firstname" 
-          id="firstname-input" 
-          placeholder="Firstname" 
-          required
-        >
-      </div>
-      <div :class="{ incorrect: hasError }">
-        <label for="lastname-input">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
-        </label>
-        <input 
-          type="text" 
-          v-model="lastname" 
-          id="lastname-input" 
-          placeholder="Lastname" 
-          required
-        >
-      </div>
-      <div :class="{ incorrect: hasError }">
         <label for="email-input">
           <span>@</span>
         </label>
@@ -37,28 +13,6 @@
           id="email-input" 
           placeholder="Email" 
           required
-        >
-      </div>
-      <div :class="{ incorrect: hasError }">
-        <label for="phonenum-input">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
-        </label>
-        <input 
-          type="text" 
-          v-model="phoneNum" 
-          id="phonenum-input" 
-          placeholder="Phone Number"
-        >
-      </div>
-      <div :class="{ incorrect: hasError }">
-        <label for="address-input">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
-        </label>
-        <input 
-          type="text" 
-          v-model="address" 
-          id="address-input" 
-          placeholder="Address"
         >
       </div>
       <div :class="{ incorrect: hasError }">
@@ -101,11 +55,7 @@ import { useRouter } from 'vue-router';
 export default {
   setup() {
     const router = useRouter();
-    const firstname = ref("");
-    const lastname = ref("");
     const email = ref("");
-    const phoneNum = ref("");
-    const address = ref("");
     const password = ref("");
     const repeatPassword = ref("");
     const errorMessage = ref("");
@@ -132,28 +82,8 @@ export default {
         if (error) throw error;
         if (!data.user) throw new Error("Signup failed, please try again.");
 
-        // Insert user details into the UserInfo table
-        const { error: insertError } = await supabase
-          .from("UserInfo")
-          .insert([
-            {
-              UserInfo_email: email.value,
-              UserInfo_password: password.value,
-              option:{
-                data:{
-              UserInfo_fname: firstname.value,
-              UserInfo_lname: lastname.value,
-              UserInfo_address: address.value,
-              UserInfo_phoneNum: phoneNum.value,
-                }
-              }
-            },
-          ]);
-
-        if (insertError) throw insertError;
-
-        alert("Signup successful! Please check your email for confirmation.");
-        router.push('/login');
+        // Redirect to profile setup page
+        router.push('/profile-setup');
       } catch (err) {
         console.error("Signup error:", err);
         errorMessage.value = err.message;
@@ -163,11 +93,7 @@ export default {
     };
 
     return { 
-      firstname, 
-      lastname, 
       email, 
-      phoneNum, 
-      address, 
       password, 
       repeatPassword, 
       signUp, 
