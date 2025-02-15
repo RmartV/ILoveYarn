@@ -5,10 +5,10 @@
       <button @click="logout">Logout</button>
     </div>
     <div class="wrapper">
-      <h1>Welcome, {{ userInfo.UserInfo_fname }} {{ userInfo.UserInfo_lname }}</h1>
-      <p>Email: {{ userInfo.UserInfo_email }}</p>
-      <p>Phone: {{ userInfo.UserInfo_phoneNum }}</p>
-      <p>Address: {{ userInfo.UserInfo_address }}</p>
+      <h1>Welcome, {{ userinfo.userinfo_fname }} {{ userinfo.userinfo_lname }}</h1>
+      <p>Email: {{ userinfo.userinfo_email }}</p>
+      <p>Phone: {{ userinfo.userinfo_phonenum }}</p>
+      <p>Address: {{ userinfo.userinfo_address }}</p>
     </div>
   </div>
 </template>
