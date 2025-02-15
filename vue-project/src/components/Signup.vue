@@ -219,7 +219,6 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  float: right;
 }
 
 h1 {
