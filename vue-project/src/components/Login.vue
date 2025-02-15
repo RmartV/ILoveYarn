@@ -107,8 +107,7 @@ body {
   background-size: fill;
   background-position: left;
   overflow: hidden;
-  -webkit-text-stroke: 0.5px #c38592;
-  text-stroke: 0.5px #c38592;
+
 }
 
 .wrapper {
@@ -130,7 +129,7 @@ h1 {
   font-weight: 900;
   text-transform: uppercase;
   -webkit-text-stroke: 1px #c38592;
-  text-stroke: 1px #c38592;
+
 }
 
 form {
@@ -176,8 +175,7 @@ form input {
   border-left: none;
   background-color: #F3F0FF;
   transition: 150ms ease;
-  -webkit-text-stroke: 0.5px #c38592;
-  text-stroke: 0.5px #c38592;
+
 }
 
 form input:hover {
@@ -196,7 +194,7 @@ div:has(input:focus) > label {
 form input::placeholder {
   color: #f8bdca;
   -webkit-text-stroke: 0.3px #c38592;
-  text-stroke: 0.3px #c38592;
+
 }
 
 form button {
@@ -211,8 +209,7 @@ form button {
   text-transform: uppercase;
   cursor: pointer;
   transition: 150ms ease;
-  -webkit-text-stroke: 0.5px #aa7a85;
-  text-stroke: 0.5px #aa7a85;
+
 }
 
 form button:hover {
@@ -232,8 +229,8 @@ form button:disabled {
 a {
   text-decoration: none;
   color: #f8bdca;
-  -webkit-text-stroke: 0.5px #c38592;
-  text-stroke: 0.5px #c38592;
+  -webkit-text-stroke: 1px #c38592;
+
 }
 
 a:hover {
@@ -257,7 +254,7 @@ form div.incorrect input {
 
 #error-message {
   color: #f06272;
-  -webkit-text-stroke: 0.5px #d14d5c;
-  text-stroke: 0.5px #d14d5c;
+  -webkit-text-stroke: 1px #d14d5c;
+
 }
 </style>
