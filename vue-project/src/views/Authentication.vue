@@ -8,7 +8,7 @@
           <h1>Check Your Email</h1>
           <p class="message">Please check your email for Authentication!</p>
           <p class="thank-you">Thank you!</p>
-          <router-link to="/login" class="back-button">Back to Login</router-link>
+          <router-link to="/" class="back-button">Back to Login</router-link>
         </div>
       </div>
     </div>
