@@ -1,4 +1,5 @@
 <template>
+  <div class="page">
   <div class="wrapper">
     <h1>Login</h1>
     <p id="error-message">{{ errorMessage }}</p>
@@ -35,6 +36,7 @@
     </form>
     <p>New here? <router-link to="/signup">Create an Account</router-link></p>
   </div>
+</div>
 </template>
 
 <script>
@@ -100,14 +102,11 @@ export default {
   padding: 0;
 }
 
-template {
+.page {
   font-family: Poppins, Segoe UI, sans-serif;
   font-size: 12pt;
   color: var(--text-color);
   text-align: center;
-}
-
-template {
   min-height: 100vh;
   background-image: url(bgL.png);
   background-size: fill;
@@ -121,7 +120,7 @@ template {
   height: 100vh;
   width: max(40%, 600px);
   padding: 10px;
-  border-radius: 20px 0px 0px 20px;
+  border-radius: 20px 0 0 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -218,6 +217,11 @@ form button:hover {
 form button:focus {
   outline: none;
   background-color: var(--text-color);
+}
+
+form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 a {
