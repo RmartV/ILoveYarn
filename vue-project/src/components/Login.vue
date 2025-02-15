@@ -97,12 +97,9 @@ export default {
   --input-color: #F3F0FF;
 }
 
-* {
+.page {
   margin: 0;
   padding: 0;
-}
-
-.page {
   font-family: Poppins, Segoe UI, sans-serif;
   font-size: 12pt;
   color: var(--text-color);
