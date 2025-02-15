@@ -112,7 +112,7 @@ body {
 
 .wrapper {
   box-sizing: border-box;
-  background-color: white;
+  background-color: #f6eee0;
   height: 100vh;
   width: max(40%, 600px);
   padding: 10px;
@@ -193,7 +193,6 @@ div:has(input:focus) > label {
 
 form input::placeholder {
   color: #f8bdca;
-  -webkit-text-stroke: 0.3px #c38592;
 
 }
 
@@ -229,7 +228,6 @@ form button:disabled {
 a {
   text-decoration: none;
   color: #f8bdca;
-  -webkit-text-stroke: 1px #c38592;
 
 }
 
