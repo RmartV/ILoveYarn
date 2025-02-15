@@ -1,14 +1,11 @@
 <template>
-  <div id="app">
-    <nav>
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/signup">Signup</router-link> |
-    </nav>
-  </div>
+  <Login />
 </template>
 
 <script>
-</script>
+import Login from './components/Login.vue';
 
-<style>
-</style>
+export default {
+  components: { Login }
+};
+</script>
