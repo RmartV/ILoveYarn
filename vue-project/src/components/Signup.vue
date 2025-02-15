@@ -138,14 +138,15 @@ export default {
           .insert([
             {
               UserInfo_email: email.value,
-              UserInfo_password: password.value,},
-              {
+              UserInfo_password: password.value,
+              option:{
                 data:{
               UserInfo_fname: firstname.value,
               UserInfo_lname: lastname.value,
               UserInfo_address: address.value,
               UserInfo_phoneNum: phoneNum.value,
                 }
+              }
             },
           ]);
 
