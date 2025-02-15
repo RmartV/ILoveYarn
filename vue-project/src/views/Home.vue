@@ -21,7 +21,7 @@ export default {
   setup() {
     const userInfo = ref({});
 
-    const fetchUserInfo = async () => {
+    const fetchuserinfo = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
 
@@ -29,14 +29,14 @@ export default {
 
         // Fetch user details from UserInfo table
         const { data, error } = await supabase
-          .from("UserInfo")
+          .from("userinfo")
           .select("*")
-          .eq("user_id", user.id)
+          .eq("userinfo_id", user.id)
           .single();
 
         if (error) throw error;
 
-        userInfo.value = data;
+        userinfo.value = data;
       } catch (err) {
         console.error("Error fetching user info:", err);
       }
@@ -47,11 +47,11 @@ export default {
     };
 
     onMounted(() => {
-      fetchUserInfo();
+      fetchuserinfo();
     });
 
     return { 
-      userInfo,
+      userinfo,
       logout 
     };
   },
