@@ -90,7 +90,7 @@
                 userinfo_id: user.id,
                 userinfo_fname: firstname.value,
                 userinfo_lname: lastname.value,
-                userinfo_phoneNum: phoneNum.value,
+                userinfo_phonenum: phoneNum.value,
                 userinfo_address: address.value,
               },
             ]);
