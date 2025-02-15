@@ -53,9 +53,7 @@
 
 <script>
 import { ref } from 'vue';
-import { supabase } from '../lib/supabaseClient'
-
-
+import { supabase } from '../lib/supabaseClient';
 
 export default {
   setup() {
@@ -65,11 +63,17 @@ export default {
     const phoneNum = ref("");
     const address = ref("");
     const password = ref("");
+    const repeatPassword = ref("");
     const errorMessage = ref("");
 
     const signUp = async () => {
       errorMessage.value = "";
       try {
+        if (password.value !== repeatPassword.value) {
+          errorMessage.value = "Passwords do not match.";
+          return;
+        }
+
         // Sign up with Supabase Authentication
         const { data, error } = await supabase.auth.signUp({
           email: email.value,
@@ -79,27 +83,34 @@ export default {
         if (error) throw error;
         if (!data.user) throw new Error("Signup failed, please try again.");
 
+        console.log("User signed up:", data.user);
+
         // Insert user details into the UserInfo table
-        const { error: insertError } = await supabase.from("UserInfo").insert([
-          {
-            UserInfo_fname: firstname.value,
-            UserInfo_lname: lastname.value,
-            UserInfo_email: email.value,
-            UserInfo_phoneNum: phoneNum.value,
-            UserInfo_address: address.value,
-            UserInfo_password: password.value, // Ideally, store only hashed passwords
-          },
-        ]);
+        const { data: insertData, error: insertError } = await supabase
+          .from("UserInfo")
+          .insert([
+            {
+              UserInfo_fname: firstname.value,
+              UserInfo_lname: lastname.value,
+              UserInfo_email: email.value,
+              UserInfo_phoneNum: phoneNum.value,
+              UserInfo_address: address.value,
+              UserInfo_password: password.value, // Ideally, store only hashed passwords
+            },
+          ])
+          .select();
 
         if (insertError) throw insertError;
 
+        console.log("UserInfo inserted:", insertData);
         alert("Signup successful! Please check your email for confirmation.");
       } catch (err) {
+        console.error("Signup error:", err);
         errorMessage.value = err.message;
       }
     };
 
-    return { firstname, lastname, email, phoneNum, address, password, signUp, errorMessage };
+    return { firstname, lastname, email, phoneNum, address, password, repeatPassword, signUp, errorMessage };
   },
 };
 </script>
