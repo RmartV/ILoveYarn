@@ -145,7 +145,7 @@ export default {
               UserInfo_lname: lastname.value,
               UserInfo_address: address.value,
               UserInfo_phoneNum: phoneNum.value,
-                  
+                }
             },
           ]);
 
