@@ -55,52 +55,51 @@
 import { ref } from 'vue';
 import { supabase } from '../lib/supabaseClient'
 
+
+
 export default {
   setup() {
-    const firstname = ref('');
-    const lastname = ref('');
-    const email = ref('');
-    const phoneNum = ref('');
-    const address = ref('');
-    const password = ref('');
-    const repeatPassword = ref('');
-    const errorMessage = ref('');
+    const firstname = ref("");
+    const lastname = ref("");
+    const email = ref("");
+    const phoneNum = ref("");
+    const address = ref("");
+    const password = ref("");
+    const errorMessage = ref("");
 
-    const signup = async () => {
-      if (password.value !== repeatPassword.value) {
-        errorMessage.value = 'Passwords do not match';
-        return;
-      }
-
+    const signUp = async () => {
+      errorMessage.value = "";
       try {
-        const { user, error } = await supabase.auth.signUp({
+        // Sign up with Supabase Authentication
+        const { data, error } = await supabase.auth.signUp({
           email: email.value,
           password: password.value,
         });
-        if (error) throw error;
 
-        // Insert user info into the UserInfo table
-        const { data, error: insertError } = await supabase
-          .from('UserInfo')
-          .insert([
-            {
-              UserInfo_fname: firstname.value,
-              UserInfo_lname: lastname.value,
-              UserInfo_email: email.value,
-              UserInfo_phoneNum: phoneNum.value,
-              UserInfo_address: address.value,
-              UserInfo_password: password.value, // Note: In a real app, hash the password before storing
-            },
-          ]);
+        if (error) throw error;
+        if (!data.user) throw new Error("Signup failed, please try again.");
+
+        // Insert user details into the UserInfo table
+        const { error: insertError } = await supabase.from("UserInfo").insert([
+          {
+            UserInfo_fname: firstname.value,
+            UserInfo_lname: lastname.value,
+            UserInfo_email: email.value,
+            UserInfo_phoneNum: phoneNum.value,
+            UserInfo_address: address.value,
+            UserInfo_password: password.value, // Ideally, store only hashed passwords
+          },
+        ]);
+
         if (insertError) throw insertError;
 
-        // Redirect or handle successful signup
-      } catch (error) {
-        errorMessage.value = error.message;
+        alert("Signup successful! Please check your email for confirmation.");
+      } catch (err) {
+        errorMessage.value = err.message;
       }
     };
 
-    return { firstname, lastname, email, phoneNum, address, password, repeatPassword, errorMessage, signup };
+    return { firstname, lastname, email, phoneNum, address, password, signUp, errorMessage };
   },
 };
 </script>
