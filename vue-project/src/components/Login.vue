@@ -111,7 +111,7 @@ export default {
   overflow: hidden;
 }
 
-.page, .wrapper {
+ .wrapper {
   box-sizing: border-box;
   background-color: white;
   height: 100vh;
