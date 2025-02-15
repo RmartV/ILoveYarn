@@ -151,7 +151,7 @@ export default {
         if (insertError) throw insertError;
 
         alert("Signup successful! Please check your email for confirmation.");
-        router.push('/login');
+        router.push('/authentication');
       } catch (err) {
         console.error("Signup error:", err);
         errorMessage.value = err.message;

@@ -3,11 +3,13 @@ import Login from '../components/Login.vue';
 import Signup from '../components/Signup.vue';
 import ProfileSetup from '../views/ProfileSetup.vue';
 import Home from '../views/Home.vue';
+import Authentication from '../views/Authentication.vue';
 
 const routes = [
   { path: '/', component: Login }, // Default route is Login
   { path: '/signup', component: Signup },
   { path: '/profile-setup', component: ProfileSetup },
+  { path: '/authentication', component: Authentication },
   { path: '/home', component: Home } // Home page after login
 ];
 
