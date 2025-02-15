@@ -86,7 +86,12 @@ export default {
   }
 };
 </script>
-
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+</style>
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;600;900&display=swap');
 
