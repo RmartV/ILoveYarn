@@ -50,8 +50,6 @@
     background-size: fill;
     background-position: left;
     overflow: hidden;
-    -webkit-text-stroke: 0.5px var(--stroke-color);
-    text-stroke: 0.5px var(--stroke-color);
   }
   
   .wrapper {
@@ -65,7 +63,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    float: right;
   }
   
   .content {
@@ -107,16 +104,12 @@
     font-weight: 900;
     text-transform: uppercase;
     margin: 0;
-    -webkit-text-stroke: 1px var(--stroke-color);
-    text-stroke: 1px var(--stroke-color);
   }
   
   .message {
     font-size: 1.2rem;
     margin: 0;
     color: #f8bdca;
-    -webkit-text-stroke: 0.5px var(--stroke-color);
-    text-stroke: 0.5px var(--stroke-color);
   }
   
   .thank-you {
@@ -124,8 +117,6 @@
     font-weight: 600;
     margin: 10px 0;
     color: #f8bdca;
-    -webkit-text-stroke: 0.5px var(--stroke-color);
-    text-stroke: 0.5px var(--stroke-color);
   }
   
   .back-button {
@@ -139,8 +130,6 @@
     font-weight: 600;
     text-transform: uppercase;
     transition: 150ms ease;
-    -webkit-text-stroke: 0.5px #aa7a85;
-    text-stroke: 0.5px #aa7a85;
   }
   
   .back-button:hover {
