@@ -3,60 +3,104 @@
     <h1>Signup</h1>
     <p id="error-message">{{ errorMessage }}</p>
     <form @submit.prevent="signUp">
-      <div>
+      <div :class="{ incorrect: hasError }">
         <label for="firstname-input">
           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
         </label>
-        <input type="text" v-model="firstname" id="firstname-input" placeholder="Firstname" required>
+        <input 
+          type="text" 
+          v-model="firstname" 
+          id="firstname-input" 
+          placeholder="Firstname" 
+          required
+        >
       </div>
-      <div>
+      <div :class="{ incorrect: hasError }">
         <label for="lastname-input">
           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
         </label>
-        <input type="text" v-model="lastname" id="lastname-input" placeholder="Lastname" required>
+        <input 
+          type="text" 
+          v-model="lastname" 
+          id="lastname-input" 
+          placeholder="Lastname" 
+          required
+        >
       </div>
-      <div>
+      <div :class="{ incorrect: hasError }">
         <label for="email-input">
           <span>@</span>
         </label>
-        <input type="email" v-model="email" id="email-input" placeholder="Email" required>
+        <input 
+          type="email" 
+          v-model="email" 
+          id="email-input" 
+          placeholder="Email" 
+          required
+        >
       </div>
-      <div>
+      <div :class="{ incorrect: hasError }">
         <label for="phonenum-input">
           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
         </label>
-        <input type="text" v-model="phoneNum" id="phonenum-input" placeholder="Phone Number">
+        <input 
+          type="text" 
+          v-model="phoneNum" 
+          id="phonenum-input" 
+          placeholder="Phone Number"
+        >
       </div>
-      <div>
+      <div :class="{ incorrect: hasError }">
         <label for="address-input">
           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
         </label>
-        <input type="text" v-model="address" id="address-input" placeholder="Address">
+        <input 
+          type="text" 
+          v-model="address" 
+          id="address-input" 
+          placeholder="Address"
+        >
       </div>
-      <div>
+      <div :class="{ incorrect: hasError }">
         <label for="password-input">
           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>
         </label>
-        <input type="password" v-model="password" id="password-input" placeholder="Password" required>
+        <input 
+          type="password" 
+          v-model="password" 
+          id="password-input" 
+          placeholder="Password" 
+          required
+        >
       </div>
-      <div>
+      <div :class="{ incorrect: hasError }">
         <label for="repeat-password-input">
           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>
         </label>
-        <input type="password" v-model="repeatPassword" id="repeat-password-input" placeholder="Repeat Password" required>
+        <input 
+          type="password" 
+          v-model="repeatPassword" 
+          id="repeat-password-input" 
+          placeholder="Repeat Password" 
+          required
+        >
       </div>
-      <button type="submit">Signup</button>
+      <button type="submit" :disabled="isLoading">
+        {{ isLoading ? 'Signing up...' : 'Signup' }}
+      </button>
     </form>
     <p>Already have an Account? <router-link to="/login">login</router-link></p>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { supabase } from '../lib/supabaseClient';
+import { useRouter } from 'vue-router';
 
 export default {
   setup() {
+    const router = useRouter();
     const firstname = ref("");
     const lastname = ref("");
     const email = ref("");
@@ -65,9 +109,14 @@ export default {
     const password = ref("");
     const repeatPassword = ref("");
     const errorMessage = ref("");
+    const isLoading = ref(false);
+    
+    const hasError = computed(() => errorMessage.value !== "");
 
     const signUp = async () => {
       errorMessage.value = "";
+      isLoading.value = true;
+      
       try {
         if (password.value !== repeatPassword.value) {
           errorMessage.value = "Passwords do not match.";
@@ -83,10 +132,8 @@ export default {
         if (error) throw error;
         if (!data.user) throw new Error("Signup failed, please try again.");
 
-        console.log("User signed up:", data.user);
-
         // Insert user details into the UserInfo table
-        const { data: insertData, error: insertError } = await supabase
+        const { error: insertError } = await supabase
           .from("UserInfo")
           .insert([
             {
@@ -95,22 +142,35 @@ export default {
               UserInfo_email: email.value,
               UserInfo_phoneNum: phoneNum.value,
               UserInfo_address: address.value,
-              UserInfo_password: password.value, // Ideally, store only hashed passwords
+              UserInfo_password: password.value,
             },
-          ])
-          .select();
+          ]);
 
         if (insertError) throw insertError;
 
-        console.log("UserInfo inserted:", insertData);
         alert("Signup successful! Please check your email for confirmation.");
+        router.push('/login');
       } catch (err) {
         console.error("Signup error:", err);
         errorMessage.value = err.message;
+      } finally {
+        isLoading.value = false;
       }
     };
 
-    return { firstname, lastname, email, phoneNum, address, password, repeatPassword, signUp, errorMessage };
+    return { 
+      firstname, 
+      lastname, 
+      email, 
+      phoneNum, 
+      address, 
+      password, 
+      repeatPassword, 
+      signUp, 
+      errorMessage,
+      isLoading,
+      hasError
+    };
   },
 };
 </script>
