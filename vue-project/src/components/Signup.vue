@@ -176,49 +176,57 @@ export default {
 </script>
 
 
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-:root{
-    --accent-color: #f8bdca;
-    --base-color: white;
-    --text-color: #c38592;
-    --input-color: #F3F0FF;
-}
-*{
+<style>
+body {
   margin: 0;
   padding: 0;
 }
-template{
+</style>
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;600;900&display=swap');
+
+:root {
+  --accent-color: #f8bdca;
+  --base-color: white;
+  --text-color: #f8bdca;
+  --input-color: #F3F0FF;
+}
+
+.page {
+  margin: 0;
+  padding: 0;
   font-family: Poppins, Segoe UI, sans-serif;
   font-size: 12pt;
-  color: var(--text-color);
+  color: #f8bdca;
   text-align: center;
-}
-template{
   min-height: 100vh;
   background-image: url(bg.png);
-  background-size: cover;
-  background-position: right;
+  background-size: fill;
+  background-position: left;
   overflow: hidden;
 }
-.wrapper{
+
+ .wrapper {
   box-sizing: border-box;
-  background-color: var(--base-color);
+  background-color: white;
   height: 100vh;
   width: max(40%, 600px);
   padding: 10px;
-  border-radius: 0 20px 20px 0;
+  border-radius: 0px 20px 20px 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  float: right;
 }
-h1{
+
+h1 {
   font-size: 3rem;
   font-weight: 900;
   text-transform: uppercase;
 }
-form{
+
+form {
   width: min(400px, 100%);
   margin-top: 20px;
   margin-bottom: 50px;
@@ -227,18 +235,20 @@ form{
   align-items: center;
   gap: 10px;
 }
-form > div{
+
+form > div {
   width: 100%;
   display: flex;
   justify-content: center;
 }
-form label{
+
+form label {
   flex-shrink: 0;
   height: 50px;
   width: 50px;
-  background-color: var(--accent-color);
-  fill: var(--base-color);
-  color: var(--base-color);
+  background-color: #f8bdca;
+  fill: white;
+  color: white;
   border-radius: 10px 0 0 10px;
   display: flex;
   justify-content: center;
@@ -246,7 +256,8 @@ form label{
   font-size: 1.5rem;
   font-weight: 500;
 }
-form input{
+
+form input {
   box-sizing: border-box;
   flex-grow: 1;
   min-width: 0;
@@ -254,64 +265,82 @@ form input{
   padding: 1em;
   font: inherit;
   border-radius: 0 10px 10px 0;
-  border: 2px solid var(--input-color);
+  border: 2px solid #F3F0FF;
   border-left: none;
-  background-color: var(--input-color);
+  background-color: #F3F0FF;
   transition: 150ms ease;
 }
-form input:hover{
-  border-color: var(--accent-color);
+
+form input:hover {
+  border-color: #f8bdca;
 }
-form input:focus{
+
+form input:focus {
   outline: none;
-  border-color: var(--text-color);
+  border-color: #f8bdca;
 }
-div:has(input:focus) > label{
-  background-color: var(--text-color);
+
+div:has(input:focus) > label {
+  background-color: #f8bdca;
 }
-form input::placeholder{
-  color: var(--text-color);
+
+form input::placeholder {
+  color: #f8bdca;
 }
-form button{
+
+form button {
   margin-top: 10px;
   border: none;
   border-radius: 1000px;
   padding: .85em 4em;
-  background-color: var(--accent-color);
-  color: var(--base-color);
+  background-color: #f8bdca;
+  color: white;
   font: inherit;
   font-weight: 600;
   text-transform: uppercase;
   cursor: pointer;
   transition: 150ms ease;
 }
-form button:hover{
-  background-color: var(--text-color);
+
+form button:hover {
+  background-color: #f8bdca;
 }
-form button:focus{
+
+form button:focus {
   outline: none;
-  background-color: var(--text-color);
+  background-color: #f8bdca;
 }
-a{
+
+form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+a {
   text-decoration: none;
-  color: var(--accent-color);
+  color: #f8bdca;
 }
-a:hover{
+
+a:hover {
   text-decoration: underline;
 }
-@media(max-width: 1100px){
-  .wrapper{
+
+@media(max-width: 1100px) {
+  .wrapper {
     width: min(600px, 100%);
     border-radius: 0;
   }
 }
-form div.incorrect label{
+
+form div.incorrect label {
   background-color: #f06272;
 }
-form div.incorrect input{
+
+form div.incorrect input {
   border-color: #f06272;
 }
-#error-message{
-  color:#f06272;
+
+#error-message {
+  color: #f06272;
 }
 </style>
