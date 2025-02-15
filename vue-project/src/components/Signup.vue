@@ -2,7 +2,7 @@
   <div class="wrapper">
     <h1>Signup</h1>
     <p id="error-message">{{ errorMessage }}</p>
-    <form @submit.prevent="signup">
+    <form @submit.prevent="signUp">
       <div>
         <label for="firstname-input">
           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
@@ -55,7 +55,7 @@
 import { ref } from 'vue';
 import { supabase } from '../lib/supabaseClient'
 
-const supabase = createClient('https://iycapcrfimbrwdixnfmt.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5Y2FwY3JmaW1icndkaXhuZm10Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk2MTk1MzksImV4cCI6MjA1NTE5NTUzOX0.Q83ftUckbZ6Ox6bikQ-SHDZ8sXwxuzuvEFodmMjGOGg')
+
 
 export default {
   setup() {
