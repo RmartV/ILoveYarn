@@ -84,14 +84,14 @@
   
           // Insert user details into the UserInfo table
           const { error } = await supabase
-            .from("UserInfo")
+            .from("userinfo")
             .insert([
               {
-                user_id: user.id,
-                UserInfo_fname: firstname.value,
-                UserInfo_lname: lastname.value,
-                UserInfo_phoneNum: phoneNum.value,
-                UserInfo_address: address.value,
+                userinfo_id: user.id,
+                userinfo_fname: firstname.value,
+                userinfo_lname: lastname.value,
+                userinfo_phoneNum: phoneNum.value,
+                userinfo_address: address.value,
               },
             ]);
   
