@@ -112,7 +112,7 @@ body {
 
 .wrapper {
   box-sizing: border-box;
-  background-color: #f2f0ef;
+  background-color: #f2f2f2;
   height: 100vh;
   width: max(40%, 600px);
   padding: 10px;
