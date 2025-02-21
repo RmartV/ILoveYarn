@@ -68,26 +68,15 @@
                     <h3>{{ product.prod_name }}</h3>
                     <p>Price: &#8369;{{ product.prod_price.toFixed(2) }}</p>
                     <p>Category: {{ product.prod_categorytype }}</p>
-        
+                    <div v-if="product.prod_categorytype === 'TOOL'">
                     <p>Material: {{ product.tool.tool_material }}</p>
                     <p>Stock: {{ product.prod_stock }}</p>
+                    </div>
                     <p>Size: {{ product.tool.tool_size }}</p>
-      
+                    <div v-if="product.prod_categorytype === 'YARN'">
                     <p>Composition: {{ product.yarn.yarn_composition }}</p>
                     <p>Weight: {{ product.yarn.yarn_weight }}</p>
                     <p>Thickness: {{ product.yarn.yarn_thickness }}</p>
-                    
-                    <div class="yarn-colors">
-                        <select v-model="selectedColors[product.prod_id]" class="color-dropdown">
-                            <option value="" disabled>Select Color</option>
-                            <option 
-                                v-for="color in product.available_colors" 
-                                :key="color.color_id" 
-                                :value="color.color_id"
-                                :style="{ backgroundColor: color.color_hex }">
-                                {{ color.color_name }}
-                            </option>
-                        </select>
                     </div>
                     
                     <p class="product-stock" :class="{ 'low-stock': product.prod_stock < 10 }">
@@ -104,6 +93,7 @@
             </div>
         </div>
     </div>
+    
 </template>
 
 <script>
