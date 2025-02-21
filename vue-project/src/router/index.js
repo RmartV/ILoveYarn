@@ -5,6 +5,7 @@ import ProfileSetup from '../views/ProfileSetup.vue';
 import Home from '../views/Home.vue';
 import Authentication from '../views/Authentication.vue';
 import UserAccount from '../views/UserAccount.vue';
+import Usercart from '@/views/Usercart.vue';
 
 const routes = [
   { path: '/', component: Login }, // Default route is Login
@@ -12,6 +13,7 @@ const routes = [
   { path: '/profile-setup', component: ProfileSetup },
   { path: '/authentication', component: Authentication },
   { path: '/user-details', component: UserAccount},
+  {path:  '/user-cart', component: UserAccount},
   { path: '/home', component: Home } // Home page after login
 ];
 
