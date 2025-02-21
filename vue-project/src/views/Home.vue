@@ -247,7 +247,7 @@
         }
 
         .user-info {
-            width: auto;
+            width: 30px;
             display: flex;
             align-items: center;
             gap: 8px;
