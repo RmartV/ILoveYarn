@@ -2,13 +2,13 @@
     <div class="app-container">
       <header class="header">
         <div class="logo-container">
-          <img src="css/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
+          <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
           <h1 class="logo-text">I LOVE YARN PH</h1>
         </div>
   
         <div class="search-container">
           <input type="text" class="search-input" placeholder="What are you looking for?">
-          <button class="search-btn"><img class="nav-img-icon" src="css/magnifying-glass.png"></button>
+          <button class="search-btn"><img class="nav-img-icon" src="../views/images/magnifying-glass.png"></button>
         </div>
   
         <div class="nav-icons">
