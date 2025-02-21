@@ -19,41 +19,24 @@
             </router-link>
           </div>
           <div class="nav-icon user-info">
-            <div class="user-avatar">{{ userInfo?.userinfo_fname.charAt(0) || 'G' }}</div>
-            <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
+            <router-link to="/user-details">
+              <div class="user-avatar">{{ userInfo?.userinfo_fname.charAt(0) || 'G' }}</div>
+              <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
+            </router-link>
           </div>
         </div>
       </header>
   
       <div class="main-content">
-        <div class="sidebar">
-          <ul class="sidebar-menu">
-            <li class="sidebar-item active">Yarn</li>
-            <li class="sidebar-item">Crochet Hooks</li>
-            <li class="sidebar-item">Decorative Tape</li>
-            <li class="sidebar-item">Ribbons</li>
-            <li class="sidebar-item">Sewing Threads</li>
-            <li class="sidebar-item">Accessories</li>
-          </ul>
-        </div>
-  
         <div class="content-area">
           <h2 class="page-title">All Products</h2>
           <div class="products-container">
             <div v-for="product in products" :key="product.prod_id" class="product-card">
-             
+              <div class="product-image">
+                <img :src="product.image_url || '../views/images/default.png'" alt="Product Image">
+              </div>
               <div class="product-details">
-                <div class="product-category">{{ product.prod_categorytype }}</div>
                 <h3 class="product-name">{{ product.prod_name }}</h3>
-                <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
-                  <span class="meta-item">{{ product.yarn.yarn_composition }}</span>
-                  <span class="meta-item">{{ product.yarn.yarn_weight }}</span>
-                  <span class="meta-item">{{ product.yarn.yarn_thickness }}</span>
-                </div>
-                <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
-                  <span class="meta-item">{{ product.tool.tool_material }}</span>
-                  <span class="meta-item">{{ product.tool.tool_size }}</span>
-                </div>
                 <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
                 <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
                 <div class="product-actions">
@@ -94,15 +77,24 @@
         }
       };
   
-      onMounted(async () => {
-        await fetchUserInfo();
-  
+      const fetchProducts = async () => {
         const { data, error } = await supabase
           .from('product')
-          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
+          .select('*');
+        
         if (!error) {
-          products.value = data;
+          products.value = data.map(product => ({
+            ...product,
+            image_url: product.prod_id === 101 
+              ? supabase.storage.from('product_images').getPublicUrl('chunky_yarn.png').data.publicUrl
+              : ''
+          }));
         }
+      };
+  
+      onMounted(async () => {
+        await fetchUserInfo();
+        await fetchProducts();
       });
   
       const addToCart = async (product) => {
