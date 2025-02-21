@@ -83,7 +83,7 @@
                 
                 <div class="categories-grid-yarn">
                     <div class="category-card">
-                        <img src="/api/placeholder/50/50" alt="Yarn" class="category-icon">
+                        <!--Produc image here line command-->
                         <div class="category-name">Yarn</div>
                         <div class="yarn-price">P100</div>
                         <div class="weigth"></div>
