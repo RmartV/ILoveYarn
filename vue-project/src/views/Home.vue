@@ -1,6 +1,7 @@
 <template>
     <div>
       <h1>Welcome, {{ userName }}</h1>
+      <router-link to="/user-cart">Go to Cart</router-link>
       <h2>Products</h2>
       <div v-for="product in products" :key="product.prod_id" class="product-card">
         <h3>{{ product.prod_name }}</h3>
@@ -31,12 +32,17 @@
       const products = ref([]);
   
       onMounted(async () => {
-        const { data: user } = await supabase.auth.getUser();
-        if (user) {
-          userName.value = user.email;
+        const { data: userInfo, error: userError } = await supabase
+          .from('userinfo')
+          .select('userinfo_fname')
+          .single();
+        if (!userError && userInfo) {
+          userName.value = userInfo.userinfo_fname;
         }
   
-        const { data, error } = await supabase.from('product').select('*');
+        const { data, error } = await supabase
+          .from('product')
+          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
         if (!error) {
           products.value = data;
         }
