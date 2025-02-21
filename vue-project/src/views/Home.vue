@@ -1,17 +1,17 @@
 <template>
     <header class="header">
         <div class="logo-container">
-            <img src="css/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
+            <img src="../views/images/homelogo.png" alt="I LOVE YARN PH Logo" class="logo-img">
             <h1 class="logo-text">I LOVE YARN PH</h1>
         </div>
         
         <div class="search-container">
             <input type="text" class="search-input" placeholder="What are you looking for?">
-            <button class="search-btn"><img class="nav-img-icon" src="css/magnifying-glass.png"></button>
+            <button class="search-btn"><img class="nav-img-icon" src="../views/images/magnifying-glass.png"></button>
         </div>
         
         <div class="nav-icons">
-            <div class="nav-icon"><img class="nav-img-icon" src="css/shopping-cart.png"></div>
+            <div class="nav-icon"><img class="nav-img-icon" src="../views/images/shopping-cart.png"></div>
             <div class="nav-icon">
                 <img src="/api/placeholder/30/30" alt="Profile" class="profile-img">
             </div>
@@ -38,21 +38,21 @@
             <div class="carousel-container">
                 <div class="carousel-slides">
                     <div class="carousel-slide active">
-                        <img src="css/slide1.png" alt="Yarn Collection 1" class="carousel-image">
+                        <img src="../views/images/slide1.png" alt="Yarn Collection 1" class="carousel-image">
                         <div class="carousel-overlay">
                             <h2 class="carousel-title">Up to 10% off Voucher</h2>
                             <button class="shop-now-btn">Shop Now</button>
                         </div>
                     </div>
                     <div class="carousel-slide">
-                        <img src="css/slide2.png" alt="Yarn Collection 2" class="carousel-image">
+                        <img src="../views/images/slide2.png" alt="Yarn Collection 2" class="carousel-image">
                         <div class="carousel-overlay">
                             <h2 class="carousel-title">New Arrivals - Premium Yarn</h2>
                             <button class="shop-now-btn">Explore Now</button>
                         </div>
                     </div>
                     <div class="carousel-slide">
-                        <img src="css/slide3.png" alt="Crochet Supplies" class="carousel-image">
+                        <img src="../views/images/slide3.png" alt="Crochet Supplies" class="carousel-image">
                         <div class="carousel-overlay">
                             <h2 class="carousel-title">Crochet Supplies Sale</h2>
                             <button class="shop-now-btn">View Collection</button>
@@ -77,7 +77,7 @@
                 <div class="section-header-yarn">
                     <h3 class="section-title-yarn">Browse By Yarn</h3>
                     <div class="view-more">
-                        <a href="/yarn-page"><img src="arrow.png">View more</a>
+                        <a href="/yarn-page"><img src="../views/images/arrow.png">View more</a>
                     </div>
                 </div>
                 
