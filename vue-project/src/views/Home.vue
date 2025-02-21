@@ -86,7 +86,7 @@
           products.value = data.map(product => ({
             ...product,
             image_url: product.prod_id === 101 
-              ? supabase.storage.from('product_images').getPublicUrl('chunky_yarn.png').data.publicUrl
+              ? supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl
               : ''
           }));
         }
