@@ -1,7 +1,7 @@
 <template>
     <header class="header">
         <div class="logo-container">
-            <img src="../views/images/homelogo.png" alt="I LOVE YARN PH Logo" class="logo-img">
+            <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
             <h1 class="logo-text">I LOVE YARN PH</h1>
         </div>
         
