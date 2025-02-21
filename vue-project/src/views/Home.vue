@@ -21,7 +21,7 @@
           <div class="nav-icon user-info">
             <router-link to="/user-details">
             <div class="user-avatar">{{ userInfo?.userinfo_fname.charAt(0) || 'G' }}</div>
-            <span style="width: auto">{{ userInfo?.userinfo_fname || 'Guest' }}</span>
+            <span style="width: 50px;">{{ userInfo?.userinfo_fname || 'Guest' }}</span>
         </router-link>
           </div>
         </div>
