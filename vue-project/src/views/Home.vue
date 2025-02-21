@@ -13,7 +13,7 @@
         <div class="nav-icons">
             <div class="nav-icon"><img class="nav-img-icon" src="../views/images/shopping-cart.png"></div>
             <div class="nav-icon">
-              <p><router-link to="/user-details">{{ username || 'Account' }}</router-link></p>
+              <p><router-link to="/user-details">{{ userDisplayName || 'Account' }}</router-link></p>
             </div>
         </div>
     </header>
@@ -115,17 +115,15 @@
 </template>
 
 <script>
-import { createClient } from '@supabase/supabase-js'
-
-// Initialize Supabase client
-const supabaseUrl = 'YOUR_SUPABASE_URL'
-const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'
-const supabase = createClient(supabaseUrl, supabaseKey)
+  import { ref, computed } from 'vue';
+  import { supabase } from '../lib/supabaseClient';
+  import { useRouter } from 'vue-router';
 
 export default {
     data() {
         return {
-            username: '',
+            userDisplayName: '',
+            userId: null,
             slides: [
                 {
                     image: '../views/images/slide1.png',
@@ -165,14 +163,17 @@ export default {
         async getUserProfile() {
             const { data: { session } } = await supabase.auth.getSession()
             if (session) {
+                this.userid = session.user.id
+                
+                // Get user details from UserInfo table
                 const { data, error } = await supabase
-                    .from('profiles')
-                    .select('username')
-                    .eq('id', session.user.id)
+                    .from('userinfo')
+                    .select('userinfo_fname, userinfo_lname')
+                    .eq('userinfo_id', this.userid)
                     .single()
                 
-                if (data) {
-                    this.username = data.username
+                if (data && !error) {
+                    this.userDisplayName = `${data.userinfo_fname} ${data.userinfo_lname}`
                 }
             }
         },
@@ -290,7 +291,7 @@ export default {
 <style>
 :root {
     --primary-color: #feb1bf;
-    --background-color: #f2f2f2ef;
+    --background-color: #F2F2F2;
     --text-color: rgb(0, 0, 0);
     --light-gray: #646464;
     --highlights: #77c275;
