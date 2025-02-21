@@ -109,7 +109,7 @@ export default {
     data() {
         return {
             userDisplayName: '',
-            userId: null,
+            userid: null,
             yarnProducts: [],
             selectedColors: {},
             loading: true,
