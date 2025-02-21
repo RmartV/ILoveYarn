@@ -63,9 +63,9 @@
   
             <div class="products-grid">
               <div v-for="product in filteredProducts" :key="product.prod_id" class="product-card">
-                <div class="product-image">
+               
                   <!--     images-->
-                </div>
+                
                 <div class="product-name">{{ product.prod_name }}</div>
                 <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
                 <div v-if="product.prod_categoryType === 'YARN' && product.yarnDetails" class="product-details">
