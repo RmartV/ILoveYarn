@@ -27,12 +27,12 @@
         <!-- Sidebar -->
         <div class="sidebar">
           <ul class="sidebar-menu">
-            <li class="sidebar-item" @click="filterByCategory('YARN')">Yarn <i class="fas fa-chevron-right"></i></li>
-            <li class="sidebar-item" @click="filterByCategory('TOOL')">Crochet Hooks <i class="fas fa-chevron-right"></i></li>
-            <li class="sidebar-item" @click="filterByCategory('TAPE')">Decorative Tape <i class="fas fa-chevron-right"></i></li>
-            <li class="sidebar-item" @click="filterByCategory('RIBBONS')">Ribbons <i class="fas fa-chevron-right"></i></li>
-            <li class="sidebar-item" @click="filterByCategory('THREAD')">Sewing Threads <i class="fas fa-chevron-right"></i></li>
-            <li class="sidebar-item" @click="filterByCategory('ACCESSORIES')">Accessories <i class="fas fa-chevron-right"></i></li>
+            <li class="sidebar-item">Yarn <i class="fas fa-chevron-right"></i></li>
+            <li class="sidebar-item">Crochet Hooks <i class="fas fa-chevron-right"></i></li>
+            <li class="sidebar-item">Decorative Tape <i class="fas fa-chevron-right"></i></li>
+            <li class="sidebar-item">Ribbons <i class="fas fa-chevron-right"></i></li>
+            <li class="sidebar-item">Sewing Threads <i class="fas fa-chevron-right"></i></li>
+            <li class="sidebar-item">Accessories <i class="fas fa-chevron-right"></i></li>
           </ul>
         </div>
   
