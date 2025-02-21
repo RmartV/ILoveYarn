@@ -13,7 +13,7 @@
         <div class="nav-icons">
             <div class="nav-icon"><img class="nav-img-icon" src="../views/images/shopping-cart.png"></div>
             <div class="nav-icon">
-                <img src="/api/placeholder/30/30" alt="Profile" class="profile-img">
+                <a href="/user-details">Account_Name</a>
             </div>
         </div>
     </header>
