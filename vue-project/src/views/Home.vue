@@ -13,7 +13,7 @@
         <div class="nav-icons">
             <div class="nav-icon"><img class="nav-img-icon" src="../views/images/shopping-cart.png"></div>
             <div class="nav-icon">
-              <p><router-link to="/user-details">Account_Name</router-link></p>
+              <p><router-link to="/user-details">{{ username || 'Account' }}</router-link></p>
             </div>
         </div>
     </header>
@@ -37,219 +37,260 @@
             <!-- Carousel -->
             <div class="carousel-container">
                 <div class="carousel-slides">
-                    <div class="carousel-slide active">
-                        <img src="../views/images/slide1.png" alt="Yarn Collection 1" class="carousel-image">
+                    <div class="carousel-slide" v-for="(slide, index) in slides" :key="index" :class="{ active: currentSlide === index }">
+                        <img :src="slide.image" :alt="slide.title" class="carousel-image">
                         <div class="carousel-overlay">
-                            <h2 class="carousel-title">Up to 10% off Voucher</h2>
-                            <button class="shop-now-btn">Shop Now</button>
-                        </div>
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="../views/images/slide2.png" alt="Yarn Collection 2" class="carousel-image">
-                        <div class="carousel-overlay">
-                            <h2 class="carousel-title">New Arrivals - Premium Yarn</h2>
-                            <button class="shop-now-btn">Explore Now</button>
-                        </div>
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="../views/images/slide3.png" alt="Crochet Supplies" class="carousel-image">
-                        <div class="carousel-overlay">
-                            <h2 class="carousel-title">Crochet Supplies Sale</h2>
-                            <button class="shop-now-btn">View Collection</button>
+                            <h2 class="carousel-title">{{ slide.title }}</h2>
+                            <button class="shop-now-btn">{{ slide.buttonText }}</button>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Circle Navigation Buttons -->
                 <div class="carousel-circle-nav">
-                    <button class="circle-btn active" data-slide="0"></button>
-                    <button class="circle-btn" data-slide="1"></button>
-                    <button class="circle-btn" data-slide="2"></button>
+                    <button 
+                        v-for="(slide, index) in slides" 
+                        :key="index"
+                        class="circle-btn" 
+                        :class="{ active: currentSlide === index }"
+                        @click="showSlide(index)"></button>
                 </div>
             </div>
         </div>
- </div>         
+    </div>         
 
-
-            <!-- Categories Section -->
-            <div class="categories-section">
-                <hr>
-                <div class="section-header-yarn">
-                    <h3 class="section-title-yarn">Browse By Yarn</h3>
-                    <div class="view-more">
-                        <a href="/yarn-page"><img src="../views/images/arrow.png">View more</a>
+    <!-- Categories Section -->
+    <div class="categories-section">
+        <hr>
+        <div class="section-header-yarn">
+            <h3 class="section-title-yarn">Browse By Yarn</h3>
+            <div class="view-more">
+                <a href="/yarn-page"><img src="../views/images/arrow.png">View more</a>
+            </div>
+        </div>
+        
+        <div class="categories-grid-yarn">
+            <div v-if="loading" class="loading-message">
+                Loading products...
+            </div>
+            <div v-else-if="error" class="error-message">
+                {{ error }}
+            </div>
+            <div v-else class="categories-grid">
+                <div v-for="product in yarnProducts" :key="product.prod_id" class="category-card">
+                    <img :src="getProductImage(product)" alt="Yarn product" class="product-image">
+                    <p class="product-name">{{ product.prod_name }}</p>
+                    <p class="product-category">{{ product.prod_categoryType }}</p>
+                    <p class="product-price">₱{{ product.prod_price.toFixed(2) }}</p>
+                    <p class="product-weight">Weight: {{ product.yarn_weight }}</p>
+                    <p class="product-thickness">Thickness: {{ product.yarn_thickness }}</p>
+                    
+                    <div class="yarn-colors">
+                        <select v-model="selectedColors[product.prod_id]" class="color-dropdown">
+                            <option value="" disabled>Select Color</option>
+                            <option 
+                                v-for="color in product.available_colors" 
+                                :key="color.color_id" 
+                                :value="color.color_id"
+                                :style="{ backgroundColor: color.color_hex }">
+                                {{ color.color_name }}
+                            </option>
+                        </select>
                     </div>
-                </div>
-                
-                <div class="categories-grid-yarn">
-                    <div class="category-card">
-                        <!--Produc image here line command-->
-                        <div class="category-name">Yarn</div>
-                        <div class="yarn-price">P100</div>
-                        <div class="weigth"></div>
-                        <div class="materials"></div>
-                        <div class="yarn colors"><dropdown></dropdown></div>
-                        <button> Add to cart</button>
+                    
+                    <p class="product-stock" :class="{ 'low-stock': product.prod_stock < 10 }">
+                        Stock: {{ product.prod_stock }}
+                    </p>
+                    
+                    <button 
+                        class="add-to-cart-btn" 
+                        :disabled="!selectedColors[product.prod_id] || product.prod_stock <= 0"
+                        @click="addToCart(product)">
+                        Add to cart
+                    </button>
                 </div>
             </div>
-            </div>
+        </div>
+    </div>
 </template>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Carousel functionality
-    const carousel = {
-        slides: document.querySelectorAll('.carousel-slide'),
-        prevArrow: document.querySelector('.carousel-prev'),
-        nextArrow: document.querySelector('.carousel-next'),
-        circleButtons: document.querySelectorAll('.circle-btn'),
-        currentSlide: 0,
-        autoPlayInterval: null
-    };
+import { createClient } from '@supabase/supabase-js'
 
-    function showSlide(index) {
-        // Handle index boundaries
-        if (index < 0) index = carousel.slides.length - 1;
-        if (index >= carousel.slides.length) index = 0;
-        
-        // Update current slide
-        carousel.currentSlide = index;
-        
-        // Update slides
-        carousel.slides.forEach((slide, i) => {
-            if (i === index) {
-                slide.classList.add('active');
-            } else {
-                slide.classList.remove('active');
-            }
-        });
-        
-        // Update circle buttons
-        carousel.circleButtons.forEach((btn, i) => {
-            if (i === index) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-    }
+// Initialize Supabase client
+const supabaseUrl = 'YOUR_SUPABASE_URL'
+const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'
+const supabase = createClient(supabaseUrl, supabaseKey)
 
-    function nextSlide() {
-        showSlide(carousel.currentSlide + 1);
-    }
-
-    function prevSlide() {
-        showSlide(carousel.currentSlide - 1);
-    }
-
-    // Set up event listeners for carousel arrows
-    if (carousel.prevArrow && carousel.nextArrow) {
-        carousel.prevArrow.addEventListener('click', function() {
-            prevSlide();
-            // Reset the auto slide timer when arrow is clicked
-            if (carousel.autoPlayInterval) {
-                stopAutoSlide();
-                startAutoSlide();
-            }
-        });
-        
-        carousel.nextArrow.addEventListener('click', function() {
-            nextSlide();
-            // Reset the auto slide timer when arrow is clicked
-            if (carousel.autoPlayInterval) {
-                stopAutoSlide();
-                startAutoSlide();
-            }
-        });
-    }
-
-    // Set up event listeners for circle buttons
-    carousel.circleButtons.forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-            showSlide(index);
-            // Reset the auto slide timer when a button is clicked
-            if (carousel.autoPlayInterval) {
-                stopAutoSlide();
-                startAutoSlide();
-            }
-        });
-    });
-
-    // Auto slide functions
-    function startAutoSlide() {
-        carousel.autoPlayInterval = setInterval(nextSlide, 5000);
-    }
-
-    function stopAutoSlide() {
-        clearInterval(carousel.autoPlayInterval);
-    }
-
-    // Start auto slide
-    startAutoSlide();
-
-    // Pause auto slide on hover
-    const carouselContainer = document.querySelector('.carousel-container');
-    if (carouselContainer) {
-        carouselContainer.addEventListener('mouseenter', stopAutoSlide);
-        carouselContainer.addEventListener('mouseleave', startAutoSlide);
-    }
-
-    // Initialize first slide
-    showSlide(0);
-    
-    // Category navigation
-    const categoryNav = {
-        currentPosition: 0,
-        container: document.querySelector('.categories-grid'),
-        items: document.querySelectorAll('.category-card'),
-        prevArrow: document.querySelector('.prev-arrow'),
-        nextArrow: document.querySelector('.next-arrow'),
-        itemsPerView: () => {
-            if (window.innerWidth < 768) return 3;
-            return 6;
+export default {
+    data() {
+        return {
+            username: '',
+            slides: [
+                {
+                    image: '../views/images/slide1.png',
+                    title: 'Up to 10% off Voucher',
+                    buttonText: 'Shop Now'
+                },
+                {
+                    image: '../views/images/slide2.png',
+                    title: 'New Arrivals - Premium Yarn',
+                    buttonText: 'Explore Now'
+                },
+                {
+                    image: '../views/images/slide3.png',
+                    title: 'Crochet Supplies Sale',
+                    buttonText: 'View Collection'
+                }
+            ],
+            currentSlide: 0,
+            autoPlayInterval: null,
+            yarnProducts: [],
+            selectedColors: {},
+            loading: true,
+            error: null
         }
-    };
-    
-    function updateCategoryVisibility() {
-        if (!categoryNav.container) return;
-        
-        const visibleItems = categoryNav.itemsPerView();
-        categoryNav.items.forEach((item, index) => {
-            if (index >= categoryNav.currentPosition && index < categoryNav.currentPosition + visibleItems) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
+    },
+    created() {
+        this.fetchYarnProducts()
+    },
+    mounted() {
+        this.startAutoSlide()
+        this.getUserProfile()
+    },
+    beforeUnmount() {
+        this.stopAutoSlide()
+    },
+    methods: {
+        async getUserProfile() {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (session) {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('id', session.user.id)
+                    .single()
+                
+                if (data) {
+                    this.username = data.username
+                }
             }
-        });
+        },
+        async fetchYarnProducts() {
+            try {
+                this.loading = true
+                
+                // First, get product IDs of type YARN
+                const { data: productData, error: productError } = await supabase
+                    .from('product')
+                    .select('*')
+                    .eq('prod_categoryType', 'YARN')
+                
+                if (productError) throw productError
+                
+                // For each product, get yarn details
+                const yarnDetailsPromises = productData.map(async (product) => {
+                    const { data: yarnData, error: yarnError } = await supabase
+                        .from('yarn')
+                        .select('*')
+                        .eq('prod_id', product.prod_id)
+                        .single()
+                    
+                    if (yarnError) return { ...product, yarnDetails: null }
+                    
+                    // Fetch available colors for this yarn
+                    const { data: colorData, error: colorError } = await supabase
+                        .from('color')
+                        .select('*')
+                        .eq('color_id', yarnData.color_id)
+                    
+                    const available_colors = colorError ? [] : colorData
+                    
+                    return {
+                        ...product,
+                        ...yarnData,
+                        available_colors
+                    }
+                })
+                
+                const results = await Promise.all(yarnDetailsPromises)
+                this.yarnProducts = results.filter(product => product.yarn_composition)
+                this.loading = false
+            } catch (error) {
+                console.error('Error fetching products:', error)
+                this.error = 'Failed to load products. Please try again later.'
+                this.loading = false
+            }
+        },
+        getProductImage(product) {
+            // This is a placeholder - replace with actual image logic
+            return `../views/images/yarns/yarn_${product.prod_id}.jpg`
+        },
+        addToCart(product) {
+            if (!this.selectedColors[product.prod_id]) {
+                alert('Please select a color first')
+                return
+            }
+            
+            const selectedColor = product.available_colors.find(
+                color => color.color_id === this.selectedColors[product.prod_id]
+            )
+            
+            // Get cart from localStorage or initialize empty cart
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+            
+            // Check if this product with this color is already in cart
+            const existingItemIndex = cart.findIndex(item => 
+                item.prod_id === product.prod_id && 
+                item.color_id === this.selectedColors[product.prod_id]
+            )
+            
+            if (existingItemIndex >= 0) {
+                // Increment quantity of existing item
+                cart[existingItemIndex].quantity += 1
+            } else {
+                // Add new item to cart
+                cart.push({
+                    prod_id: product.prod_id,
+                    name: product.prod_name,
+                    price: product.prod_price,
+                    color_id: this.selectedColors[product.prod_id],
+                    color_name: selectedColor ? selectedColor.color_name : 'Unknown',
+                    quantity: 1
+                })
+            }
+            
+            // Save updated cart
+            localStorage.setItem('cart', JSON.stringify(cart))
+            
+            // Show confirmation
+            alert(`Added ${product.prod_name} to cart!`)
+        },
+        showSlide(index) {
+            this.currentSlide = index
+            // Reset the auto slide timer when manually changing slide
+            if (this.autoPlayInterval) {
+                this.stopAutoSlide()
+                this.startAutoSlide()
+            }
+        },
+        nextSlide() {
+            this.currentSlide = (this.currentSlide + 1) % this.slides.length
+        },
+        startAutoSlide() {
+            this.autoPlayInterval = setInterval(this.nextSlide, 5000)
+        },
+        stopAutoSlide() {
+            clearInterval(this.autoPlayInterval)
+        }
     }
-    
-    function nextCategory() {
-        const maxPosition = Math.max(0, categoryNav.items.length - categoryNav.itemsPerView());
-        categoryNav.currentPosition = Math.min(categoryNav.currentPosition + 1, maxPosition);
-        updateCategoryVisibility();
-    }
-    
-    function prevCategory() {
-        categoryNav.currentPosition = Math.max(0, categoryNav.currentPosition - 1);
-        updateCategoryVisibility();
-    }
-    
-    if (categoryNav.prevArrow && categoryNav.nextArrow) {
-        categoryNav.prevArrow.addEventListener('click', prevCategory);
-        categoryNav.nextArrow.addEventListener('click', nextCategory);
-    }
-    
-    // Initial setup for categories
-    updateCategoryVisibility();
-    
-    // Update on window resize
-    window.addEventListener('resize', updateCategoryVisibility);
-});
+}
 </script>
+
 <style>
 :root {
     --primary-color: #feb1bf;
-    --background-color: #F2F2F2;
+    --background-color: #f2f2f2ef;
     --text-color: rgb(0, 0, 0);
     --light-gray: #646464;
     --highlights: #77c275;
@@ -265,7 +306,6 @@ document.addEventListener('DOMContentLoaded', function() {
 body {
     background-color: var(--background-color);
 }
-
 
 .header {
     background-color: var(--primary-color);
@@ -330,12 +370,6 @@ body {
 .nav-img-icon{
     height: 25px;
 }
-.profile-img {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-}
 
 .sidebar {
     height: 100%;
@@ -348,7 +382,6 @@ body {
 .sidebar-menu {
     list-style: none;
 }
-
 
 .sidebar-item {
     color: var(--text-color);
@@ -445,27 +478,6 @@ body {
     margin-top: 20px;
 }
 
-.carousel-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 3;
-    transition: background 0.3s;
-}
-
-.carousel-arrow:hover {
-    background: rgba(255, 255, 255, 0.9);
-}
-
-
 .carousel-circle-nav {
     position: absolute;
     bottom: 30px;
@@ -502,7 +514,6 @@ body {
     outline: none;
 }
 
-
 .categories-section {
     margin-top: 40px;
     margin: auto;
@@ -515,11 +526,13 @@ body {
     align-items: center;
     margin-bottom: 20px;
 }
-hr{
+
+hr {
     border-style: solid;
     height: 2px;
     color: var(--light-gray);
 }
+
 .section-title-yarn {
     color: var(--text-color);
     margin: 40px 0 30px 0;
@@ -539,25 +552,27 @@ hr{
     left: -19px;
 }
 
-.nav-arrows {
-    display: flex;
-    gap: 10px;
-}
-
-.nav-arrow {
-    width: 30px;
-    height: 30px;
-    border: 1px solid #ddd;
-    border-radius: 50%;
+.view-more {
     display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
+}
+
+.view-more a {
+    display: flex;
+    align-items: center;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.view-more img {
+    height: 15px;
+    margin-right: 5px;
 }
 
 .categories-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
 }
 
@@ -565,12 +580,11 @@ hr{
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.3s;
+    transition: transform 0.3s, box-shadow 0.3s;
+    background-color: white;
 }
 
 .category-card:hover {
@@ -578,15 +592,92 @@ hr{
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.category-icon {
-    width: 50px;
-    height: 50px;
+.product-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.product-name {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.product-category {
+    color: var(--light-gray);
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.product-weight, .product-thickness {
+    font-size: 14px;
+    color: var(--light-gray);
+    margin-bottom: 5px;
+}
+
+.yarn-colors {
+    margin: 10px 0;
+    width: 100%;
+}
+
+.color-dropdown {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: white;
+}
+
+.product-stock {
+    font-size: 14px;
     margin-bottom: 15px;
 }
 
-.category-name {
+.low-stock {
+    color: #e74c3c;
+}
+
+.add-to-cart-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.add-to-cart-btn:hover:not(:disabled) {
+    background-color: #e69da8;
+}
+
+.add-to-cart-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.loading-message, .error-message {
+    grid-column: 1 / -1;
+    padding: 20px;
     text-align: center;
-    font-size: 14px;
+    font-size: 16px;
+}
+
+.error-message {
+    color: #e74c3c;
 }
 
 /* Responsive adjustments */
@@ -612,7 +703,7 @@ hr{
     }
     
     .categories-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     }
     
     .carousel-slides {
