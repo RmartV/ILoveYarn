@@ -13,7 +13,7 @@ const routes = [
   { path: '/profile-setup', component: ProfileSetup },
   { path: '/authentication', component: Authentication },
   { path: '/user-details', component: UserAccount},
-  {path:  '/user-cart', component: UserAccount},
+  {path:  '/user-cart', component: Usercart},
   { path: '/home', component: Home } // Home page after login
 ];
 

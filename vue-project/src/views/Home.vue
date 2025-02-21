@@ -41,7 +41,7 @@
         }
   
         const { data, error } = await supabase
-          .from('product')
+          .from('product, yarn, tool')
           .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
         if (!error) {
           products.value = data;
@@ -58,7 +58,7 @@
         alert('Added to cart');
       };
   
-      return { userName, products, addToCart };
+      return { userName, products, yarn, tool, addToCart };
     }
   };
   </script>
