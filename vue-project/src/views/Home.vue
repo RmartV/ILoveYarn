@@ -1,11 +1,21 @@
 <template>
-    <div class="home">
-      <h1>Welcome, {{ username }}</h1>
-      <div v-for="product in products" :key="product.prod_id" class="product">
-        <h2>{{ product.prod_name }}</h2>
+    <div>
+      <h1>Welcome, {{ userName }}</h1>
+      <h2>Products</h2>
+      <div v-for="product in products" :key="product.prod_id" class="product-card">
+        <h3>{{ product.prod_name }}</h3>
         <p>Category: {{ product.prod_categorytype }}</p>
-        <p>Price: ${{ product.prod_price }}</p>
+        <p>Price: &#8369;{{ product.prod_price.toFixed(2) }}</p>
         <p>Stock: {{ product.prod_stock }}</p>
+        <div v-if="product.prod_categorytype === 'TOOL'">
+          <p>Material: {{ product.tool_material }}</p>
+          <p>Size: {{ product.tool_size }}</p>
+        </div>
+        <div v-if="product.prod_categorytype === 'YARN'">
+          <p>Composition: {{ product.yarn_composition }}</p>
+          <p>Weight: {{ product.yarn_weight }}</p>
+          <p>Thickness: {{ product.yarn_thickness }}</p>
+        </div>
         <button @click="addToCart(product)">Add to Cart</button>
       </div>
     </div>
@@ -17,45 +27,41 @@
   
   export default {
     setup() {
-      const username = ref('');
+      const userName = ref('');
       const products = ref([]);
   
       onMounted(async () => {
-        const user = supabase.auth.user();
+        const { data: user } = await supabase.auth.getUser();
         if (user) {
-          username.value = user.email;
+          userName.value = user.email;
         }
-        await fetchProducts();
+  
+        const { data, error } = await supabase.from('product').select('*');
+        if (!error) {
+          products.value = data;
+        }
       });
   
-      async function fetchProducts() {
-        const { data, error } = await supabase
-          .from('product')
-          .select('*');
-        if (error) console.error('Error fetching products:', error);
-        else products.value = data;
-      }
+      const addToCart = async (product) => {
+        await supabase.from('usercart').insert({
+          userinfo_id: (await supabase.auth.getUser()).data.user.id,
+          prod_id: product.prod_id,
+          usercart_totalprice: product.prod_price,
+          usercart_totalitems: 1
+        });
+        alert('Added to cart');
+      };
   
-      async function addToCart(product) {
-        const { error } = await supabase
-          .from('usercart')
-          .insert([{ userinfo_id: supabase.auth.user().id, prod_id: product.prod_id }]);
-        if (error) console.error('Error adding to cart:', error);
-        else alert('Added to cart!');
-      }
-  
-      return { username, products, addToCart };
+      return { userName, products, addToCart };
     }
   };
   </script>
   
   <style>
-  .home {
-    padding: 20px;
-  }
-  .product {
-    margin-bottom: 20px;
+  .product-card {
+    border: 1px solid #ddd;
     padding: 10px;
-    border: 1px solid #ccc;
+    margin: 10px;
+    display: inline-block;
   }
   </style>
