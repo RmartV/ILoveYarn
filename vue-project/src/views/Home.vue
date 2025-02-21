@@ -13,7 +13,7 @@
         <div class="nav-icons">
             <div class="nav-icon"><img class="nav-img-icon" src="../views/images/shopping-cart.png"></div>
             <div class="nav-icon">
-                <a href="/user-details">Account_Name</a>
+              <p><router-link to="/user-details">Account_Name</router-link></p>
             </div>
         </div>
     </header>
