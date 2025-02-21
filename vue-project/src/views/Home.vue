@@ -10,13 +10,13 @@
       <p>Price: &#8369;{{ product.prod_price.toFixed(2) }}</p>
       <p>Stock: {{ product.prod_stock }}</p>
       <div v-if="product.prod_categorytype === 'TOOL'">
-        <p>Material: {{ product.tool_material }}</p>
-        <p>Size: {{ product.tool_size }}</p>
+        <p>Material: {{ product.tool.tool_material }}</p>
+        <p>Size: {{ product.tool.tool_size }}</p>
       </div>
       <div v-if="product.prod_categorytype === 'YARN'">
-        <p>Composition: {{ product.yarn_composition }}</p>
-        <p>Weight: {{ product.yarn_weight }}</p>
-        <p>Thickness: {{ product.yarn_thickness }}</p>
+        <p>Composition: {{ product.yarn.yarn_composition }}</p>
+        <p>Weight: {{ product.yarn.yarn_weight }}</p>
+        <p>Thickness: {{ product.yarn.yarn_thickness }}</p>
       </div>
       <button @click="addToCart(product)">Add to Cart</button>
     </div>
