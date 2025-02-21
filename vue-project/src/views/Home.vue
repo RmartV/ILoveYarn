@@ -2,19 +2,19 @@
     <div>
       <header class="header">
         <div class="logo-container">
-          <img src="/api/placeholder/50/50" alt="I LOVE YARN PH Logo" class="logo-img">
+          <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
           <h1 class="logo-text">I LOVE YARN PH</h1>
         </div>
         <div class="search-container">
           <input type="text" class="search-input" placeholder="What are you looking for?">
           <button class="search-btn">
-            <img class="nav-img-icon" src="/api/placeholder/25/25" alt="Search">
+            <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
           </button>
         </div>
         <div class="nav-icons">
           <div class="nav-icon cart-icon">
             <router-link to="/cart">
-              <img class="nav-img-icon" src="/api/placeholder/25/25" alt="Cart">
+              <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
               <span class="cart-count">3</span>
             </router-link>
           </div>
