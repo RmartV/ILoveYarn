@@ -41,9 +41,7 @@
           <h2 class="page-title">All Products</h2>
           <div class="products-container">
             <div v-for="product in products" :key="product.prod_id" class="product-card">
-              <div class="product-image">
-                <img src="/api/placeholder/250/200" :alt="product.prod_name">
-              </div>
+             
               <div class="product-details">
                 <div class="product-category">{{ product.prod_categorytype }}</div>
                 <h3 class="product-name">{{ product.prod_name }}</h3>
