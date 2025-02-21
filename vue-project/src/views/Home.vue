@@ -53,14 +53,6 @@
                 <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
                   <span class="meta-item">{{ product.tool.tool_material }}</span>
                   <span class="meta-item">{{ product.tool.tool_size }}</span>
-                  <div class="color-selector">
-                  <label for="color">Select Color:</label>
-                  <select v-model="selectedColors[product.prod_id]" @change="updateSelectedColor(product.prod_id)">
-                    <option v-for="color in product.colors" :key="color.color_id" :value="color.color_id">
-                      {{ color.color_name }}
-                    </option>
-                  </select>
-                </div>
                 </div>
                 <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
                 <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
@@ -80,62 +72,52 @@
   import { supabase } from '../lib/supabaseClient';
   
   export default {
-  setup() {
-    const userInfo = ref(null);
-    const products = ref([]);
-    const selectedColors = ref({});
-
-    const fetchUserInfo = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('No user logged in');
-
+    setup() {
+      const userInfo = ref(null);
+      const products = ref([]);
+  
+      const fetchUserInfo = async () => {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) throw new Error('No user logged in');
+  
+          const { data, error } = await supabase
+            .from('userinfo')
+            .select('userinfo_fname')
+            .eq('userinfo_email', user.email)
+            .single();
+  
+          if (error) throw error;
+          userInfo.value = data;
+        } catch (err) {
+          console.error('Error fetching user info:', err);
+        }
+      };
+  
+      onMounted(async () => {
+        await fetchUserInfo();
+  
         const { data, error } = await supabase
-          .from('userinfo')
-          .select('userinfo_fname')
-          .eq('userinfo_email', user.email)
-          .single();
-
-        if (error) throw error;
-        userInfo.value = data;
-      } catch (err) {
-        console.error('Error fetching user info:', err);
-      }
-    };
-
-    onMounted(async () => {
-      await fetchUserInfo();
-
-      const { data, error } = await supabase
-        .from('product')
-        .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size, color_id), color(color_id, color_name)')
-        .eq('product.prod_categorytype', 'TOOL');
-      if (!error) {
-        products.value = data.map(product => ({
-          ...product,
-          colors: data.filter(p => p.color_id === product.color_id)
-        }));
-      }
-    });
-
-    const updateSelectedColor = (prod_id) => {
-      console.log(`Selected color for product ${prod_id}:`, selectedColors.value[prod_id]);
-    };
-
-    const addToCart = async (product) => {
-      await supabase.from('usercart').insert({
-        userinfo_id: (await supabase.auth.getUser()).data.user.id,
-        prod_id: product.prod_id,
-        usercart_totalprice: product.prod_price,
-        usercart_totalitems: 1,
-        color_id: selectedColors.value[product.prod_id] || null
+          .from('product')
+          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
+        if (!error) {
+          products.value = data;
+        }
       });
-      alert('Added to cart');
-    };
-
-    return { userInfo, products, addToCart, selectedColors, updateSelectedColor };
-  }
-};
+  
+      const addToCart = async (product) => {
+        await supabase.from('usercart').insert({
+          userinfo_id: (await supabase.auth.getUser()).data.user.id,
+          prod_id: product.prod_id,
+          usercart_totalprice: product.prod_price,
+          usercart_totalitems: 1
+        });
+        alert('Added to cart');
+      };
+  
+      return { userInfo, products, addToCart };
+    }
+  };
   </script>
   
   <style>
