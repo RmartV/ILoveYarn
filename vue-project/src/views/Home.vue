@@ -34,26 +34,12 @@
         
         <!-- Content Area -->
         <div class="content-area">
-            <!-- Carousel -->
-            <div class="carousel-container">
-                <div class="carousel-slides">
-                    <div class="carousel-slide" v-for="(slide, index) in slides" :key="index" :class="{ active: currentSlide === index }">
-                        <img :src="slide.image" :alt="slide.title" class="carousel-image">
-                        <div class="carousel-overlay">
-                            <h2 class="carousel-title">{{ slide.title }}</h2>
-                            <button class="shop-now-btn">{{ slide.buttonText }}</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Circle Navigation Buttons -->
-                <div class="carousel-circle-nav">
-                    <button 
-                        v-for="(slide, index) in slides" 
-                        :key="index"
-                        class="circle-btn" 
-                        :class="{ active: currentSlide === index }"
-                        @click="showSlide(index)"></button>
+            <!-- Static Banner (replaces Carousel) -->
+            <div class="banner-container">
+                <img src="../views/images/slide1.png" alt="Up to 10% off Voucher" class="banner-image">
+                <div class="banner-overlay">
+                    <h2 class="banner-title">Up to 10% off Voucher</h2>
+                    <button class="shop-now-btn">Shop Now</button>
                 </div>
             </div>
         </div>
@@ -124,25 +110,6 @@ export default {
         return {
             userDisplayName: '',
             userId: null,
-            slides: [
-                {
-                    image: '../views/images/slide1.png',
-                    title: 'Up to 10% off Voucher',
-                    buttonText: 'Shop Now'
-                },
-                {
-                    image: '../views/images/slide2.png',
-                    title: 'New Arrivals - Premium Yarn',
-                    buttonText: 'Explore Now'
-                },
-                {
-                    image: '../views/images/slide3.png',
-                    title: 'Crochet Supplies Sale',
-                    buttonText: 'View Collection'
-                }
-            ],
-            currentSlide: 0,
-            autoPlayInterval: null,
             yarnProducts: [],
             selectedColors: {},
             loading: true,
@@ -153,11 +120,7 @@ export default {
         this.fetchYarnProducts()
     },
     mounted() {
-        this.startAutoSlide()
         this.getUserProfile()
-    },
-    beforeUnmount() {
-        this.stopAutoSlide()
     },
     methods: {
         async getUserProfile() {
@@ -266,23 +229,6 @@ export default {
             
             // Show confirmation
             alert(`Added ${product.prod_name} to cart!`)
-        },
-        showSlide(index) {
-            this.currentSlide = index
-            // Reset the auto slide timer when manually changing slide
-            if (this.autoPlayInterval) {
-                this.stopAutoSlide()
-                this.startAutoSlide()
-            }
-        },
-        nextSlide() {
-            this.currentSlide = (this.currentSlide + 1) % this.slides.length
-        },
-        startAutoSlide() {
-            this.autoPlayInterval = setInterval(this.nextSlide, 5000)
-        },
-        stopAutoSlide() {
-            clearInterval(this.autoPlayInterval)
         }
     }
 }
@@ -411,42 +357,23 @@ body {
     padding: 20px;
 }
 
-.carousel-container {
+/* New Banner Styles (replacing carousel) */
+.banner-container {
     position: relative;
-    margin: 30px 0;
+    margin: 30px auto;
+    width: 85%;
+    height: 400px;
     overflow: hidden;
     border-radius: 8px;
 }
 
-.carousel-slides {
-    margin: auto;
-    position: relative;
-    width: 85%;
-    height: 400px; /* Adjust height as needed */
-}
-
-.carousel-slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
-}
-
-.carousel-slide.active {
-    opacity: 1;
-    z-index: 1;
-}
-
-.carousel-image {
+.banner-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.carousel-overlay {
+.banner-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -460,7 +387,7 @@ body {
     z-index: 2;
 }
 
-.carousel-title {
+.banner-title {
     color: var(--highlights);
     font-size: 36px;
     font-weight: bold;
@@ -477,42 +404,6 @@ body {
     font-weight: bold;
     width: fit-content;
     margin-top: 20px;
-}
-
-.carousel-circle-nav {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 15px;
-    z-index: 10;
-}
-
-.circle-btn {
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.7);
-    border: 2px solid white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 0;
-}
-
-.circle-btn:hover {
-    background-color: rgba(255, 255, 255, 0.9);
-    transform: scale(1.1);
-}
-
-.circle-btn.active {
-    background-color: var(--primary-color);
-    border-color: white;
-    transform: scale(1.2);
-}
-
-.circle-btn:focus {
-    outline: none;
 }
 
 .categories-section {
@@ -707,7 +598,7 @@ hr {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     }
     
-    .carousel-slides {
+    .banner-container {
         height: 300px;
     }
 }
