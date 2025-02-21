@@ -2,19 +2,19 @@
     <div>
       <header class="header">
         <div class="logo-container">
-          <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
+          <img src="/api/placeholder/50/50" alt="I LOVE YARN PH Logo" class="logo-img">
           <h1 class="logo-text">I LOVE YARN PH</h1>
         </div>
         <div class="search-container">
           <input type="text" class="search-input" placeholder="What are you looking for?">
           <button class="search-btn">
-            <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
+            <img class="nav-img-icon" src="/api/placeholder/25/25" alt="Search">
           </button>
         </div>
         <div class="nav-icons">
           <div class="nav-icon cart-icon">
             <router-link to="/cart">
-              <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
+              <img class="nav-img-icon" src="/api/placeholder/25/25" alt="Cart">
               <span class="cart-count">3</span>
             </router-link>
           </div>
@@ -41,7 +41,9 @@
           <h2 class="page-title">All Products</h2>
           <div class="products-container">
             <div v-for="product in products" :key="product.prod_id" class="product-card">
-             
+              <div class="product-image">
+                <img src="/api/placeholder/250/200" :alt="product.prod_name">
+              </div>
               <div class="product-details">
                 <div class="product-category">{{ product.prod_categorytype }}</div>
                 <h3 class="product-name">{{ product.prod_name }}</h3>
@@ -53,6 +55,14 @@
                 <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
                   <span class="meta-item">{{ product.tool.tool_material }}</span>
                   <span class="meta-item">{{ product.tool.tool_size }}</span>
+                  <div class="color-selector">
+                    <label for="color">Select Color:</label>
+                    <select v-model="selectedColors[product.prod_id]" @change="updateSelectedColor(product.prod_id)">
+                      <option v-for="color in product.colors" :key="color.color_id" :value="color.color_id">
+                        {{ color.color_name }}
+                      </option>
+                    </select>
+                  </div>
                 </div>
                 <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
                 <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
@@ -75,6 +85,7 @@
     setup() {
       const userInfo = ref(null);
       const products = ref([]);
+      const selectedColors = ref({});
   
       const fetchUserInfo = async () => {
         try {
@@ -99,23 +110,32 @@
   
         const { data, error } = await supabase
           .from('product')
-          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
+          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size, color_id), color(color_id, color_name)')
+          .eq('product.prod_categorytype', 'TOOL');
         if (!error) {
-          products.value = data;
+          products.value = data.map(product => ({
+            ...product,
+            colors: data.filter(p => p.color_id === product.color_id)
+          }));
         }
       });
+  
+      const updateSelectedColor = (prod_id) => {
+        console.log(`Selected color for product ${prod_id}:`, selectedColors.value[prod_id]);
+      };
   
       const addToCart = async (product) => {
         await supabase.from('usercart').insert({
           userinfo_id: (await supabase.auth.getUser()).data.user.id,
           prod_id: product.prod_id,
           usercart_totalprice: product.prod_price,
-          usercart_totalitems: 1
+          usercart_totalitems: 1,
+          color_id: selectedColors.value[product.prod_id] || null
         });
         alert('Added to cart');
       };
   
-      return { userInfo, products, addToCart };
+      return { userInfo, products, addToCart, selectedColors, updateSelectedColor };
     }
   };
   </script>
