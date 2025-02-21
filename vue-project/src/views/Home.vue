@@ -101,28 +101,21 @@
       const fetchProducts = async () => {
         const { data, error } = await supabase
           .from('product')
-          .select('*');
+          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
         
         if (!error) {
           products.value = data.map(product => ({
             ...product,
             image_url: product.prod_id === 101 
-              ? supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl
+              ? supabase.storage.from('product_images').getPublicUrl('chunky_yarn.png').data.publicUrl
               : ''
           }));
         }
       };
-
+  
       onMounted(async () => {
         await fetchUserInfo();
         await fetchProducts();
-  
-        const { data, error } = await supabase
-          .from('product')
-          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
-        if (!error) {
-          products.value = data;
-        }
       });
   
       const addToCart = async (product) => {
