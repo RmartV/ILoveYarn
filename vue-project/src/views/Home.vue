@@ -2,18 +2,18 @@
     <div class="app-container">
       <header class="header">
         <div class="logo-container">
-          <img src="css/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
+          <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
           <h1 class="logo-text">I LOVE YARN PH</h1>
         </div>
   
         <div class="search-container">
           <input type="text" class="search-input" placeholder="What are you looking for?">
-          <button class="search-btn"><img class="nav-img-icon" src="css/magnifying-glass.png"></button>
+          <button class="search-btn"><img class="nav-img-icon" src="../views/images/magnifying-glass.png"></button>
         </div>
   
         <div class="nav-icons">
           <div class="nav-icon" @click="goToCart">
-            <img class="nav-img-icon" src="css/shopping-cart.png">
+            <img class="nav-img-icon" src="../views/images/shopping-cart.png">
             <span v-if="cartItems.length" class="cart-badge">{{ getTotalItems() }}</span>
           </div>
           <div class="nav-icon user-info" v-if="currentUser">
@@ -42,7 +42,7 @@
           <div class="carousel-container">
             <div class="carousel-slides">
               <div class="carousel-slide active">
-                <img src="css/slide1.png" alt="Yarn Collection 1" class="carousel-image">
+                <img src="../views/images/slide1.png" alt="Yarn Collection 1" class="carousel-image">
                 <div class="carousel-overlay">
                   <h2 class="carousel-title">Up to 10% off Voucher</h2>
                   <button class="shop-now-btn">Shop Now</button>
@@ -64,7 +64,7 @@
             <div class="products-grid">
               <div v-for="product in filteredProducts" :key="product.prod_id" class="product-card">
                 <div class="product-image">
-                  <img src="css/product-placeholder.jpg" alt="Product Image" class="product-img">
+                  <!--     images-->
                 </div>
                 <div class="product-name">{{ product.prod_name }}</div>
                 <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
@@ -89,8 +89,9 @@
   </template>
   
   <script>
-  import { ref, onMounted, computed } from 'vue';
-  import { createClient } from '@supabase/supabase-js';
+  import { ref, onMounted } from 'vue';
+  import { supabase } from '../lib/supabaseClient';
+  
   
   export default {
     setup() {
