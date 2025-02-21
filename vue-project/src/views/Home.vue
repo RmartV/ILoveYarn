@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h1>Welcome, {{ userName }}</h1>
+      <h1>Welcome, {{ userInfo.userinfo_fname }}</h1>
       <router-link to="/user-cart">Go to Cart</router-link>
       <h2>Products</h2>
       <div v-for="product in products" :key="product.prod_id" class="product-card">
@@ -28,25 +28,30 @@
   
   export default {
     setup() {
-      const userName = ref('');
+      const userInfo = ref('');
       const products = ref([]);
+      const fetchUserInfo = async () => {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          if (!user) {
+            throw new Error('No user logged in');
+          }
   
-      onMounted(async () => {
-        const { data: userInfo, error: userError } = await supabase
-          .from('userinfo')
-          .select('userinfo_fname')
-          .single();
-        if (!userError && userInfo) {
-          userName.value = userInfo.userinfo_fname;
-        }
+          const { data, error: fetchError } = await supabase
+            .from('userinfo')
+            .select('*')
+            .eq('userinfo_email', user.email)
+            .single();
   
-        const { data, error } = await supabase
-          .from('product, yarn, tool')
-          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
-        if (!error) {
-          products.value = data;
+          if (fetchError) throw fetchError;
+          
+          userInfo.value = data;
+        } catch (err) {
+          console.error('Error fetching user info:', err);
+          error.value = err.message;
         }
-      });
+      };
   
       const addToCart = async (product) => {
         await supabase.from('usercart').insert({
@@ -57,9 +62,14 @@
         });
         alert('Added to cart');
       };
-  
-      return { userName, products, yarn, tool, addToCart };
+
+      onMounted(() => {
+        fetchUserInfo();
+      });
+
+      return { userinfo, products, yarn, tool, addToCart };
     }
+    
   };
   </script>
   
