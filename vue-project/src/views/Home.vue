@@ -63,7 +63,7 @@
                 {{ error }}
             </div>
             <div v-else class="categories-grid">
-                <div v-for="product in yarnProducts" :key="product.prod_id" class="category-card">
+                <div v-for="product in products" :key="product.prod_id" class="category-card">
                     <img :src="getProductImage(product)" alt="Yarn product" class="product-image">
                     <p class="product-name">{{ product.prod_name }}</p>
                     <p class="product-category">{{ product.prod_categoryType }}</p>
