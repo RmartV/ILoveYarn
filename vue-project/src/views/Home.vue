@@ -120,7 +120,7 @@
   };
   </script>
   
-  <style scoped>
+  <style>
         :root {
             --primary-color: #feb1bf;
             --background-color: #F2F2F2;
