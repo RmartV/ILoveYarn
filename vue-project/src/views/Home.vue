@@ -65,11 +65,17 @@
             <div v-else class="categories-grid">
                 <div v-for="product in products" :key="product.prod_id" class="category-card">
                     <img :src="getProductImage(product)" alt="Yarn product" class="product-image">
-                    <p class="product-name">{{ product.prod_name }}</p>
-                    <p class="product-category">{{ product.prod_categoryType }}</p>
-                    <p class="product-price">₱{{ product.prod_price.toFixed(2) }}</p>
-                    <p class="product-weight">Weight: {{ product.yarn.yarn_weight }}</p>
-                    <p class="product-thickness">Thickness: {{ product.yarn.yarn_thickness }}</p>
+                    <h3>{{ product.prod_name }}</h3>
+                    <p>Price: &#8369;{{ product.prod_price.toFixed(2) }}</p>
+                    <p>Category: {{ product.prod_categorytype }}</p>
+        
+                    <p>Material: {{ product.tool.tool_material }}</p>
+                    <p>Stock: {{ product.prod_stock }}</p>
+                    <p>Size: {{ product.tool.tool_size }}</p>
+      
+                    <p>Composition: {{ product.yarn.yarn_composition }}</p>
+                    <p>Weight: {{ product.yarn.yarn_weight }}</p>
+                    <p>Thickness: {{ product.yarn.yarn_thickness }}</p>
                     
                     <div class="yarn-colors">
                         <select v-model="selectedColors[product.prod_id]" class="color-dropdown">
