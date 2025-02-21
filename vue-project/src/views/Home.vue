@@ -103,15 +103,23 @@
           .from('product')
           .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
         
-        if (!error) {
-          products.value = data.map(product => ({
-            ...product,
-            image_url: product.prod_id === 101 
-              ? supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl
-              : ''
-          }));
-        }
+          if (!error) {
+    products.value = data.map(product => {
+      let imageUrl = '';
+
+      if (product.prod_id === 101) {
+        imageUrl = supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
+      } else if (product.prod_id === 201) {
+        imageUrl = supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
+      }
+
+      return {
+        ...product,
+        image_url: imageUrl
       };
+    });
+  }
+};
   
       onMounted(async () => {
         await fetchUserInfo();
