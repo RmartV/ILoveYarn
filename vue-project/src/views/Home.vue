@@ -26,7 +26,7 @@
           </div>
         </div>
       </header>
-  
+  <!-----------------------------side bar-------------------------------->
       <div class="main-content">
         <div class="sidebar">
           <ul class="sidebar-menu">
@@ -34,14 +34,27 @@
             <li class="sidebar-item">Crochet Hooks</li>
             <li class="sidebar-item">Decorative Tape</li>
             <li class="sidebar-item">Ribbons</li>
-            <li class="sidebar-item">Sewing Threads</li>
             <li class="sidebar-item">Accessories</li>
           </ul>
         </div>
-  
+    <!-----------------------------Main area-------------------------------->
         <div class="content-area">
+
+          <div class="content-area">
+            <!-- Carousel -->
+            <div class="carousel-container">
+                <div class="carousel-slides">
+                    <div class="carousel-slide active">
+                        <img src="../views/images/slide1.png" alt="Yarn Collection 1" class="carousel-image">
+                        <div class="carousel-overlay">
+                            <h2 class="carousel-title">Up to 10% off Voucher</h2>
+                            <button class="shop-now-btn">Shop Now</button>
+                        </div>
+                    </div>   
+
           <h2 class="page-title">All Products</h2>
           <div class="products-container">
+            <hr>
             <div v-for="product in products" :key="product.prod_id" class="product-card">
                 <div class="product-image">
                 <img :src="product.image_url || '../views/images/default.png'" alt="Product Image">
