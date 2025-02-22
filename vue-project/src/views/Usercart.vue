@@ -2,8 +2,10 @@
   <div>
     <header class="header">
       <div class="logo-container">
+        <router-link to="/home">
         <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
         <h1 class="logo-text">I LOVE YARN PH</h1>
+      </router-link>
       </div>
       <div class="search-container">
         <input type="text" class="search-input" placeholder="What are you looking for?">
