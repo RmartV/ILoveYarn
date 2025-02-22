@@ -1,7 +1,7 @@
 <template>
   <div>
     <header class="header">
-      <!-- Reuse the same header from home.vue -->
+      <!-- Reuse header from home.vue -->
     </header>
 
     <div class="cart-container">
@@ -17,11 +17,15 @@
               <h3>{{ item.product.prod_name }}</h3>
               <p>Price: ₱{{ item.product.prod_price.toFixed(2) }}</p>
               <p>Quantity: {{ item.quantity }}</p>
+              <button @click="updateQuantity(item, 1)">+</button>
+              <button @click="updateQuantity(item, -1)">-</button>
+              <button @click="removeItem(item)">Remove</button>
             </div>
           </div>
           <div class="cart-summary">
             <p>Total Items: {{ totalItems }}</p>
             <p>Total Price: ₱{{ totalPrice.toFixed(2) }}</p>
+            <button class="checkout-btn">Proceed to Checkout</button>
           </div>
         </div>
       </div>
@@ -39,91 +43,101 @@ export default {
     const totalPrice = ref(0);
     const totalItems = ref(0);
     const loading = ref(true);
-    const userInfo = ref(null);
 
-    const fetchUserInfo = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      const { data } = await supabase
-        .from('userinfo')
-        .select('userinfo_id')
-        .eq('userinfo_email', user.email)
-        .single();
-      return data;
-    };
-
-    const fetchCartData = async () => {
+    const fetchCartItems = async () => {
       try {
-        userInfo.value = await fetchUserInfo();
-        
-        // Fetch latest order
-        const { data: order } = await supabase
-          .from('orders')
-          .select('*')
-          .eq('userinfo_id', userInfo.value.userinfo_id)
-          .order('created_at', { ascending: false })
-          .limit(1)
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('User not logged in');
+
+        const { data: userInfo } = await supabase
+          .from('userinfo')
+          .select('userinfo_id')
+          .eq('userinfo_email', user.email)
           .single();
 
-        if (order) {
-          totalPrice.value = order.total_amount;
-          
-          // Fetch cart items
-          const { data: items } = await supabase
-            .from('cartitems')
-            .select('*, product:prod_id(*)')
-            .eq('userinfo_id', userInfo.value.userinfo_id);
+        const { data } = await supabase
+          .from('cartitems')
+          .select('*, product:prod_id(*)')
+          .eq('userinfo_id', userInfo.userinfo_id);
 
-          cartItems.value = items;
-          totalItems.value = items.reduce((sum, item) => sum + item.quantity, 0);
-        }
+        cartItems.value = data || [];
+        calculateTotals();
       } catch (error) {
-        console.error('Error fetching cart data:', error);
+        console.error('Error fetching cart:', error);
       } finally {
         loading.value = false;
       }
     };
 
-    onMounted(() => {
-      fetchCartData();
-    });
+    const calculateTotals = () => {
+      totalItems.value = cartItems.value.reduce((sum, item) => sum + item.quantity, 0);
+      totalPrice.value = cartItems.value.reduce(
+        (sum, item) => sum + (item.quantity * item.product.prod_price), 0
+      );
+    };
 
-    return { cartItems, totalPrice, totalItems, loading };
+    const updateQuantity = async (item, change) => {
+      const newQuantity = item.quantity + change;
+      if (newQuantity < 1) return;
+
+      try {
+        const { error } = await supabase
+          .from('cartitems')
+          .update({ quantity: newQuantity })
+          .eq('cart_item_id', item.cart_item_id);
+
+        if (!error) {
+          item.quantity = newQuantity;
+          calculateTotals();
+        }
+      } catch (error) {
+        console.error('Error updating quantity:', error);
+      }
+    };
+
+    const removeItem = async (item) => {
+      try {
+        const { error } = await supabase
+          .from('cartitems')
+          .delete()
+          .eq('cart_item_id', item.cart_item_id);
+
+        if (!error) {
+          cartItems.value = cartItems.value.filter(i => i.cart_item_id !== item.cart_item_id);
+          calculateTotals();
+        }
+      } catch (error) {
+        console.error('Error removing item:', error);
+      }
+    };
+
+    onMounted(fetchCartItems);
+
+    return { cartItems, totalPrice, totalItems, loading, updateQuantity, removeItem };
   }
 };
 </script>
-
 <style scoped>
-.cart-container {
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
 .cart-item {
-  border: 1px solid #ddd;
+  border: 1px solid #eee;
   padding: 1rem;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
   border-radius: 8px;
 }
 
-.item-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.checkout-btn {
+  background: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
 }
 
-.cart-summary {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  text-align: right;
-}
-
-.empty-cart {
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.2rem;
-  color: #666;
+button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  cursor: pointer;
 }
 </style>

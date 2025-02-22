@@ -144,62 +144,34 @@
   
       const addToCart = async (product) => {
       try {
-        if (!userInfo.value?.userinfo_id) throw new Error('User not logged in');
-        
-        // 1. Get or create order
-        let { data: order, error: orderError } = await supabase
-          .from('orders')
-          .select('*')
-          .eq('userinfo_id', userInfo.value.userinfo_id)
-          .order('created_at', { ascending: false })
-          .limit(1)
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('User not logged in');
+
+        // Get userinfo_id
+        const { data: userInfo } = await supabase
+          .from('userinfo')
+          .select('userinfo_id')
+          .eq('userinfo_email', user.email)
           .single();
 
-        if (!order) {
-          const { data: newOrder, error: newOrderError } = await supabase
-            .from('orders')
-            .insert([{
-              userinfo_id: userInfo.value.userinfo_id,
-              total_amount: 0
-            }])
-            .select()
-            .single();
-          if (newOrderError) throw newOrderError;
-          order = newOrder;
-        }
-
-        // 2. Update order total
-        const newTotal = (order.total_amount || 0) + product.prod_price;
-        await supabase
-          .from('orders')
-          .update({ total_amount: newTotal })
-          .eq('order_id', order.order_id);
-
-        // 3. Add to orderitems
-        const { error: itemError } = await supabase
-          .from('orderitems')
-          .insert([{
-            order_id: order.order_id,
-            prod_id: product.prod_id,
-            order_quantity: 1,
-            order_price: product.prod_price
-          }]);
-        if (itemError) throw itemError;
-
-        // 4. Add to cartitems
-        const { error: cartError } = await supabase
+        // Upsert into cartitems
+        const { error } = await supabase
           .from('cartitems')
-          .upsert([{
-            userinfo_id: userInfo.value.userinfo_id,
+          .upsert({
+            userinfo_id: userInfo.userinfo_id,
             prod_id: product.prod_id,
             quantity: 1
-          }], { onConflict: ['userinfo_id', 'prod_id'], ignoreDuplicates: false });
-        if (cartError) throw cartError;
+          }, {
+            onConflict: 'userinfo_id, prod_id',
+            ignoreDuplicates: false
+          })
+          .select();
 
-        alert('Added to cart!');
+        if (error) throw error;
+        alert('Added to cart successfully!');
       } catch (error) {
         console.error('Error adding to cart:', error);
-        alert('Error adding to cart');
+        alert(error.message);
       }
     };
 
