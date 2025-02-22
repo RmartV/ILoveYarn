@@ -15,18 +15,21 @@
         <div class="nav-icon cart-icon">
           <router-link to="/user-cart">
             <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-            <span class="cart-count">{{ cartCount }}</span>
+            <span class="cart-count">3</span>
           </router-link>
         </div>
         <router-link to="/user-details">
-          <div class="nav-icon user-info">
+        <div class="nav-icon user-info">
+
             <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
             <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
-          </div>
-        </router-link>
+          
+        </div>
+      </router-link>
       </div>
     </header>
 
+    <!----------------------------- Sidebar -------------------------------->
     <div class="main-content">
       <div class="sidebar">
         <ul class="sidebar-menu">
@@ -38,8 +41,10 @@
         </ul>
       </div>
 
+      <!----------------------------- Main Area -------------------------------->
       <div class="content-area">
-        <section class="carousel-container">
+        <!-- Carousel -->
+        <section class="carousel-container" aria-label="Featured Products">
           <div class="carousel-slides">
             <div class="carousel-slide active">
               <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="carousel-image">
@@ -60,12 +65,12 @@
             <div class="product-details">
               <div class="product-category">{{ product.prod_categorytype }}</div>
               <h3 class="product-name">{{ product.prod_name }}</h3>
-              <div v-if="product.prod_categorytype === 'YARN'" class="product-meta">
+              <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
                 <span class="meta-item">{{ product.yarn.yarn_composition }}</span>
                 <span class="meta-item">{{ product.yarn.yarn_weight }}</span>
                 <span class="meta-item">{{ product.yarn.yarn_thickness }}</span>
               </div>
-              <div v-if="product.prod_categorytype === 'TOOL'" class="product-meta">
+              <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
                 <span class="meta-item">{{ product.tool.tool_material }}</span>
                 <span class="meta-item">{{ product.tool.tool_size }}</span>
               </div>
@@ -81,132 +86,127 @@
     </div>
   </div>
 </template>
-
-<script>
-import { ref, onMounted } from 'vue';
-import { supabase } from '../lib/supabaseClient';
-
-export default {
-  setup() {
-    const userInfo = ref(null);
-    const products = ref([]);
-    const cartCount = ref(0);
-
-    // Fetch user info
-    const fetchUserInfo = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
+  
+  <script>
+  import { ref, onMounted } from 'vue';
+  import { supabase } from '../lib/supabaseClient';
+  
+  export default {
+    setup() {
+      const userInfo = ref(null);
+      const products = ref([]);
+  
+      const fetchUserInfo = async () => {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) throw new Error('No user logged in');
+  
+          const { data, error } = await supabase
+            .from('userinfo')
+            .select('userinfo_fname')
+            .eq('userinfo_email', user.email)
+            .single();
+  
+          if (error) throw error;
+          userInfo.value = data;
+        } catch (err) {
+          console.error('Error fetching user info:', err);
+        }
+      };
+  
+      const fetchProducts = async () => {
         const { data, error } = await supabase
-          .from('userinfo')
-          .select('userinfo_fname')
-          .eq('userinfo_email', user.email)
-          .single();
+          .from('product')
+          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
+        
+          if (!error) {
+    products.value = data.map(product => {
+      let imageUrl = '';
 
-        if (error) throw error;
-        userInfo.value = data;
-      } catch (err) {
-        console.error('Error fetching user info:', err);
-      }
-    };
-
-    // Fetch products
-    const fetchProducts = async () => {
-      const { data, error } = await supabase
-        .from('product')
-        .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
-      
-      if (error) {
-        console.error('Error fetching products:', error);
-        return;
+      if (product.prod_id === 101) {
+        imageUrl = supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
+      } else if (product.prod_id === 201) {
+        imageUrl = supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
       }
 
-      products.value = data.map(product => {
-        let imageUrl = '';
-        if (product.prod_id === 101) {
-          imageUrl = supabase.storage.from('product_images').getPublicUrl('chunky_yarn.png').data.publicUrl;
-        } else if (product.prod_id === 201) {
-          imageUrl = supabase.storage.from('product_images').getPublicUrl('aluminum_hook.png').data.publicUrl;
-        }
-        return { ...product, image_url: imageUrl };
-      });
-    };
-
-    // Fetch cart count
-    const fetchCartCount = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data, error } = await supabase
-          .from('CartItems')
-          .select('quantity')
-          .eq('userinfo_id', user.id);
-
-        if (error) throw error;
-
-        cartCount.value = data.reduce((sum, item) => sum + item.quantity, 0);
-      } catch (err) {
-        console.error('Error fetching cart count:', err);
-      }
-    };
-
-    // Add to cart
-    const addToCart = async (product) => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          alert("You need to log in first!");
-          return;
-        }
-
-        const { data: existingCartItem, error: fetchError } = await supabase
-          .from("CartItems")
-          .select("cart_item_id, quantity")
-          .eq("userinfo_id", user.id)
-          .eq("prod_id", product.prod_id)
-          .single();
-
-        if (fetchError && fetchError.code !== "PGRST116") {
-          throw fetchError;
-        }
-
-        if (existingCartItem) {
-          const { error: updateError } = await supabase
-            .from("CartItems")
-            .update({ quantity: existingCartItem.quantity + 1 })
-            .eq("cart_item_id", existingCartItem.cart_item_id);
-
-          if (updateError) throw updateError;
-        } else {
-          const { error: insertError } = await supabase.from("CartItems").insert({
-            userinfo_id: user.id,
-            prod_id: product.prod_id,
-            quantity: 1,
-          });
-
-          if (insertError) throw insertError;
-        }
-
-        await fetchCartCount();
-        alert("Added to cart!");
-      } catch (err) {
-        console.error("Error adding to cart:", err);
-        alert("Failed to add to cart.");
-      }
-    };
-
-    onMounted(async () => {
-      await fetchUserInfo();
-      await fetchProducts();
-      await fetchCartCount();
+      return {
+        ...product,
+        image_url: imageUrl
+      };
     });
-
-    return { userInfo, products, cartCount, addToCart };
   }
 };
-</script>
+  
+      onMounted(async () => {
+        await fetchUserInfo();
+        await fetchProducts();
+      });
+  
+      const addToCart = async (product) => {
+      try {
+        if (!userInfo.value?.userinfo_id) throw new Error('User not logged in');
+        
+        // 1. Get or create order
+        let { data: order, error: orderError } = await supabase
+          .from('orders')
+          .select('*')
+          .eq('userinfo_id', userInfo.value.userinfo_id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (!order) {
+          const { data: newOrder, error: newOrderError } = await supabase
+            .from('orders')
+            .insert([{
+              userinfo_id: userInfo.value.userinfo_id,
+              total_amount: 0
+            }])
+            .select()
+            .single();
+          if (newOrderError) throw newOrderError;
+          order = newOrder;
+        }
+
+        // 2. Update order total
+        const newTotal = (order.total_amount || 0) + product.prod_price;
+        await supabase
+          .from('orders')
+          .update({ total_amount: newTotal })
+          .eq('order_id', order.order_id);
+
+        // 3. Add to orderitems
+        const { error: itemError } = await supabase
+          .from('orderitems')
+          .insert([{
+            order_id: order.order_id,
+            prod_id: product.prod_id,
+            order_quantity: 1,
+            order_price: product.prod_price
+          }]);
+        if (itemError) throw itemError;
+
+        // 4. Add to cartitems
+        const { error: cartError } = await supabase
+          .from('cartitems')
+          .upsert([{
+            userinfo_id: userInfo.value.userinfo_id,
+            prod_id: product.prod_id,
+            quantity: 1
+          }], { onConflict: ['userinfo_id', 'prod_id'], ignoreDuplicates: false });
+        if (cartError) throw cartError;
+
+        alert('Added to cart!');
+      } catch (error) {
+        console.error('Error adding to cart:', error);
+        alert('Error adding to cart');
+      }
+    };
+
+    return { userInfo, products, addToCart };
+  }
+};
+  </script>
   
   <style>
         :root {
