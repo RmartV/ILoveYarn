@@ -34,7 +34,7 @@
       <div v-if="loading" class="loading-spinner">⏳ Loading...</div>
       <div v-else>
         <div v-if="cartItems.length === 0" class="empty-cart">
-          <img src="../views/images/empty-cart.png" alt="Empty cart" class="empty-cart-img">
+          <img src="../views/images/shopping-cart.png" alt="Empty cart" class="empty-cart-img">
           <p class="empty-cart-text">Your cart is feeling lonely!</p>
           <router-link to="/" class="continue-shopping-btn">Continue Shopping</router-link>
         </div>
