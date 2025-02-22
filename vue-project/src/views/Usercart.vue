@@ -19,13 +19,11 @@
           </router-link>
         </div>
         <router-link to="/user-details">
-        <div class="nav-icon user-info">
-
+          <div class="nav-icon user-info">
             <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
             <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
-          
-        </div>
-      </router-link>
+          </div>
+        </router-link>
       </div>
     </header>
 
@@ -42,8 +40,8 @@
           <div class="cart-items">
             <div v-for="item in cartItems" :key="item.cart_item_id" class="cart-item">
               <img 
-                :src="product.image_url || '../views/images/default-product.png'" 
-                :alt="product.prod_name" 
+                :src="item.product.image_url || '../views/images/default-product.png'" 
+                :alt="item.product.prod_name" 
                 class="product-image"
               >
               <div class="item-details">
@@ -99,13 +97,40 @@ export default {
     const totalItems = ref(0);
     const loading = ref(true);
     const cartCount = ref(0);
+    const userInfo = ref(null);
+
+    const fetchUserInfo = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data } = await supabase
+          .from('userinfo')
+          .select('userinfo_fname')
+          .eq('userinfo_email', user.email)
+          .single();
+
+        userInfo.value = data;
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
+    };
+
+    const getProductImage = (product) => {
+      if (product.prod_id === 101) {
+        return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
+      } else if (product.prod_id === 201) {
+        return supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
+      }
+      return '../views/images/default-product.png';
+    };
 
     const fetchCartItems = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('User not logged in');
 
-        const { data: userInfo } = await supabase
+        const { data: userData } = await supabase
           .from('userinfo')
           .select('userinfo_id')
           .eq('userinfo_email', user.email)
@@ -113,10 +138,23 @@ export default {
 
         const { data } = await supabase
           .from('cartitems')
-          .select('*, product:prod_id(*)')
-          .eq('userinfo_id', userInfo.userinfo_id);
+          .select(`
+            *, 
+            product:prod_id(
+              *,
+              yarn(yarn_composition, yarn_weight, yarn_thickness),
+              tool(tool_material, tool_size)
+            )
+          `)
+          .eq('userinfo_id', userData.userinfo_id);
 
-        cartItems.value = data || [];
+        cartItems.value = data.map(item => ({
+          ...item,
+          product: {
+            ...item.product,
+            image_url: getProductImage(item.product)
+          }
+        })) || [];
         calculateTotals();
       } catch (error) {
         console.error('Error fetching cart:', error);
@@ -172,7 +210,7 @@ export default {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        const { data: userInfo } = await supabase
+        const { data: userData } = await supabase
           .from('userinfo')
           .select('userinfo_id')
           .eq('userinfo_email', user.email)
@@ -181,7 +219,7 @@ export default {
         const { count } = await supabase
           .from('cartitems')
           .select('*', { count: 'exact', head: true })
-          .eq('userinfo_id', userInfo.userinfo_id);
+          .eq('userinfo_id', userData.userinfo_id);
 
         cartCount.value = count || 0;
       } catch (error) {
@@ -189,37 +227,22 @@ export default {
       }
     };
 
-    const fetchProducts = async () => {
-        const { data, error } = await supabase
-          .from('product')
-          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
-        
-          if (!error) {
-    products.value = data.map(product => {
-      let imageUrl = '';
-
-      if (product.prod_id === 101) {
-        imageUrl = supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
-      } else if (product.prod_id === 201) {
-        imageUrl = supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
-      }
-
-      return {
-        ...product,
-        image_url: imageUrl
-      };
-    });
-  }
-};
-    
-
-    onMounted(fetchCartItems);
     onMounted(async () => {
+      await fetchUserInfo();
+      await fetchCartItems();
       await fetchCartCount();
-      await fetchProducts ();
     });
 
-    return { cartItems, totalPrice, totalItems, loading, updateQuantity, removeItem, cartCount};
+    return { 
+      cartItems, 
+      totalPrice, 
+      totalItems, 
+      loading, 
+      updateQuantity, 
+      removeItem, 
+      cartCount,
+      userInfo
+    };
   }
 };
 </script>
