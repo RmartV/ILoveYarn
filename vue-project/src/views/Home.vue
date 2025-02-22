@@ -13,17 +13,19 @@
       </div>
       <div class="nav-icons">
         <div class="nav-icon cart-icon">
-          <router-link to="/cart">
+          <router-link to="/user-cart">
             <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
             <span class="cart-count">3</span>
           </router-link>
         </div>
+        <router-link to="/user-details">
         <div class="nav-icon user-info">
-          <router-link to="/user-details">
+
             <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
-            <span style="width: 50px;">{{ userInfo?.userinfo_fname || 'Guest' }}</span>
-          </router-link>
+            <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
+          
         </div>
+      </router-link>
       </div>
     </header>
 
