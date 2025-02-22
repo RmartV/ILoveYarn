@@ -62,7 +62,7 @@
                   </div>
                 </div>
                 <button @click="removeItem(item)" class="remove-btn">
-                  <img src="../views/images/trash-bin.png" alt="Remove" class="remove-icon">
+                  <img src="../views/images/recycle-bin.png" alt="Remove" class="remove-icon">
                 </button>
               </div>
             </div>
