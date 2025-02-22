@@ -284,8 +284,8 @@
         }
 
         .sidebar {
-            height: 100vh;
-            width: 250px;
+            height: 100%;
+            width: 350px;
             padding: 20px;
             background-color: var(--background-color);
             border-right: 2px solid var(--light-gray);
@@ -318,6 +318,68 @@
             background-color: var(--primary-color);
             color: white;
         }
+
+        .carousel-container {
+    position: relative;
+    margin: 30px 0;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.carousel-slides {
+    margin: auto;
+    position: relative;
+    width: 85%;
+    height: 400px; /* Adjust height as needed */
+}
+
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+    z-index: 1;
+}
+
+.carousel-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.carousel-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px;
+    color: var(--light-gray);
+    z-index: 2;
+}
+
+.carousel-title {
+    color: var(--highlights);
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+hr{
+    border-style: solid;
+    height: 2px;
+    color: var(--light-gray);
+}
 
         .content-area {
             flex-grow: 1;
