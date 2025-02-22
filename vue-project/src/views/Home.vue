@@ -143,14 +143,51 @@
       });
   
       const addToCart = async (product) => {
-        await supabase.from('usercart').insert({
-          userinfo_id: (await supabase.auth.getUser()).data.user.id,
-          prod_id: product.prod_id,
-          usercart_totalprice: product.prod_price,
-          usercart_totalitems: 1
-        });
-        alert('Added to cart');
-      };
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      alert('Please login to add items to cart');
+      return;
+    }
+
+    // Check if product already exists in cart
+    const { data: existingItem } = await supabase
+      .from('usercart')
+      .select('*')
+      .eq('userinfo_id', user.id)
+      .eq('prod_id', product.prod_id)
+      .single();
+
+    if (existingItem) {
+      // Update quantity if item exists
+      const newQuantity = existingItem.quantity + 1;
+      if (newQuantity <= product.prod_stock) {
+        await supabase
+          .from('usercart')
+          .update({
+            quantity: newQuantity,
+            usercart_totalprice: product.prod_price * newQuantity
+          })
+          .eq('cart_id', existingItem.cart_id);
+        alert('Cart updated successfully');
+      } else {
+        alert('Cannot add more items than available in stock');
+      }
+    } else {
+      // Add new item if it doesn't exist
+      await supabase.from('usercart').insert({
+        userinfo_id: user.id,
+        prod_id: product.prod_id,
+        quantity: 1,
+        usercart_totalprice: product.prod_price
+      });
+      alert('Added to cart');
+    }
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+    alert('Failed to add item to cart');
+  }
+};
   
       return { userInfo, products, addToCart };
     }
