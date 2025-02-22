@@ -1,88 +1,90 @@
 <template>
-    <div>
-      <header class="header">
-        <div class="logo-container">
-          <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
-          <h1 class="logo-text">I LOVE YARN PH</h1>
+  <div>
+    <header class="header">
+      <div class="logo-container">
+        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
+        <h1 class="logo-text">I LOVE YARN PH</h1>
+      </div>
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="What are you looking for?">
+        <button class="search-btn">
+          <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
+        </button>
+      </div>
+      <div class="nav-icons">
+        <div class="nav-icon cart-icon">
+          <router-link to="/cart">
+            <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
+            <span class="cart-count">3</span>
+          </router-link>
         </div>
-        <div class="search-container">
-          <input type="text" class="search-input" placeholder="What are you looking for?">
-          <button class="search-btn">
-            <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
-          </button>
-        </div>
-        <div class="nav-icons">
-          <div class="nav-icon cart-icon">
-            <router-link to="/cart">
-              <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-              <span class="cart-count">3</span>
-            </router-link>
-          </div>
-          <div class="nav-icon user-info">
-            <router-link to="/user-details">
-            <div class="user-avatar">{{ userInfo?.userinfo_fname.charAt(0) || 'G' }}</div>
+        <div class="nav-icon user-info">
+          <router-link to="/user-details">
+            <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
             <span style="width: 50px;">{{ userInfo?.userinfo_fname || 'Guest' }}</span>
-        </router-link>
+          </router-link>
+        </div>
+      </div>
+    </header>
+
+    <!----------------------------- Sidebar -------------------------------->
+    <div class="main-content">
+      <div class="sidebar">
+        <ul class="sidebar-menu">
+          <li class="sidebar-item active">Yarn</li>
+          <li class="sidebar-item">Crochet Hooks</li>
+          <li class="sidebar-item">Decorative Tape</li>
+          <li class="sidebar-item">Ribbons</li>
+          <li class="sidebar-item">Accessories</li>
+        </ul>
+      </div>
+
+      <!----------------------------- Main Area -------------------------------->
+      <div class="content-area">
+        <!-- Carousel -->
+        <div class="carousel-container">
+          <div class="carousel-slides">
+            <div class="carousel-slide active">
+              <img src="../views/images/slide1.png" alt="Yarn Collection 1" class="carousel-image">
+              <div class="carousel-overlay">
+                <h2 class="carousel-title">Up to 10% off Voucher</h2>
+                <button class="shop-now-btn">Shop Now</button>
+              </div>
+            </div>
           </div>
         </div>
-      </header>
-  <!-----------------------------side bar-------------------------------->
-      <div class="main-content">
-        <div class="sidebar">
-          <ul class="sidebar-menu">
-            <li class="sidebar-item active">Yarn</li>
-            <li class="sidebar-item">Crochet Hooks</li>
-            <li class="sidebar-item">Decorative Tape</li>
-            <li class="sidebar-item">Ribbons</li>
-            <li class="sidebar-item">Accessories</li>
-          </ul>
-        </div>
-    <!-----------------------------Main area-------------------------------->
-        <div class="content-area">
 
-          <div class="content-area">
-            <!-- Carousel -->
-            <div class="carousel-container">
-                <div class="carousel-slides">
-                    <div class="carousel-slide active">
-                        <img src="../views/images/slide1.png" alt="Yarn Collection 1" class="carousel-image">
-                        <div class="carousel-overlay">
-                            <h2 class="carousel-title">Up to 10% off Voucher</h2>
-                            <button class="shop-now-btn">Shop Now</button>
-                        </div>
-                    </div>   
-
-          <h2 class="page-title">All Products</h2>
-          <div class="products-container">
-            <hr>
-            <div v-for="product in products" :key="product.prod_id" class="product-card">
-                <div class="product-image">
-                <img :src="product.image_url || '../views/images/default.png'" alt="Product Image">
+        <h2 class="page-title">All Products</h2>
+        <div class="products-container">
+          <hr>
+          <div v-for="product in products" :key="product.prod_id" class="product-card">
+            <div class="product-image">
+              <img :src="product.image_url || '../views/images/default.png'" alt="Product Image">
+            </div>
+            <div class="product-details">
+              <div class="product-category">{{ product.prod_categorytype }}</div>
+              <h3 class="product-name">{{ product.prod_name }}</h3>
+              <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
+                <span class="meta-item">{{ product.yarn.yarn_composition }}</span>
+                <span class="meta-item">{{ product.yarn.yarn_weight }}</span>
+                <span class="meta-item">{{ product.yarn.yarn_thickness }}</span>
               </div>
-              <div class="product-details">
-                <div class="product-category">{{ product.prod_categorytype }}</div>
-                <h3 class="product-name">{{ product.prod_name }}</h3>
-                <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
-                  <span class="meta-item">{{ product.yarn.yarn_composition }}</span>
-                  <span class="meta-item">{{ product.yarn.yarn_weight }}</span>
-                  <span class="meta-item">{{ product.yarn.yarn_thickness }}</span>
-                </div>
-                <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
-                  <span class="meta-item">{{ product.tool.tool_material }}</span>
-                  <span class="meta-item">{{ product.tool.tool_size }}</span>
-                </div>
-                <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
-                <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
-                <div class="product-actions">
-                  <button @click="addToCart(product)" class="add-to-cart-btn">Add to Cart</button>
-                </div>
+              <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
+                <span class="meta-item">{{ product.tool.tool_material }}</span>
+                <span class="meta-item">{{ product.tool.tool_size }}</span>
+              </div>
+              <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
+              <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
+              <div class="product-actions">
+                <button @click="addToCart(product)" class="add-to-cart-btn">Add to Cart</button>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
   
   <script>
   import { ref, onMounted } from 'vue';
