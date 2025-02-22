@@ -42,8 +42,8 @@
           <div class="cart-items">
             <div v-for="item in cartItems" :key="item.cart_item_id" class="cart-item">
               <img 
-                :src="item.product.image_url || '../views/images/default-product.png'" 
-                :alt="item.product.prod_name" 
+                :src="product.image_url || '../views/images/default-product.png'" 
+                :alt="product.prod_name" 
                 class="product-image"
               >
               <div class="item-details">
@@ -188,11 +188,35 @@ export default {
         console.error('Error fetching cart count:', error);
       }
     };
+
+    const fetchProducts = async () => {
+        const { data, error } = await supabase
+          .from('product')
+          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
+        
+          if (!error) {
+    products.value = data.map(product => {
+      let imageUrl = '';
+
+      if (product.prod_id === 101) {
+        imageUrl = supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
+      } else if (product.prod_id === 201) {
+        imageUrl = supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
+      }
+
+      return {
+        ...product,
+        image_url: imageUrl
+      };
+    });
+  }
+};
     
 
     onMounted(fetchCartItems);
     onMounted(async () => {
       await fetchCartCount();
+      await fetchProducts ();
     });
 
     return { cartItems, totalPrice, totalItems, loading, updateQuantity, removeItem, cartCount};
