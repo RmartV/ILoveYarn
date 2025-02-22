@@ -13,11 +13,11 @@
       </div>
       <div class="nav-icons">
         <div class="nav-icon cart-icon">
-          <router-link to="/user-cart">
-            <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-            <span class="cart-count">3</span>
-          </router-link>
-        </div>
+  <router-link to="/user-cart">
+    <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
+    <span class="cart-count">{{ cartCount }}</span>
+  </router-link>
+</div>
         <router-link to="/user-details">
         <div class="nav-icon user-info">
 
@@ -95,6 +95,7 @@
     setup() {
       const userInfo = ref(null);
       const products = ref([]);
+      const cartCount = ref(0);
   
       const fetchUserInfo = async () => {
         try {
@@ -137,10 +138,33 @@
   }
 };
   
-      onMounted(async () => {
-        await fetchUserInfo();
-        await fetchProducts();
-      });
+const fetchCartCount = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: userInfo } = await supabase
+          .from('userinfo')
+          .select('userinfo_id')
+          .eq('userinfo_email', user.email)
+          .single();
+
+        const { count } = await supabase
+          .from('cartitems')
+          .select('*', { count: 'exact', head: true })
+          .eq('userinfo_id', userInfo.userinfo_id);
+
+        cartCount.value = count || 0;
+      } catch (error) {
+        console.error('Error fetching cart count:', error);
+      }
+    };
+
+    onMounted(async () => {
+      await fetchUserInfo();
+      await fetchProducts();
+      await fetchCartCount();
+    });
   
       const addToCart = async (product) => {
       try {
@@ -175,7 +199,7 @@
       }
     };
 
-    return { userInfo, products, addToCart };
+    return { userInfo, products, addToCart, cartCount  };
   }
 };
   </script>

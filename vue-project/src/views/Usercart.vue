@@ -1,31 +1,86 @@
 <template>
   <div>
     <header class="header">
-      <!-- Reuse header from home.vue -->
+      <div class="logo-container">
+        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
+        <h1 class="logo-text">I LOVE YARN PH</h1>
+      </div>
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="What are you looking for?">
+        <button class="search-btn">
+          <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
+        </button>
+      </div>
+      <div class="nav-icons">
+        <div class="nav-icon cart-icon">
+          <router-link to="/user-cart">
+            <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
+            <span class="cart-count">{{ cartCount }}</span>
+          </router-link>
+        </div>
+        <router-link to="/user-details">
+        <div class="nav-icon user-info">
+
+            <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
+            <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
+          
+        </div>
+      </router-link>
+      </div>
     </header>
 
     <div class="cart-container">
-      <h1>Your Cart</h1>
-      <div v-if="loading">Loading...</div>
+      <h1 class="cart-title">Your Shopping Cart</h1>
+      <div v-if="loading" class="loading-spinner">⏳ Loading...</div>
       <div v-else>
         <div v-if="cartItems.length === 0" class="empty-cart">
-          Your cart is empty
+          <img src="../views/images/empty-cart.png" alt="Empty cart" class="empty-cart-img">
+          <p class="empty-cart-text">Your cart is feeling lonely!</p>
+          <router-link to="/" class="continue-shopping-btn">Continue Shopping</router-link>
         </div>
         <div v-else>
-          <div v-for="item in cartItems" :key="item.cart_item_id" class="cart-item">
-            <div class="item-info">
-              <h3>{{ item.product.prod_name }}</h3>
-              <p>Price: ₱{{ item.product.prod_price.toFixed(2) }}</p>
-              <p>Quantity: {{ item.quantity }}</p>
-              <button @click="updateQuantity(item, 1)">+</button>
-              <button @click="updateQuantity(item, -1)">-</button>
-              <button @click="removeItem(item)">Remove</button>
+          <div class="cart-items">
+            <div v-for="item in cartItems" :key="item.cart_item_id" class="cart-item">
+              <img 
+                :src="item.product.image_url || '../views/images/default-product.png'" 
+                :alt="item.product.prod_name" 
+                class="product-image"
+              >
+              <div class="item-details">
+                <h3 class="product-name">{{ item.product.prod_name }}</h3>
+                <p class="product-category">{{ item.product.prod_categorytype }}</p>
+                <div class="price-quantity">
+                  <p class="product-price">₱{{ (item.product.prod_price * item.quantity).toFixed(2) }}</p>
+                  <div class="quantity-controls">
+                    <button 
+                      @click="updateQuantity(item, -1)" 
+                      class="quantity-btn"
+                      :disabled="item.quantity <= 1"
+                    >-</button>
+                    <span class="quantity">{{ item.quantity }}</span>
+                    <button @click="updateQuantity(item, 1)" class="quantity-btn">+</button>
+                  </div>
+                </div>
+                <button @click="removeItem(item)" class="remove-btn">
+                  <img src="../views/images/trash-bin.png" alt="Remove" class="remove-icon">
+                </button>
+              </div>
             </div>
           </div>
+          
           <div class="cart-summary">
-            <p>Total Items: {{ totalItems }}</p>
-            <p>Total Price: ₱{{ totalPrice.toFixed(2) }}</p>
-            <button class="checkout-btn">Proceed to Checkout</button>
+            <div class="summary-content">
+              <h2 class="summary-title">Order Summary</h2>
+              <div class="summary-row">
+                <span>Total Items:</span>
+                <span>{{ totalItems }}</span>
+              </div>
+              <div class="summary-row total">
+                <span>Total Price:</span>
+                <span>₱{{ totalPrice.toFixed(2) }}</span>
+              </div>
+              <button class="checkout-btn">Proceed to Checkout →</button>
+            </div>
           </div>
         </div>
       </div>
@@ -43,6 +98,7 @@ export default {
     const totalPrice = ref(0);
     const totalItems = ref(0);
     const loading = ref(true);
+    const cartCount = ref(0);
 
     const fetchCartItems = async () => {
       try {
@@ -111,33 +167,345 @@ export default {
       }
     };
 
-    onMounted(fetchCartItems);
+    const fetchCartCount = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-    return { cartItems, totalPrice, totalItems, loading, updateQuantity, removeItem };
+        const { data: userInfo } = await supabase
+          .from('userinfo')
+          .select('userinfo_id')
+          .eq('userinfo_email', user.email)
+          .single();
+
+        const { count } = await supabase
+          .from('cartitems')
+          .select('*', { count: 'exact', head: true })
+          .eq('userinfo_id', userInfo.userinfo_id);
+
+        cartCount.value = count || 0;
+      } catch (error) {
+        console.error('Error fetching cart count:', error);
+      }
+    };
+    
+
+    onMounted(fetchCartItems);
+    onMounted(async () => {
+      await fetchCartCount();
+    });
+
+    return { cartItems, totalPrice, totalItems, loading, updateQuantity, removeItem, cartCount};
   }
 };
 </script>
-<style scoped>
+<style>
+
+:root {
+            --primary-color: #feb1bf;
+            --background-color: #F2F2F2;
+            --text-color: rgb(0, 0, 0);
+            --light-gray: #646464;
+            --highlights: #77c275;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+       .header {
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            max-width: 500px;
+            margin: 0 20px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 2px solid #ddd;
+            outline: none;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-icon {
+            color: var(--text-color);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cart-icon {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--highlights);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .nav-img-icon {
+            height: 25px;
+        }
+
+        .user-info {
+            width: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .cart-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.cart-title {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.empty-cart-img {
+  width: 200px;
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+}
+
+.empty-cart-text {
+  font-size: 1.2rem;
+  color: var(--light-gray);
+  margin-bottom: 2rem;
+}
+
+.continue-shopping-btn {
+  background: var(--primary-color);
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 25px;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+
+.continue-shopping-btn:hover {
+  transform: scale(1.05);
+}
+
 .cart-item {
-  border: 1px solid #eee;
-  padding: 1rem;
-  margin: 1rem 0;
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.product-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
   border-radius: 8px;
 }
 
-.checkout-btn {
-  background: #4CAF50;
-  color: white;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.item-details {
+  flex: 1;
+  position: relative;
+}
+
+.product-name {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.product-category {
+  color: var(--light-gray);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.price-quantity {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 1rem;
 }
 
-button {
-  margin: 0 5px;
-  padding: 5px 10px;
+.product-price {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--highlights);
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quantity-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  background: white;
+  font-size: 1rem;
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quantity-btn:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantity {
+  min-width: 30px;
+  text-align: center;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.remove-icon {
+  width: 20px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.remove-icon:hover {
+  opacity: 1;
+}
+
+.cart-summary {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.summary-content {
+  max-width: 400px;
+  margin-left: auto;
+}
+
+.summary-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.summary-row.total {
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-bottom: none;
+  padding-top: 1rem;
+}
+
+.checkout-btn {
+  width: 100%;
+  padding: 1rem;
+  background: var(--highlights);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  margin-top: 1.5rem;
+}
+
+.checkout-btn:hover {
+  transform: translateY(-2px);
 }
 </style>
