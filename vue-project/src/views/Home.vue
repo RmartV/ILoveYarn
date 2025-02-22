@@ -47,16 +47,15 @@
             <div class="carousel-slide active">
               <img src="../views/images/slide1.png" alt="Yarn Collection 1" class="carousel-image">
               <div class="carousel-overlay">
-                <h2 class="carousel-title">Up to 10% off Voucher</h2>
-                <button class="shop-now-btn">Shop Now</button>
+                <h2 class="carousel-title">We have it all!</h2>
               </div>
             </div>
           </div>
         </div>
-
+        <hr>
         <h2 class="page-title">All Products</h2>
         <div class="products-container">
-          <hr>
+         
           <div v-for="product in products" :key="product.prod_id" class="product-card">
             <div class="product-image">
               <img :src="product.image_url || '../views/images/default.png'" alt="Product Image">
@@ -307,8 +306,13 @@
         }
 
         .sidebar-item:first-child {
-            margin-top: 20px;
+            margin-top: 80px;
         }
+
+        .sidebar-item:last-child {
+    border-bottom: none;
+    padding-bottom: 100px;
+}
 
         .sidebar-item:hover {
             background-color: rgba(254, 177, 191, 0.2);
