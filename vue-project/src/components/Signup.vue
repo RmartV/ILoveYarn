@@ -136,7 +136,7 @@ export default {
 
         // Insert user details into the UserInfo table
         const { error: insertError } = await supabase
-          .from("userinfo")
+          .from("user_account")
           .insert([
           {
               useracc_id: data.user.id,
