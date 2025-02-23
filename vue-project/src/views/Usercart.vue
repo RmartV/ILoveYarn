@@ -104,24 +104,24 @@ export default {
     const totalItems = ref(0);
     const loading = ref(true);
     const cartCount = ref(0);
-    const useracc = ref(null);
+    const userAccount = ref(null);
 
     const fetchUseracc = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
-        const { data } = await supabase
-          .from('user_account')
-          .select('useracc_fname')
-          .eq('useracc_email', user.email)
-          .single();
+    const { data } = await supabase
+      .from('user_account')
+      .select('useracc_fname')
+      .eq('useracc_email', user.email)
+      .single();
 
-        userAccount.value = data;
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      }
-    };
+    userAccount.value = data; // Correct variable name
+  } catch (error) {
+    console.error('Error fetching user:', error);
+  }
+};
 
     const getProductImage = (product) => {
       if (product.prod_id === 101) {
@@ -253,7 +253,7 @@ export default {
       updateQuantity, 
       removeItem, 
       cartCount,
-      useracc
+      userAccount 
     };
   }
 };
