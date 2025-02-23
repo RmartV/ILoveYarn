@@ -50,14 +50,14 @@
                 <h3 class="product-name">{{ item.product.prod_name }}</h3>
                 <p class="product-category">{{ item.product.prod_categorytype }}</p>
                 <div class="price-quantity">
-                  <p class="product-price">₱{{ (item.product.prod_price * item.quantity).toFixed(2) }}</p>
+                  <p class="product-price">₱{{ (item.product.prod_price * item.items_quantity).toFixed(2) }}</p>
                   <div class="quantity-controls">
                     <button 
                       @click="updateQuantity(item, -1)" 
                       class="quantity-btn"
-                      :disabled="item.quantity <= 1"
+                      :disabled="item.items_quantity <= 1"
                     >-</button>
-                    <span class="quantity">{{ item.quantity }}</span>
+                    <span class="quantity">{{ item.items_quantity }}</span>
                     <button @click="updateQuantity(item, 1)" class="quantity-btn">+</button>
                   </div>
                 </div>
@@ -166,11 +166,16 @@ export default {
     };
 
     const calculateTotals = () => {
-      totalItems.value = cartItems.value.reduce((sum, item) => sum + item.items_quantity, 0);
-      totalPrice.value = cartItems.value.reduce(
-        (sum, item) => sum + (item.items_quantity * item.product.prod_price), 0
-      );
-    };
+  totalItems.value = cartItems.value.reduce(
+    (sum, item) => sum + item.items_quantity, 
+    0
+  );
+  
+  totalPrice.value = cartItems.value.reduce(
+    (sum, item) => sum + (item.items_quantity * item.product.prod_price), 
+    0
+  );
+};
 
     const updateQuantity = async (item, change) => {
       const newQuantity = item.items_quantity + change;

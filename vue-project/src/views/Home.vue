@@ -3,7 +3,9 @@
     <header class="header">
       <div class="logo-container">
         <router-link to="/home">
-        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img"><
+        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
+      </router-link>
+      <router-link to="/home">
         <h1 class="logo-text">I LOVE YARN PH</h1>
         </router-link>
       </div>
