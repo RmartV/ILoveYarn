@@ -3,8 +3,8 @@
     <header class="header">
       <div class="logo-container">
         <router-link to="/home">
-        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
-        <h1 class="logo-text">I LOVE YARN PH</h1>
+          <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
+          <h1 class="logo-text">I LOVE YARN PH</h1>
         </router-link>
       </div>
       <div class="search-container">
@@ -15,146 +15,91 @@
       </div>
       <div class="nav-icons">
         <div class="nav-icon cart-icon">
-  <router-link to="/user-cart">
-    <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-    <span class="cart-count">{{ cartCount }}</span>
-  </router-link>
-</div>
-        <router-link to="/user-details">
-        <div class="nav-icon user-info">
-
-            <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
-            <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
-          
+          <router-link to="/user-cart">
+            <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
+            <span class="cart-count">{{ cartCount }}</span>
+          </router-link>
         </div>
-      </router-link>
+        <router-link to="/user-details">
+          <div class="nav-icon user-info">
+            <div class="user-avatar">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</div>
+            <span>{{ userAccount?.useracc_fname || 'Guest' }}</span>
+          </div>
+        </router-link>
       </div>
     </header>
 
-    <!----------------------------- Sidebar -------------------------------->
     <div class="main-content">
-      <div class="sidebar">
-        <ul class="sidebar-menu">
-          <li class="sidebar-item active">Yarn</li>
-          <li class="sidebar-item">Crochet Hooks</li>
-          <li class="sidebar-item">Decorative Tape</li>
-          <li class="sidebar-item">Ribbons</li>
-          <li class="sidebar-item">Accessories</li>
-        </ul>
-      </div>
-
-      <!----------------------------- Main Area -------------------------------->
-      <div class="content-area">
-        <!-- Carousel -->
-        <section class="carousel-container" aria-label="Featured Products">
-          <div class="carousel-slides">
-            <div class="carousel-slide active">
-              <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="carousel-image">
-              <div class="carousel-overlay">
-                <h2 class="carousel-title">Discover Our Collection</h2>
-                <p class="carousel-subtitle">Premium yarns and tools for your creative projects</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <h2 class="page-title">All Products</h2>
-        <div class="products-container">
-          <div v-for="product in products" :key="product.prod_id" class="product-card">
-            <div class="product-image">
-              <img :src="product.image_url || '../views/images/default.png'" alt="Product Image">
-            </div>
-            <div class="product-details">
-              <div class="product-category">{{ product.prod_categorytype }}</div>
-              <h3 class="product-name">{{ product.prod_name }}</h3>
-              <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
-                <span class="meta-item">{{ product.yarn.yarn_composition }}</span>
-                <span class="meta-item">{{ product.yarn.yarn_weight }}</span>
-                <span class="meta-item">{{ product.yarn.yarn_thickness }}</span>
-              </div>
-              <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
-                <span class="meta-item">{{ product.tool.tool_material }}</span>
-                <span class="meta-item">{{ product.tool.tool_size }}</span>
-              </div>
-              <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
-              <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
-              <div class="product-actions">
-                <button @click="addToCart(product)" class="add-to-cart-btn">Add to Cart</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- ... (rest of your existing template) ... -->
+      <button @click="addToCart(product)" class="add-to-cart-btn">Add to Cart</button>
     </div>
   </div>
 </template>
-  
-  <script>
-  import { ref, onMounted } from 'vue';
-  import { supabase } from '../lib/supabaseClient';
-  
-  export default {
-    setup() {
-      const userInfo = ref(null);
-      const products = ref([]);
-      const cartCount = ref(0);
-  
-      const fetchUserInfo = async () => {
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) throw new Error('No user logged in');
-  
-          const { data, error } = await supabase
-            .from('userinfo')
-            .select('userinfo_fname')
-            .eq('userinfo_email', user.email)
-            .single();
-  
-          if (error) throw error;
-          userInfo.value = data;
-        } catch (err) {
-          console.error('Error fetching user info:', err);
-        }
-      };
-  
-      const fetchProducts = async () => {
-        const { data, error } = await supabase
-          .from('product')
-          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
-        
-          if (!error) {
-    products.value = data.map(product => {
-      let imageUrl = '';
 
-      if (product.prod_id === 101) {
-        imageUrl = supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
-      } else if (product.prod_id === 201) {
-        imageUrl = supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
-      }
+<script>
+import { ref, onMounted } from 'vue';
+import { supabase } from '../lib/supabaseClient';
 
-      return {
-        ...product,
-        image_url: imageUrl
-      };
-    });
-  }
-};
-  
-const fetchCartCount = async () => {
+export default {
+  setup() {
+    const userAccount = ref(null);
+    const products = ref([]);
+    const cartCount = ref(0);
+
+    const fetchUserAccount = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        const { data: userInfo } = await supabase
-          .from('userinfo')
-          .select('userinfo_id')
-          .eq('userinfo_email', user.email)
+        const { data } = await supabase
+          .from('user_account')
+          .select('useracc_fname')
+          .eq('useracc_email', user.email)
+          .single();
+
+        userAccount.value = data;
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+
+    const fetchProducts = async () => {
+      const { data, error } = await supabase
+        .from('product')
+        .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
+
+      if (!error) {
+        products.value = data.map(product => ({
+          ...product,
+          image_url: getProductImage(product)
+        }));
+      }
+    };
+
+    const getProductImage = (product) => {
+      if (product.prod_id === 101) {
+        return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
+      } else if (product.prod_id === 201) {
+        return supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
+      }
+      return '../views/images/default.png';
+    };
+
+    const fetchCartCount = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: userData } = await supabase
+          .from('user_account')
+          .select('useracc_id')
+          .eq('useracc_email', user.email)
           .single();
 
         const { count } = await supabase
           .from('cartitems')
           .select('*', { count: 'exact', head: true })
-          .eq('userinfo_id', userInfo.userinfo_id);
+          .eq('useracc_id', userData.useracc_id);
 
         cartCount.value = count || 0;
       } catch (error) {
@@ -162,38 +107,30 @@ const fetchCartCount = async () => {
       }
     };
 
-    onMounted(async () => {
-      await fetchUserInfo();
-      await fetchProducts();
-      await fetchCartCount();
-    });
-  
-      const addToCart = async (product) => {
+    const addToCart = async (product) => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('User not logged in');
 
-        // Get userinfo_id
-        const { data: userInfo } = await supabase
-          .from('userinfo')
-          .select('userinfo_id')
-          .eq('userinfo_email', user.email)
+        const { data: userData } = await supabase
+          .from('user_account')
+          .select('useracc_id')
+          .eq('useracc_email', user.email)
           .single();
 
-        // Upsert into cartitems
         const { error } = await supabase
           .from('cartitems')
           .upsert({
-            userinfo_id: userInfo.userinfo_id,
+            useracc_id: userData.useracc_id,
             prod_id: product.prod_id,
-            quantity: 1
+            items_quantity: 1
           }, {
-            onConflict: 'userinfo_id, prod_id',
+            onConflict: 'useracc_id, prod_id',
             ignoreDuplicates: false
-          })
-          .select();
+          });
 
         if (error) throw error;
+        await fetchCartCount();
         alert('Added to cart successfully!');
       } catch (error) {
         console.error('Error adding to cart:', error);
@@ -201,10 +138,16 @@ const fetchCartCount = async () => {
       }
     };
 
-    return { userInfo, products, addToCart, cartCount  };
+    onMounted(async () => {
+      await fetchUserAccount();
+      await fetchProducts();
+      await fetchCartCount();
+    });
+
+    return { userAccount, products, addToCart, cartCount };
   }
 };
-  </script>
+</script>
   
   <style>
         :root {

@@ -1,86 +1,33 @@
 <template>
   <div>
-    <header class="header">
-      <div class="logo-container">
-        <router-link to="/home">
-        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
-        <h1 class="logo-text">I LOVE YARN PH</h1>
-      </router-link>
-      </div>
-      <div class="search-container">
-        <input type="text" class="search-input" placeholder="What are you looking for?">
-        <button class="search-btn">
-          <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
-        </button>
-      </div>
-      <div class="nav-icons">
-        <div class="nav-icon cart-icon">
-          <router-link to="/user-cart">
-            <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-            <span class="cart-count">{{ cartCount }}</span>
-          </router-link>
-        </div>
-        <router-link to="/user-details">
-          <div class="nav-icon user-info">
-            <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
-            <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
-          </div>
-        </router-link>
-      </div>
-    </header>
-
+    <!-- Header (same as home.vue) -->
+    
     <div class="cart-container">
       <h1 class="cart-title">Your Shopping Cart</h1>
-      <div v-if="loading" class="loading-spinner">⏳ Loading...</div>
+      <div v-if="loading">Loading...</div>
       <div v-else>
         <div v-if="cartItems.length === 0" class="empty-cart">
-          <img src="../views/images/shopping-cart.png" alt="Empty cart" class="empty-cart-img">
-          <p class="empty-cart-text">Your cart is feeling lonely!</p>
-          <router-link to="/" class="continue-shopping-btn">Continue Shopping</router-link>
+          <img src="../views/images/shopping-cart.png" alt="Empty cart">
+          <p>Your cart is empty</p>
         </div>
         <div v-else>
-          <div class="cart-items">
-            <div v-for="item in cartItems" :key="item.cart_item_id" class="cart-item">
-              <img 
-                :src="item.product.image_url || '../views/images/default-product.png'" 
-                :alt="item.product.prod_name" 
-                class="product-image"
-              >
-              <div class="item-details">
-                <h3 class="product-name">{{ item.product.prod_name }}</h3>
-                <p class="product-category">{{ item.product.prod_categorytype }}</p>
-                <div class="price-quantity">
-                  <p class="product-price">₱{{ (item.product.prod_price * item.quantity).toFixed(2) }}</p>
-                  <div class="quantity-controls">
-                    <button 
-                      @click="updateQuantity(item, -1)" 
-                      class="quantity-btn"
-                      :disabled="item.quantity <= 1"
-                    >-</button>
-                    <span class="quantity">{{ item.quantity }}</span>
-                    <button @click="updateQuantity(item, 1)" class="quantity-btn">+</button>
-                  </div>
-                </div>
-                <button @click="removeItem(item)" class="remove-btn">
-                  <img src="../views/images/recycle-bin.png" alt="Remove" class="remove-icon">
-                </button>
+          <div v-for="item in cartItems" :key="item.cart_item_id" class="cart-item">
+            <img :src="item.product.image_url" :alt="item.product.prod_name">
+            <div class="item-details">
+              <h3>{{ item.product.prod_name }}</h3>
+              <p>₱{{ (item.product.prod_price * item.items_quantity).toFixed(2) }}</p>
+              <div class="quantity-controls">
+                <button @click="updateQuantity(item, -1)" :disabled="item.items_quantity <= 1">-</button>
+                <span>{{ item.items_quantity }}</span>
+                <button @click="updateQuantity(item, 1)">+</button>
               </div>
+              <button @click="removeItem(item)">Remove</button>
             </div>
           </div>
-          
           <div class="cart-summary">
-            <div class="summary-content">
-              <h2 class="summary-title">Order Summary</h2>
-              <div class="summary-row">
-                <span>Total Items:</span>
-                <span>{{ totalItems }}</span>
-              </div>
-              <div class="summary-row total">
-                <span>Total Price:</span>
-                <span>₱{{ totalPrice.toFixed(2) }}</span>
-              </div>
-              <button class="checkout-btn">Proceed to Checkout →</button>
-            </div>
+            <p>Total Items: {{ totalItems }}</p>
+            <p>Total Price: ₱{{ totalPrice.toFixed(2) }}</p>
+            <button class="checkout-btn">Checkout</button>
           </div>
         </div>
       </div>
@@ -98,65 +45,24 @@ export default {
     const totalPrice = ref(0);
     const totalItems = ref(0);
     const loading = ref(true);
-    const cartCount = ref(0);
-    const userInfo = ref(null);
-
-    const fetchUserInfo = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data } = await supabase
-          .from('userinfo')
-          .select('userinfo_fname')
-          .eq('userinfo_email', user.email)
-          .single();
-
-        userInfo.value = data;
-      } catch (error) {
-        console.error('Error fetching user info:', error);
-      }
-    };
-
-    const getProductImage = (product) => {
-      if (product.prod_id === 101) {
-        return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
-      } else if (product.prod_id === 201) {
-        return supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
-      }
-      return '../views/images/default-product.png';
-    };
 
     const fetchCartItems = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('User not logged in');
+        if (!user) throw new Error('Not logged in');
 
         const { data: userData } = await supabase
-          .from('userinfo')
-          .select('userinfo_id')
-          .eq('userinfo_email', user.email)
+          .from('user_account')
+          .select('useracc_id')
+          .eq('useracc_email', user.email)
           .single();
 
         const { data } = await supabase
           .from('cartitems')
-          .select(`
-            *, 
-            product:prod_id(
-              *,
-              yarn(yarn_composition, yarn_weight, yarn_thickness),
-              tool(tool_material, tool_size)
-            )
-          `)
-          .eq('userinfo_id', userData.userinfo_id);
+          .select('*, product:prod_id(*)')
+          .eq('useracc_id', userData.useracc_id);
 
-        cartItems.value = data.map(item => ({
-          ...item,
-          product: {
-            ...item.product,
-            image_url: getProductImage(item.product)
-          }
-        })) || [];
+        cartItems.value = data || [];
         calculateTotals();
       } catch (error) {
         console.error('Error fetching cart:', error);
@@ -166,28 +72,28 @@ export default {
     };
 
     const calculateTotals = () => {
-      totalItems.value = cartItems.value.reduce((sum, item) => sum + item.quantity, 0);
+      totalItems.value = cartItems.value.reduce((sum, item) => sum + item.items_quantity, 0);
       totalPrice.value = cartItems.value.reduce(
-        (sum, item) => sum + (item.quantity * item.product.prod_price), 0
+        (sum, item) => sum + (item.items_quantity * item.product.prod_price), 0
       );
     };
 
     const updateQuantity = async (item, change) => {
-      const newQuantity = item.quantity + change;
+      const newQuantity = item.items_quantity + change;
       if (newQuantity < 1) return;
 
       try {
         const { error } = await supabase
           .from('cartitems')
-          .update({ quantity: newQuantity })
+          .update({ items_quantity: newQuantity })
           .eq('cart_item_id', item.cart_item_id);
 
         if (!error) {
-          item.quantity = newQuantity;
+          item.items_quantity = newQuantity;
           calculateTotals();
         }
       } catch (error) {
-        console.error('Error updating quantity:', error);
+        console.error('Update error:', error);
       }
     };
 
@@ -203,48 +109,13 @@ export default {
           calculateTotals();
         }
       } catch (error) {
-        console.error('Error removing item:', error);
+        console.error('Delete error:', error);
       }
     };
 
-    const fetchCartCount = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+    onMounted(fetchCartItems);
 
-        const { data: userData } = await supabase
-          .from('userinfo')
-          .select('userinfo_id')
-          .eq('userinfo_email', user.email)
-          .single();
-
-        const { count } = await supabase
-          .from('cartitems')
-          .select('*', { count: 'exact', head: true })
-          .eq('userinfo_id', userData.userinfo_id);
-
-        cartCount.value = count || 0;
-      } catch (error) {
-        console.error('Error fetching cart count:', error);
-      }
-    };
-
-    onMounted(async () => {
-      await fetchUserInfo();
-      await fetchCartItems();
-      await fetchCartCount();
-    });
-
-    return { 
-      cartItems, 
-      totalPrice, 
-      totalItems, 
-      loading, 
-      updateQuantity, 
-      removeItem, 
-      cartCount,
-      userInfo
-    };
+    return { cartItems, totalPrice, totalItems, loading, updateQuantity, removeItem };
   }
 };
 </script>
