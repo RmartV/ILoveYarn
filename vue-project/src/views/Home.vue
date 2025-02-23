@@ -1,138 +1,105 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Modern Header -->
-    <header class="fixed w-full top-0 bg-white/80 backdrop-blur-md shadow-sm z-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <!-- Logo -->
-          <router-link to="/home" class="flex items-center space-x-3">
-            <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="h-10 w-10 rounded-full">
-            <span class="text-xl font-bold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
-              I LOVE YARN PH
-            </span>
-          </router-link>
+  <div>
+    <header class="header">
+      <div class="logo-container">
+        <router-link to="/home">
+        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img"><
+        <h1 class="logo-text">I LOVE YARN PH</h1>
+        </router-link>
+      </div>
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="What are you looking for?">
+        <button class="search-btn">
+          <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
+        </button>
+      </div>
+      <div class="nav-icons">
+        <div class="nav-icon cart-icon">
+  <router-link to="/user-cart">
+    <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
+    <span class="cart-count">{{ cartCount }}</span>
+  </router-link>
+</div>
+        <router-link to="/user-details">
+        <div class="nav-icon user-info">
 
-          <!-- Search -->
-          <div class="flex-1 max-w-lg mx-8">
-            <div class="relative">
-              <input 
-                type="text" 
-                class="w-full pl-4 pr-10 py-2 rounded-full border border-gray-200 focus:ring-2 focus:ring-pink-200 focus:border-pink-300 transition-all"
-                placeholder="Search products..."
-              >
-              <button class="absolute right-3 top-1/2 -translate-y-1/2">
-                <img src="../views/images/magnifying-glass.png" alt="Search" class="w-5 h-5 opacity-60">
-              </button>
-            </div>
-          </div>
+            <div class="user-avatar">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</div>
+            <span>{{ userAccount?.useracc_fname || 'Guest' }}</span>
 
-          <!-- Nav Icons -->
-          <div class="flex items-center space-x-6">
-            <router-link to="/user-cart" class="relative">
-              <img src="../views/images/shopping-cart.png" alt="Cart" class="w-6 h-6">
-              <span v-if="cartCount" class="absolute -top-2 -right-2 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {{ cartCount }}
-              </span>
-            </router-link>
-            
-            <router-link to="/user-details" class="flex items-center space-x-3">
-              <div class="w-8 h-8 rounded-full bg-gradient-to-r from-pink-400 to-rose-400 flex items-center justify-center text-white font-medium">
-                {{ userAccount?.useracc_fname?.charAt(0) || 'G' }}
-              </div>
-              <span class="text-sm font-medium text-gray-700">
-                {{ userAccount?.useracc_fname || 'Guest' }}
-              </span>
-            </router-link>
-          </div>
+          
         </div>
+      </router-link>
       </div>
     </header>
 
-    <div class="flex pt-16">
-      <!-- Sidebar -->
-      <aside class="w-64 fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 overflow-y-auto">
-        <nav class="p-4">
-          <ul class="space-y-2">
-            <li v-for="category in ['Yarn', 'Crochet Hooks', 'Decorative Tape', 'Ribbons', 'Accessories']" 
-                :key="category"
-                class="group">
-              <a href="#" 
-                 :class="[
-                   'block px-4 py-2 rounded-lg text-sm font-medium transition-all',
-                   category === 'Yarn' 
-                     ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white' 
-                     : 'text-gray-600 hover:bg-pink-50 hover:text-pink-600'
-                 ]">
-                {{ category }}
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+    <!----------------------------- Sidebar -------------------------------->
+    <div class="main-content">
+      <div class="sidebar">
+        <ul class="sidebar-menu">
+          <li class="sidebar-item active">Yarn</li>
+          <li class="sidebar-item">Crochet Hooks</li>
+          <li class="sidebar-item">Decorative Tape</li>
+          <li class="sidebar-item">Ribbons</li>
+          <li class="sidebar-item">Accessories</li>
+        </ul>
+      </div>
 
-      <!-- Main Content -->
-      <main class="flex-1 ml-64 p-6">
-        <!-- Hero Carousel -->
-        <section class="mb-8 rounded-2xl overflow-hidden bg-gradient-to-r from-pink-100 to-rose-100">
-          <div class="relative h-[400px]">
-            <img 
-              src="../views/images/slide1.png" 
-              alt="Featured Collection" 
-              class="w-full h-full object-cover"
-            >
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
-              <div class="p-8 text-white max-w-2xl">
-                <h1 class="text-4xl font-bold mb-3">Discover Our Collection</h1>
-                <p class="text-lg opacity-90">Premium yarns and tools for your creative projects</p>
+      <!----------------------------- Main Area -------------------------------->
+      <div class="content-area">
+        <!-- Carousel -->
+        <section class="carousel-container" aria-label="Featured Products">
+          <div class="carousel-slides">
+            <div class="carousel-slide active">
+              <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="carousel-image">
+              <div class="carousel-overlay">
+                <h2 class="carousel-title">Discover Our Collection</h2>
+                <p class="carousel-subtitle">Premium yarns and tools for your creative projects</p>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Products Grid -->
-        <div class="mb-8">
-          <h2 class="text-2xl font-bold text-gray-800 mb-6">All Products</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <div v-for="product in products" 
-                 :key="product.prod_id" 
-                 class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-              <div class="aspect-square overflow-hidden">
-                <img 
-                  :src="product.image_url || '../views/images/default.png'" 
-                  :alt="product.prod_name"
-                  class="w-full h-full object-cover transform hover:scale-105 transition-transform"
-                >
+        <h2 class="page-title">All Products</h2>
+        <div class="products-container">
+          <div v-for="product in products" :key="product.prod_id" class="product-card">
+            <div class="product-image">
+              <img :src="product.image_url || '../views/images/default.png'" alt="Product Image">
+            </div>
+            <div class="product-details">
+              <div class="product-category">{{ product.prod_categorytype }}</div>
+              <h3 class="product-name">{{ product.prod_name }}</h3>
+              <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
+                <span class="meta-item">{{ product.yarn.yarn_composition }}</span>
+                <span class="meta-item">{{ product.yarn.yarn_weight }}</span>
+                <span class="meta-item">{{ product.yarn.yarn_thickness }}</span>
               </div>
-              
-              <div class="p-4">
-                <div class="text-xs text-gray-500 mb-1">{{ product.prod_categorytype }}</div>
-                <h3 class="font-medium text-gray-900 mb-2">{{ product.prod_name }}</h3>
-                
-                <div class="flex flex-wrap gap-2 mb-3">
-                  <template v-if="product.prod_categorytype === 'YARN'">
-                    <span v-for="detail in [product.yarn.yarn_composition, product.yarn.yarn_weight, product.yarn.yarn_thickness]"
-                          :key="detail"
-                          class="px-2 py-1 bg-pink-50 text-pink-600 rounded-full text-xs">
-                      {{ detail }}
-                    </span>
-                  </template>
-                  <!-- Similar templates for other product types -->
-                </div>
-
-                <div class="flex items-center justify-between mb-4">
-                  <span class="text-lg font-bold text-gray-900">₱{{ product.prod_price.toFixed(2) }}</span>
-                  <span class="text-sm text-gray-500">{{ product.prod_stock }} left</span>
-                </div>
-
-                <button @click="addToCart(product)" 
-                        class="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-2 rounded-lg font-medium hover:from-pink-600 hover:to-rose-600 transition-all">
-                  Add to Cart
-                </button>
+              <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
+                <span class="meta-item">{{ product.tool.tool_material }}</span>
+                <span class="meta-item">{{ product.tool.tool_size }}</span>
+              </div>
+              <div class="product-meta" v-if="product.prod_categorytype === 'TAPE'">
+                <span class="meta-item">{{ product.tape.tape_type}}</span>
+                <span class="meta-item">{{ product.tape.tape_length }}</span>
+                <span class="meta-item">{{ product.tape.tape_size }}</span>
+              </div>
+              <div class="product-meta" v-if="product.prod_categorytype === 'ACCESSORIES'">
+                <span class="meta-item">{{ product.accs.accs_category }}</span>
+                <span class="meta-item">{{ product.accs.accs_quantity }}</span>
+              </div>
+              <div class="product-meta" v-if="product.prod_categorytype === 'RIBBONS'">
+                <span class="meta-item">{{ product.ribbons.ribbons_length }}</span>
+                <span class="meta-item">{{ product.ribbons.ribbons_thickness }}</span>
+                <span class="meta-item">{{ product.ribbons.ribbons_material }}</span>
+              </div>
+              <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
+              <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
+              <div class="product-actions">
+                <button @click="addToCart(product)" class="add-to-cart-btn">Add to Cart</button>
               </div>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   </div>
 </template>
@@ -251,66 +218,384 @@ export default {
 };
 </script>
   
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  <style>
+        :root {
+            --primary-color: #feb1bf;
+            --background-color: #F2F2F2;
+            --text-color: rgb(0, 0, 0);
+            --light-gray: #646464;
+            --highlights: #77c275;
+        }
 
-:root {
-  --primary-gradient: linear-gradient(to right, #EC4899, #F43F5E);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            max-width: 500px;
+            margin: 0 20px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 2px solid #ddd;
+            outline: none;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-icon {
+            color: var(--text-color);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cart-icon {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--highlights);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .nav-img-icon {
+            height: 25px;
+        }
+
+        .user-info {
+            width: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: flex;
+        }
+
+        .sidebar {
+            height: 100vh;
+            width: 350px;
+            padding: 20px;
+            background-color: var(--background-color);
+            border-right: 2px solid var(--light-gray);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-item {
+            color: var(--text-color);
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-item:first-child {
+            margin-top: 80px;
+        }
+
+        .sidebar-item:hover {
+            background-color: rgba(254, 177, 191, 0.2);
+        }
+
+        .sidebar-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .carousel-container {
+  margin-bottom: 2rem;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+.carousel-slide {
+  height: 400px;
+  position: relative;
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+.carousel-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 3rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: white;
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
+.carousel-title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
 
-::-webkit-scrollbar-thumb {
-  background: #EC4899;
-  border-radius: 4px;
+.carousel-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #F43F5E;
-}
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+        .content-area {
+            flex-grow: 1;
+            padding: 20px;
+            min-height: 100vh;
+        }
 
-.fade-in {
-  animation: fadeIn 0.3s ease-in-out;
-}
+        .page-title {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+        }
 
-/* Custom focus styles */
-input:focus, 
-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.3);
-}
+        .page-title::before {
+            content: '';
+            width: 5px;
+            height: 24px;
+            background-color: var(--primary-color);
+            margin-right: 10px;
+            border-radius: 3px;
+        }
 
-/* Hover effects */
-.hover-scale {
-  transition: transform 0.2s ease-in-out;
-}
+        .products-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
 
-.hover-scale:hover {
-  transform: scale(1.05);
-}
-</style>
+        .product-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            height: 200px;
+            width: 100%;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-details {
+            padding: 15px;
+        }
+
+        .product-category {
+            font-size: 12px;
+            color: var(--light-gray);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .product-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .meta-item {
+            background-color: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--light-gray);
+        }
+
+        .product-price {
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .product-stock {
+            font-size: 14px;
+            color: var(--light-gray);
+            margin-bottom: 15px;
+        }
+
+        .product-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .add-to-cart-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #e99ca9;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0 20px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: var(--text-color);
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .search-container {
+                margin: 15px 0;
+                max-width: 100%;
+            }
+            
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 2px solid var(--light-gray);
+            }
+            
+            .products-container {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+  </style>
