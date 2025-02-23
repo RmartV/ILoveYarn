@@ -188,13 +188,6 @@ body {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;600;900&display=swap');
 
-:root {
-  --accent-color: #f8bdca;
-  --base-color: white;
-  --text-color: #f8bdca;
-  --input-color: #F3F0FF;
-}
-
 .page {
   margin: 0;
   padding: 0;
@@ -207,25 +200,29 @@ body {
   background-size: fill;
   background-position: left;
   overflow: hidden;
+
 }
 
- .wrapper {
+.wrapper {
   box-sizing: border-box;
-  background-color: white;
+  background-color:white;
   height: 100vh;
   width: max(40%, 600px);
   padding: 10px;
-  border-radius: 0px 20px 20px 0px;
+  border-radius: 20px 0 0 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  float: left;
 }
 
 h1 {
   font-size: 3rem;
   font-weight: 900;
   text-transform: uppercase;
+  -webkit-text-stroke: 1px #c38592;
+
 }
 
 form {
@@ -271,6 +268,7 @@ form input {
   border-left: none;
   background-color: #F3F0FF;
   transition: 150ms ease;
+
 }
 
 form input:hover {
@@ -288,6 +286,7 @@ div:has(input:focus) > label {
 
 form input::placeholder {
   color: #f8bdca;
+
 }
 
 form button {
@@ -302,6 +301,7 @@ form button {
   text-transform: uppercase;
   cursor: pointer;
   transition: 150ms ease;
+
 }
 
 form button:hover {
@@ -321,6 +321,7 @@ form button:disabled {
 a {
   text-decoration: none;
   color: #f8bdca;
+
 }
 
 a:hover {
@@ -344,5 +345,7 @@ form div.incorrect input {
 
 #error-message {
   color: #f06272;
+  -webkit-text-stroke: 1px #d14d5c;
+
 }
 </style>
