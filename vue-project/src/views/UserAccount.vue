@@ -39,7 +39,7 @@
   
   export default {
     setup() {
-      const userInfo = ref(null);
+      const Useracc = ref(null);
       const error = ref('');
   
       const fetchUserInfo = async () => {
