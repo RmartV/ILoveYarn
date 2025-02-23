@@ -324,22 +324,23 @@ export default {
             height: 25px;
         }
 
-        .user-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 10px;
-}
-
-.user-avatar {
-    width: 35px;
-    height: 35px;
+        .user-avatar {
+    width: 40px; /* Increased and matched with height */
+    height: 40px; /* Increased and matched with width */
     border-radius: 50%;
     background-color: #ddd;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    font-size: 16px; /* Added to ensure text fits well */
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Adjusted gap */
+    margin-left: 10px;
 }
 
         .main-content {
