@@ -24,7 +24,6 @@
 </div>
         
         <div class="nav-icon user-info">
-            <div class="user-avatar"><router-link to="/user-details">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</router-link></div>
             <span><router-link to="/user-details">{{ userAccount?.useracc_fname || 'Guest' }}</router-link></span>
         </div>
       </div>
@@ -235,7 +234,9 @@ export default {
         body {
             background-color: var(--background-color);
         }
-
+router-link{
+text-decoration: none;
+}
         .header {
     background-color: var(--primary-color);
     display: flex;
