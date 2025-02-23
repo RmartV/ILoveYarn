@@ -237,24 +237,26 @@ export default {
         }
 
         .header {
-            background-color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 30px;
-            border-bottom: 2px solid var(--light-gray);
-        }
+    background-color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 30px;
+    border-bottom: 2px solid var(--light-gray);
+    height: 80px; /* Added fixed height */
+}
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-        }
+.logo-container {
+    display: flex;
+    align-items: center;
+    min-width: 200px; /* Added minimum width */
+}
 
-        .logo-img {
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
-        }
+.logo-img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
 
         .logo-text {
             color: white;
@@ -264,19 +266,17 @@ export default {
         }
 
         .search-container {
-            flex-grow: 1;
-            max-width: 500px;
-            margin: 0 20px;
-            position: relative;
-        }
+    flex: 0 1 500px; /* Modified flex property */
+    margin: 0 40px; /* Increased margin */
+}
 
-        .search-input {
-            width: 100%;
-            padding: 10px 15px;
-            border-radius: 20px;
-            border: 2px solid #ddd;
-            outline: none;
-        }
+.search-input {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 2px solid #ddd;
+    outline: none;
+}
 
         .search-btn {
             position: absolute;
@@ -289,10 +289,11 @@ export default {
         }
 
         .nav-icons {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    min-width: 150px; /* Added minimum width */
+}
 
         .nav-icon {
             color: var(--text-color);
@@ -324,23 +325,22 @@ export default {
         }
 
         .user-info {
-          margin-right: 10px;
-            width: 30px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 10px;
+}
 
-        .user-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background-color: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
 
         .main-content {
             display: flex;
