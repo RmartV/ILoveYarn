@@ -22,7 +22,6 @@
       </router-link>
 
       <router-link to="/user-details" class="nav-icon user-info">
-        <div class="user-avatar">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</div>
         <span class="user-name">{{ userAccount?.useracc_fname || 'Guest' }}</span>
       </router-link>
     </div>
@@ -368,6 +367,7 @@ export default {
 }
 
 .user-name {
+  font-weight: bold;
   color: white;
   font-size: 14px;
 }
@@ -378,6 +378,8 @@ export default {
   }
 
   .logo-text {
+    align-items: center;
+    justify-content: center;
     display: none;
   }
 
