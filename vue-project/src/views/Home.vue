@@ -87,7 +87,7 @@
                 <span class="meta-item">{{ product.ribbons.ribbons_material }}</span>
               </div>
               <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
-              <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
+              <div class="product-stock">In stock: {{ product.prod_stock }} </div>
               <div class="product-actions">
                 <button @click="addToCart(product)" class="add-to-cart-btn">Add to Cart</button>
               </div>
