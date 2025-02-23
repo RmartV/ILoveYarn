@@ -1,33 +1,32 @@
 <template>
   <div>
     <header class="header">
-      <div class="logo-container">
-        <router-link to="/home">
+    <div class="logo-container">
+      <router-link to="/home" class="logo-link">
         <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
-      </router-link>
-      <router-link to="/home">
         <h1 class="logo-text">I LOVE YARN PH</h1>
-        </router-link>
-      </div>
-      <div class="search-container">
-        <input type="text" class="search-input" placeholder="What are you looking for?">
-        <button class="search-btn">
-          <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
-        </button>
-      </div>
-      <div class="nav-icons">
-        <div class="nav-icon cart-icon">
-  <router-link to="/user-cart">
-    <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-    <span class="cart-count">{{ cartCount }}</span>
-  </router-link>
-</div>
-        
-        <div class="nav-icon user-info">
-            <span><router-link to="/user-details">{{ userAccount?.useracc_fname || 'Guest' }}</router-link></span>
-        </div>
-      </div>
-    </header>
+      </router-link>
+    </div>
+
+    <div class="search-container">
+      <input type="text" class="search-input" placeholder="What are you looking for?">
+      <button class="search-btn">
+        <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
+      </button>
+    </div>
+
+    <div class="nav-icons">
+      <router-link to="/user-cart" class="nav-icon cart-icon">
+        <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
+        <span class="cart-count">{{ cartCount }}</span>
+      </router-link>
+
+      <router-link to="/user-details" class="nav-icon user-info">
+        <div class="user-avatar">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</div>
+        <span class="user-name">{{ userAccount?.useracc_fname || 'Guest' }}</span>
+      </router-link>
+    </div>
+  </header>
 
     <!----------------------------- Sidebar -------------------------------->
     <div class="main-content">
@@ -237,111 +236,162 @@ export default {
         router-link a{
     text-decoration: none !important;
 }
-        .header {
-    background-color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 30px;
-    border-bottom: 2px solid var(--light-gray);
-    height: 80px; /* Added fixed height */
+.header {
+  background-color: var(--primary-color);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+  border-bottom: 2px solid var(--light-gray);
+  height: 80px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo-container {
-    display: flex;
-    align-items: center;
-    min-width: 200px; /* Added minimum width */
+  display: flex;
+  align-items: center;
+  min-width: 200px;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }
 
 .logo-img {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  object-fit: contain;
 }
 
-        .logo-text {
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            text-decoration: none;
-        }
+.logo-text {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+}
 
-        .search-container {
-    flex: 0 1 500px; /* Modified flex property */
-    margin: 0 40px; /* Increased margin */
+.search-container {
+  flex: 0 1 500px;
+  margin: 0 40px;
+  position: relative;
 }
 
 .search-input {
-    width: 100%;
-    padding: 10px 15px;
-    border-radius: 20px;
-    border: 2px solid #ddd;
-    outline: none;
+  width: 100%;
+  padding: 10px 40px 10px 15px;
+  border-radius: 20px;
+  border: 2px solid #ddd;
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-        .search-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        .nav-icons {
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    min-width: 150px; /* Added minimum width */
+.search-input:focus {
+  border-color: var(--highlights);
 }
 
-        .nav-icon {
-            color: var(--text-color);
-            cursor: pointer;
-            position: relative;
-        }
+.search-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
 
-        .cart-icon {
-            position: relative;
-        }
+.nav-icons {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  min-width: 150px;
+}
 
-        .cart-count {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: var(--highlights);
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
+.nav-icon {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  transition: opacity 0.2s;
+}
 
-        .nav-img-icon {
-            height: 25px;
-        }
+.nav-icon:hover {
+  opacity: 0.8;
+}
 
-        .user-avatar {
-    width: auto; /* Increased and matched with height */
-    height: auto; /* Increased and matched with width */
-    border-radius: 50%;
-    background-color: #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 16px; /* Added to ensure text fits well */
+.cart-icon {
+  position: relative;
+}
+
+.cart-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: var(--highlights);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.nav-img-icon {
+  height: 25px;
+  width: auto;
 }
 
 .user-info {
-    display: flex;
-    align-items: center;
-    gap: 12px; /* Adjusted gap */
-    margin-left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: var(--primary-color);
+}
+
+.user-name {
+  color: white;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 15px;
+  }
+
+  .logo-text {
+    display: none;
+  }
+
+  .search-container {
+    margin: 0 20px;
+  }
+
+  .user-name {
+    display: none;
+  }
+
+  .nav-icons {
+    gap: 15px;
+  }
 }
 
         .main-content {
