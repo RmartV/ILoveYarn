@@ -1,589 +1,348 @@
 <template>
-  <div>
-    <header class="header">
-      <div class="logo-container">
-        <router-link to="/home">
-        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
-        <h1 class="logo-text">I LOVE YARN PH</h1>
-        </router-link>
+  <div class="page">
+  <div class="wrapper">
+    <h1>Signup</h1>
+    <p id="error-message">{{ errorMessage }}</p>
+    <form @submit.prevent="signUp">
+      <div :class="{ incorrect: hasError }">
+        <label for="firstname-input">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
+        </label>
+        <input 
+          type="text" 
+          v-model="firstname" 
+          id="firstname-input" 
+          placeholder="Firstname" 
+          required
+        >
       </div>
-      <div class="search-container">
-        <input type="text" class="search-input" placeholder="What are you looking for?">
-        <button class="search-btn">
-          <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
-        </button>
+      <div :class="{ incorrect: hasError }">
+        <label for="lastname-input">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
+        </label>
+        <input 
+          type="text" 
+          v-model="lastname" 
+          id="lastname-input" 
+          placeholder="Lastname" 
+          required
+        >
       </div>
-      <div class="nav-icons">
-        <div class="nav-icon cart-icon">
-  <router-link to="/user-cart">
-    <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-    <span class="cart-count">{{ cartCount }}</span>
-  </router-link>
-</div>
-        <router-link to="/user-details">
-        <div class="nav-icon user-info">
-
-            <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
-            <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
-          
-        </div>
-      </router-link>
+      <div :class="{ incorrect: hasError }">
+        <label for="email-input">
+          <span>@</span>
+        </label>
+        <input 
+          type="email" 
+          v-model="email" 
+          id="email-input" 
+          placeholder="Email" 
+          required
+        >
       </div>
-    </header>
-
-    <!----------------------------- Sidebar -------------------------------->
-    <div class="main-content">
-      <div class="sidebar">
-        <ul class="sidebar-menu">
-          <li class="sidebar-item active">Yarn</li>
-          <li class="sidebar-item">Crochet Hooks</li>
-          <li class="sidebar-item">Decorative Tape</li>
-          <li class="sidebar-item">Ribbons</li>
-          <li class="sidebar-item">Accessories</li>
-        </ul>
+      <div :class="{ incorrect: hasError }">
+        <label for="phonenum-input">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
+        </label>
+        <input 
+          type="text" 
+          v-model="phoneNum" 
+          id="phonenum-input" 
+          placeholder="Phone Number"
+        >
       </div>
-
-      <!----------------------------- Main Area -------------------------------->
-      <div class="content-area">
-        <!-- Carousel -->
-        <section class="carousel-container" aria-label="Featured Products">
-          <div class="carousel-slides">
-            <div class="carousel-slide active">
-              <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="carousel-image">
-              <div class="carousel-overlay">
-                <h2 class="carousel-title">Discover Our Collection</h2>
-                <p class="carousel-subtitle">Premium yarns and tools for your creative projects</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <h2 class="page-title">All Products</h2>
-        <div class="products-container">
-          <div v-for="product in products" :key="product.prod_id" class="product-card">
-            <div class="product-image">
-              <img :src="product.image_url || '../views/images/default.png'" alt="Product Image">
-            </div>
-            <div class="product-details">
-              <div class="product-category">{{ product.prod_categorytype }}</div>
-              <h3 class="product-name">{{ product.prod_name }}</h3>
-              <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
-                <span class="meta-item">{{ product.yarn.yarn_composition }}</span>
-                <span class="meta-item">{{ product.yarn.yarn_weight }}</span>
-                <span class="meta-item">{{ product.yarn.yarn_thickness }}</span>
-              </div>
-              <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
-                <span class="meta-item">{{ product.tool.tool_material }}</span>
-                <span class="meta-item">{{ product.tool.tool_size }}</span>
-              </div>
-              <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
-              <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
-              <div class="product-actions">
-                <button @click="addToCart(product)" class="add-to-cart-btn">Add to Cart</button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div :class="{ incorrect: hasError }">
+        <label for="address-input">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66 47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
+        </label>
+        <input 
+          type="text" 
+          v-model="address" 
+          id="address-input" 
+          placeholder="Address"
+        >
       </div>
-    </div>
+      <div :class="{ incorrect: hasError }">
+        <label for="password-input">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>
+        </label>
+        <input 
+          type="password" 
+          v-model="password" 
+          id="password-input" 
+          placeholder="Password" 
+          required
+        >
+      </div>
+      <div :class="{ incorrect: hasError }">
+        <label for="repeat-password-input">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>
+        </label>
+        <input 
+          type="password" 
+          v-model="repeatPassword" 
+          id="repeat-password-input" 
+          placeholder="Repeat Password" 
+          required
+        >
+      </div>
+      <button type="submit" :disabled="isLoading">
+        {{ isLoading ? 'Signing up...' : 'Signup' }}
+      </button>
+    </form>
+    <p>Already have an Account? <router-link to="/login">login</router-link></p>
   </div>
+</div>
 </template>
-  
-  <script>
-  import { ref, onMounted } from 'vue';
-  import { supabase } from '../lib/supabaseClient';
-  
-  export default {
-    setup() {
-      const userInfo = ref(null);
-      const products = ref([]);
-      const cartCount = ref(0);
-  
-      const fetchUserInfo = async () => {
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) throw new Error('No user logged in');
-  
-          const { data, error } = await supabase
-            .from('userinfo')
-            .select('userinfo_fname')
-            .eq('userinfo_email', user.email)
-            .single();
-  
-          if (error) throw error;
-          userInfo.value = data;
-        } catch (err) {
-          console.error('Error fetching user info:', err);
+
+<script>
+import { ref, computed } from 'vue';
+import { supabase } from '../lib/supabaseClient';
+import { useRouter } from 'vue-router';
+
+export default {
+  setup() {
+    const router = useRouter();
+    const firstname = ref("");
+    const lastname = ref("");
+    const email = ref("");
+    const phoneNum = ref("");
+    const address = ref("");
+    const password = ref("");
+    const repeatPassword = ref("");
+    const errorMessage = ref("");
+    const isLoading = ref(false);
+    
+    const hasError = computed(() => errorMessage.value !== "");
+
+    const signUp = async () => {
+      errorMessage.value = "";
+      isLoading.value = true;
+      
+      try {
+        if (password.value !== repeatPassword.value) {
+          errorMessage.value = "Passwords do not match.";
+          return;
         }
-      };
-  
-      const fetchProducts = async () => {
-        const { data, error } = await supabase
-          .from('product')
-          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
-        
-          if (!error) {
-    products.value = data.map(product => {
-      let imageUrl = '';
 
-      if (product.prod_id === 101) {
-        imageUrl = supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
-      } else if (product.prod_id === 201) {
-        imageUrl = supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
-      }
-
-      return {
-        ...product,
-        image_url: imageUrl
-      };
-    });
-  }
-};
-  
-const fetchCartCount = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data: userInfo } = await supabase
-          .from('userinfo')
-          .select('userinfo_id')
-          .eq('userinfo_email', user.email)
-          .single();
-
-        const { count } = await supabase
-          .from('cartitems')
-          .select('*', { count: 'exact', head: true })
-          .eq('userinfo_id', userInfo.userinfo_id);
-
-        cartCount.value = count || 0;
-      } catch (error) {
-        console.error('Error fetching cart count:', error);
-      }
-    };
-
-    onMounted(async () => {
-      await fetchUserInfo();
-      await fetchProducts();
-      await fetchCartCount();
-    });
-  
-      const addToCart = async (product) => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('User not logged in');
-
-        // Get userinfo_id
-        const { data: userInfo } = await supabase
-          .from('userinfo')
-          .select('userinfo_id')
-          .eq('userinfo_email', user.email)
-          .single();
-
-        // Upsert into cartitems
-        const { error } = await supabase
-          .from('cartitems')
-          .upsert({
-            userinfo_id: userInfo.userinfo_id,
-            prod_id: product.prod_id,
-            quantity: 1
-          }, {
-            onConflict: 'userinfo_id, prod_id',
-            ignoreDuplicates: false
-          })
-          .select();
+        // Sign up with Supabase Authentication
+        const { data, error } = await supabase.auth.signUp({
+          email: email.value,
+          password: password.value,
+        });
 
         if (error) throw error;
-        alert('Added to cart successfully!');
-      } catch (error) {
-        console.error('Error adding to cart:', error);
-        alert(error.message);
+        if (!data.user) throw new Error("Signup failed, please try again.");
+
+        // Insert user details into the UserInfo table
+        const { error: insertError } = await supabase
+          .from("user_account")
+          .insert([
+          {
+              useracc_id: data.user.id,
+              useracc_fname: firstname.value,
+              useracc_lname: lastname.value,
+              useracc_email: email.value,
+              useracc_phone: phoneNum.value,
+              useracc_address: address.value,
+              useracc_password: password.value
+            }
+          ]);
+
+        if (insertError) throw insertError;
+
+        alert("Signup successful! Please check your email for confirmation.");
+        router.push('/authentication');
+      } catch (err) {
+        console.error("Signup error:", err);
+        errorMessage.value = err.message;
+      } finally {
+        isLoading.value = false;
       }
     };
 
-    return { userInfo, products, addToCart, cartCount  };
-  }
+    return { 
+      firstname, 
+      lastname, 
+      email, 
+      phoneNum, 
+      address, 
+      password, 
+      repeatPassword, 
+      signUp, 
+      errorMessage,
+      isLoading,
+      hasError
+    };
+  },
 };
-  </script>
-  
-  <style>
-        :root {
-            --primary-color: #feb1bf;
-            --background-color: #F2F2F2;
-            --text-color: rgb(0, 0, 0);
-            --light-gray: #646464;
-            --highlights: #77c275;
-        }
+</script>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
 
-        body {
-            background-color: var(--background-color);
-        }
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+</style>
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;600;900&display=swap');
 
-        .header {
-            background-color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 30px;
-            border-bottom: 2px solid var(--light-gray);
-        }
+:root {
+  --accent-color: #f8bdca;
+  --base-color: white;
+  --text-color: #f8bdca;
+  --input-color: #F3F0FF;
+}
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo-img {
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
-        }
-
-        .logo-text {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .search-container {
-            flex-grow: 1;
-            max-width: 500px;
-            margin: 0 20px;
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 15px;
-            border-radius: 20px;
-            border: 2px solid #ddd;
-            outline: none;
-        }
-
-        .search-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        .nav-icons {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .nav-icon {
-            color: var(--text-color);
-            cursor: pointer;
-            position: relative;
-        }
-
-        .cart-icon {
-            position: relative;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: var(--highlights);
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-
-        .nav-img-icon {
-            height: 25px;
-        }
-
-        .user-info {
-            width: 30px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .user-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background-color: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .main-content {
-            display: flex;
-        }
-
-        .sidebar {
-            height: 100vh;
-            width: 350px;
-            padding: 20px;
-            background-color: var(--background-color);
-            border-right: 2px solid var(--light-gray);
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-item {
-            color: var(--text-color);
-            padding: 12px 15px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 8px;
-            transition: background-color 0.3s;
-        }
-
-        .sidebar-item:first-child {
-            margin-top: 80px;
-        }
-
-        .sidebar-item:hover {
-            background-color: rgba(254, 177, 191, 0.2);
-        }
-
-        .sidebar-item.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .carousel-container {
-  margin-bottom: 2rem;
-  border-radius: 16px;
+.page {
+  margin: 0;
+  padding: 0;
+  font-family: Poppins, Segoe UI, sans-serif;
+  font-size: 12pt;
+  color: #f8bdca;
+  text-align: center;
+  min-height: 100vh;
+  background-image: url(bg.png);
+  background-size: fill;
+  background-position: left;
   overflow: hidden;
-  box-shadow: var(--card-shadow);
 }
 
-.carousel-slide {
-  height: 400px;
-  position: relative;
+ .wrapper {
+  box-sizing: border-box;
+  background-color: white;
+  height: 100vh;
+  width: max(40%, 600px);
+  padding: 10px;
+  border-radius: 0px 20px 20px 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.carousel-image {
+h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+form {
+  width: min(400px, 100%);
+  margin-top: 20px;
+  margin-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+form > div {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  display: flex;
+  justify-content: center;
 }
 
-.carousel-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 3rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+form label {
+  flex-shrink: 0;
+  height: 50px;
+  width: 50px;
+  background-color: #f8bdca;
+  fill: white;
   color: white;
+  border-radius: 10px 0 0 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 500;
 }
 
-.carousel-title {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+form input {
+  box-sizing: border-box;
+  flex-grow: 1;
+  min-width: 0;
+  height: 50px;
+  padding: 1em;
+  font: inherit;
+  border-radius: 0 10px 10px 0;
+  border: 2px solid #F3F0FF;
+  border-left: none;
+  background-color: #F3F0FF;
+  transition: 150ms ease;
 }
 
-.carousel-subtitle {
-  font-size: 1.1rem;
-  opacity: 0.9;
+form input:hover {
+  border-color: #f8bdca;
 }
 
+form input:focus {
+  outline: none;
+  border-color: #f8bdca;
+}
 
-        .content-area {
-            flex-grow: 1;
-            padding: 20px;
-            min-height: 100vh;
-        }
+div:has(input:focus) > label {
+  background-color: #f8bdca;
+}
 
-        .page-title {
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-        }
+form input::placeholder {
+  color: #f8bdca;
+}
 
-        .page-title::before {
-            content: '';
-            width: 5px;
-            height: 24px;
-            background-color: var(--primary-color);
-            margin-right: 10px;
-            border-radius: 3px;
-        }
+form button {
+  margin-top: 10px;
+  border: none;
+  border-radius: 1000px;
+  padding: .85em 4em;
+  background-color: #f8bdca;
+  color: white;
+  font: inherit;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 150ms ease;
+}
 
-        .products-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
+form button:hover {
+  background-color: #f8bdca;
+}
 
-        .product-card {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
+form button:focus {
+  outline: none;
+  background-color: #f8bdca;
+}
 
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-        }
+form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
 
-        .product-image {
-            height: 200px;
-            width: 100%;
-            background-color: #f5f5f5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+a {
+  text-decoration: none;
+  color: #f8bdca;
+}
 
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+a:hover {
+  text-decoration: underline;
+}
 
-        .product-details {
-            padding: 15px;
-        }
+@media(max-width: 1100px) {
+  .wrapper {
+    width: min(600px, 100%);
+    border-radius: 0;
+  }
+}
 
-        .product-category {
-            font-size: 12px;
-            color: var(--light-gray);
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
+form div.incorrect label {
+  background-color: #f06272;
+}
 
-        .product-name {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: var(--text-color);
-        }
+form div.incorrect input {
+  border-color: #f06272;
+}
 
-        .product-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .meta-item {
-            background-color: #f5f5f5;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            color: var(--light-gray);
-        }
-
-        .product-price {
-            font-weight: bold;
-            font-size: 18px;
-            color: var(--text-color);
-            margin-bottom: 15px;
-        }
-
-        .product-stock {
-            font-size: 14px;
-            color: var(--light-gray);
-            margin-bottom: 15px;
-        }
-
-        .product-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .add-to-cart-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-weight: bold;
-        }
-
-        .add-to-cart-btn:hover {
-            background-color: #e99ca9;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 30px 0 20px;
-        }
-
-        .section-title {
-            font-size: 20px;
-            color: var(--text-color);
-            position: relative;
-            padding-left: 15px;
-        }
-
-        .section-title::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 5px;
-            background-color: var(--primary-color);
-            border-radius: 3px;
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                padding: 10px;
-            }
-            
-            .search-container {
-                margin: 15px 0;
-                max-width: 100%;
-            }
-            
-            .main-content {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-                border-right: none;
-                border-bottom: 2px solid var(--light-gray);
-            }
-            
-            .products-container {
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            }
-        }
-  </style>
+#error-message {
+  color: #f06272;
+}
+</style>
