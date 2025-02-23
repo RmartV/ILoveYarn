@@ -138,14 +138,14 @@ export default {
         const { error: insertError } = await supabase
           .from("userinfo")
           .insert([
-            {
-              userinfo_fname: firstname.value,
-              userinfo_lname: lastname.value,
-              userinfo_email: email.value,
-              userinfo_phonenum: phoneNum.value,
-              userinfo_address: address.value,
-              userinfo_password: password.value,
-            },
+          {
+              useracc_id: data.user.id,
+              useracc_fname: firstname.value,
+              useracc_lname: lastname.value,
+              useracc_email: email.value,
+              useracc_phone: phoneNum.value,
+              useracc_address: address.value
+            }
           ]);
 
         if (insertError) throw insertError;
