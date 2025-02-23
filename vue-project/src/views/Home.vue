@@ -24,7 +24,7 @@
 </div>
         
         <div class="nav-icon user-info">
-            <div><router-link to="/user-details">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</router-link></div>
+            <div class="user-avatar"><router-link to="/user-details">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</router-link></div>
             <span><router-link to="/user-details">{{ userAccount?.useracc_fname || 'Guest' }}</router-link></span>
         </div>
       </div>
@@ -325,8 +325,8 @@ export default {
         }
 
         .user-avatar {
-    width: 40px; /* Increased and matched with height */
-    height: 40px; /* Increased and matched with width */
+    width: auto; /* Increased and matched with height */
+    height: auto; /* Increased and matched with width */
     border-radius: 50%;
     background-color: #ddd;
     display: flex;
