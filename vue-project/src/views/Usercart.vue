@@ -22,8 +22,8 @@
         </div>
         <router-link to="/user-details">
           <div class="nav-icon user-info">
-            <div class="user-avatar">{{ useracc?.useracc_fname?.charAt(0) || 'G' }}</div>
-            <span>{{ useracc?.useracc_fname || 'Guest' }}</span>
+            <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
+            <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
           </div>
         </router-link>
       </div>
@@ -99,20 +99,20 @@ export default {
     const totalItems = ref(0);
     const loading = ref(true);
     const cartCount = ref(0);
-    const useracc = ref(null);
+    const userInfo = ref(null);
 
-    const fetchuseracc = async () => {
+    const fetchUserInfo = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
         const { data } = await supabase
-          .from('user_account')
-          .select('useracc_fname')
-          .eq('useracc_email', user.email)
+          .from('userinfo')
+          .select('userinfo_fname')
+          .eq('userinfo_email', user.email)
           .single();
 
-        useracc.value = data;
+        userInfo.value = data;
       } catch (error) {
         console.error('Error fetching user info:', error);
       }
@@ -133,9 +133,9 @@ export default {
         if (!user) throw new Error('User not logged in');
 
         const { data: userData } = await supabase
-          .from('user_account')
-          .select('useracc_id')
-          .eq('useracc_email', user.email)
+          .from('userinfo')
+          .select('userinfo_id')
+          .eq('userinfo_email', user.email)
           .single();
 
         const { data } = await supabase
@@ -148,7 +148,7 @@ export default {
               tool(tool_material, tool_size)
             )
           `)
-          .eq('useracc_id', userData.useracc_id);
+          .eq('userinfo_id', userData.userinfo_id);
 
         cartItems.value = data.map(item => ({
           ...item,
@@ -213,15 +213,15 @@ export default {
         if (!user) return;
 
         const { data: userData } = await supabase
-          .from('user_account')
-          .select('useracc_id')
-          .eq('useracc_email', user.email)
+          .from('userinfo')
+          .select('userinfo_id')
+          .eq('userinfo_email', user.email)
           .single();
 
         const { count } = await supabase
           .from('cartitems')
           .select('*', { count: 'exact', head: true })
-          .eq('useracc_id', userData.useracc_id);
+          .eq('userinfo_id', userData.userinfo_id);
 
         cartCount.value = count || 0;
       } catch (error) {
@@ -230,7 +230,7 @@ export default {
     };
 
     onMounted(async () => {
-      await fetchuseracc();
+      await fetchUserInfo();
       await fetchCartItems();
       await fetchCartCount();
     });
@@ -243,7 +243,7 @@ export default {
       updateQuantity, 
       removeItem, 
       cartCount,
-      useracc
+      userInfo
     };
   }
 };
