@@ -1,93 +1,114 @@
 <template>
-  <div>
-    <header class="header">
-      <div class="logo-container">
-        <router-link to="/home">
-        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img"><
-        <h1 class="logo-text">I LOVE YARN PH</h1>
-        </router-link>
-      </div>
-      <div class="search-container">
-        <input type="text" class="search-input" placeholder="What are you looking for?">
-        <button class="search-btn">
-          <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
-        </button>
-      </div>
-      <div class="nav-icons">
-        <div class="nav-icon cart-icon">
-  <router-link to="/user-cart">
-    <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-    <span class="cart-count">{{ cartCount }}</span>
-  </router-link>
-</div>
-        <router-link to="/user-details">
-        <div class="nav-icon user-info">
-
-            <div class="user-avatar">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</div>
-            <span>{{ userAccount?.useracc_fname || 'Guest' }}</span>
-
+<div class="shop-container">
+      <header class="header">
+        <div class="header-content">
+          <div class="logo-container">
+            <router-link to="/home" class="logo-link">
+              <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
+              <h1 class="logo-text">I LOVE YARN PH</h1>
+            </router-link>
+          </div>
           
+          <div class="search-container">
+            <input 
+              v-model="searchQuery"
+              type="text" 
+              class="search-input" 
+              placeholder="What are you looking for?"
+            >
+            <button class="search-btn">
+              <img class="search-icon" src="../views/images/magnifying-glass.png" alt="Search">
+            </button>
+          </div>
+
+          <div class="nav-icons">
+            <router-link to="/user-cart" class="cart-icon">
+              <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
+              <span class="cart-count" v-if="cartCount > 0">{{ cartCount }}</span>
+            </router-link>
+            
+            <router-link to="/user-details" class="user-info">
+              <div class="user-avatar">
+                {{ userAccount?.useracc_fname?.charAt(0) || 'G' }}
+              </div>
+              <span class="user-name">{{ userAccount?.useracc_fname || 'Guest' }}</span>
+            </router-link>
+          </div>
         </div>
-      </router-link>
-      </div>
-    </header>
+      </header>
 
-    <!----------------------------- Sidebar -------------------------------->
-    <div class="main-content">
-      <div class="sidebar">
-        <ul class="sidebar-menu">
-          <li class="sidebar-item active">Yarn</li>
-          <li class="sidebar-item">Crochet Hooks</li>
-          <li class="sidebar-item">Decorative Tape</li>
-          <li class="sidebar-item">Ribbons</li>
-          <li class="sidebar-item">Accessories</li>
-        </ul>
-      </div>
+      <div class="main-content">
+        <aside class="sidebar">
+          <nav class="category-nav">
+            <h2 class="nav-title">Categories</h2>
+            <ul class="category-menu">
+              <li class="category-item active">Yarn</li>
+              <li class="category-item">Crochet Hooks</li>
+              <li class="category-item">Decorative Tape</li>
+              <li class="category-item">Ribbons</li>
+              <li class="category-item">Accessories</li>
+            </ul>
+          </nav>
+        </aside>
 
-      <!----------------------------- Main Area -------------------------------->
-      <div class="content-area">
-        <!-- Carousel -->
-        <section class="carousel-container" aria-label="Featured Products">
-          <div class="carousel-slides">
-            <div class="carousel-slide active">
+        <main class="content-area">
+          <section class="hero-carousel" aria-label="Featured Products">
+            <div class="carousel-slide">
               <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="carousel-image">
-              <div class="carousel-overlay">
+              <div class="carousel-content">
                 <h2 class="carousel-title">Discover Our Collection</h2>
                 <p class="carousel-subtitle">Premium yarns and tools for your creative projects</p>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <h2 class="page-title">All Products</h2>
-        <div class="products-container">
-          <div v-for="product in products" :key="product.prod_id" class="product-card">
-            <div class="product-image">
-              <img :src="product.image_url || '../views/images/default.png'" alt="Product Image">
+          <section class="products-section">
+            <h2 class="section-title">All Products</h2>
+            <div class="products-grid">
+              <article 
+                v-for="product in products" 
+                :key="product.prod_id" 
+                class="product-card"
+              >
+                <div class="product-image">
+                  <img :src="product.image_url || '../views/images/default.png'" :alt="product.prod_name">
+                </div>
+                
+                <div class="product-content">
+                  <span class="product-category">{{ product.prod_categorytype }}</span>
+                  <h3 class="product-name">{{ product.prod_name }}</h3>
+                  
+                  <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
+                    <span class="meta-tag">{{ product.yarn.yarn_composition }}</span>
+                    <span class="meta-tag">{{ product.yarn.yarn_weight }}</span>
+                    <span class="meta-tag">{{ product.yarn.yarn_thickness }}</span>
+                  </div>
+                  
+                  <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
+                    <span class="meta-tag">{{ product.tool.tool_material }}</span>
+                    <span class="meta-tag">{{ product.tool.tool_size }}</span>
+                  </div>
+                  
+                  <div class="product-footer">
+                    <div class="price-stock">
+                      <span class="product-price">₱{{ product.prod_price.toFixed(2) }}</span>
+                      <span class="stock-info">{{ product.prod_stock }} in stock</span>
+                    </div>
+                    <button 
+                      @click="addToCart(product)" 
+                      class="add-cart-btn"
+                      :disabled="product.prod_stock === 0"
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
+                </div>
+              </article>
             </div>
-            <div class="product-details">
-              <div class="product-category">{{ product.prod_categorytype }}</div>
-              <h3 class="product-name">{{ product.prod_name }}</h3>
-              <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
-                <span class="meta-item">{{ product.yarn.yarn_composition }}</span>
-                <span class="meta-item">{{ product.yarn.yarn_weight }}</span>
-                <span class="meta-item">{{ product.yarn.yarn_thickness }}</span>
-              </div>
-              <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
-                <span class="meta-item">{{ product.tool.tool_material }}</span>
-                <span class="meta-item">{{ product.tool.tool_size }}</span>
-              </div>
-              <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
-              <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
-              <div class="product-actions">
-                <button @click="addToCart(product)" class="add-to-cart-btn">Add to Cart</button>
-              </div>
-            </div>
-          </div>
-        </div>
+          </section>
+        </main>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -99,6 +120,7 @@ export default {
     const userAccount = ref(null);
     const products = ref([]);
     const cartCount = ref(0);
+    const searchQuery = ref('');
 
     const fetchUserAccount = async () => {
       try {
@@ -198,184 +220,225 @@ export default {
       await fetchCartCount();
     });
 
-    return { userAccount, products, addToCart, cartCount };
+    return { userAccount, products, addToCart, cartCount, searchQuery };
   }
 };
 </script>
   
   <style>
         :root {
-            --primary-color: #feb1bf;
-            --background-color: #F2F2F2;
-            --text-color: rgb(0, 0, 0);
-            --light-gray: #646464;
-            --highlights: #77c275;
-        }
+          :root {
+  --primary-color: #feb1bf;
+  --primary-hover: #e99ca9;
+  --background-color: #f8f9fa;
+  --text-color: #2d3436;
+  --light-gray: #a0a0a0;
+  --success-color: #77c275;
+  --border-radius: 12px;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+  --container-max-width: 1400px;
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
+/* Header Styles */
+.header {
+  background-color: white;
+  border-bottom: 1px solid #eee;
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
 
-        body {
-            background-color: var(--background-color);
-        }
+.header-content {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
 
-        .header {
-            background-color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 30px;
-            border-bottom: 2px solid var(--light-gray);
-        }
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-color);
+}
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-        }
+.logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
 
-        .logo-img {
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
-        }
+.logo-text {
+  font-size: 1.5rem;
+  margin-left: 0.75rem;
+}
 
-        .logo-text {
-            font-size: 24px;
-            font-weight: bold;
-        }
+/* Search Bar */
+.search-container {
+  flex: 1;
+  max-width: 600px;
+  margin: 0 2rem;
+  position: relative;
+}
 
-        .search-container {
-            flex-grow: 1;
-            max-width: 500px;
-            margin: 0 20px;
-            position: relative;
-        }
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  padding-right: 3rem;
+  border-radius: var(--border-radius);
+  border: 2px solid #eee;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
 
-        .search-input {
-            width: 100%;
-            padding: 10px 15px;
-            border-radius: 20px;
-            border: 2px solid #ddd;
-            outline: none;
-        }
+.search-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(254, 177, 191, 0.2);
+}
 
-        .search-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
+.search-btn {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
 
-        .nav-icons {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
+.search-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.6;
+}
 
-        .nav-icon {
-            color: var(--text-color);
-            cursor: pointer;
-            position: relative;
-        }
+/* Navigation Icons */
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
 
-        .cart-icon {
-            position: relative;
-        }
+.cart-icon {
+  position: relative;
+  text-decoration: none;
+}
 
-        .cart-count {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: var(--highlights);
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--success-color);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
 
-        .nav-img-icon {
-            height: 25px;
-        }
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--text-color);
+}
 
-        .user-info {
-            width: 30px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+.user-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
 
-        .user-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background-color: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
+.user-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
 
-        .main-content {
-            display: flex;
-        }
+/* Main Content Layout */
+.main-content {
+  display: flex;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 2rem;
+  gap: 2rem;
+}
 
-        .sidebar {
-            height: 100vh;
-            width: 350px;
-            padding: 20px;
-            background-color: var(--background-color);
-            border-right: 2px solid var(--light-gray);
-        }
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+}
 
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-item {
-            color: var(--text-color);
-            padding: 12px 15px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 8px;
-            transition: background-color 0.3s;
-        }
-
-        .sidebar-item:first-child {
-            margin-top: 80px;
-        }
-
-        .sidebar-item:hover {
-            background-color: rgba(254, 177, 191, 0.2);
-        }
-
-        .sidebar-item.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .carousel-container {
-  margin-bottom: 2rem;
-  border-radius: 16px;
+.category-nav {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
-  box-shadow: var(--card-shadow);
+}
+
+.nav-title {
+  padding: 1.5rem;
+  margin: 0;
+  font-size: 1.25rem;
+  border-bottom: 1px solid #eee;
+}
+
+.category-menu {
+  list-style: none;
+  padding: 1rem 0;
+}
+
+.category-item {
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.category-item:hover {
+  background-color: rgba(254, 177, 191, 0.1);
+}
+
+.category-item.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Content Area */
+.content-area {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Hero Carousel */
+.hero-carousel {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-md);
 }
 
 .carousel-slide {
-  height: 400px;
   position: relative;
+  height: 400px;
 }
 
 .carousel-image {
@@ -384,7 +447,7 @@ export default {
   object-fit: cover;
 }
 
-.carousel-overlay {
+.carousel-content {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -397,190 +460,331 @@ export default {
 .carousel-title {
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
 
-.carousel-subtitle {
-  font-size: 1.1rem;
-  opacity: 0.9;
+/* Products Grid */
+.products-section {
+  margin-top: 2rem;
 }
 
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-left: 1rem;
+}
 
-        .content-area {
-            flex-grow: 1;
-            padding: 20px;
-            min-height: 100vh;
-        }
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  background-color: var(--primary-color);
+  border-radius: 2px;
+}
 
-        .page-title {
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-        }
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
 
-        .page-title::before {
-            content: '';
-            width: 5px;
-            height: 24px;
-            background-color: var(--primary-color);
-            margin-right: 10px;
-            border-radius: 3px;
-        }
+/* Product Cards */
+.product-card {
+  background-color: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
 
-        .products-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
 
-        .product-card {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
+.product-image {
+  height: 240px;
+  width: 100%;
+  overflow: hidden;
+}
 
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-        }
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
 
-        .product-image {
-            height: 200px;
-            width: 100%;
-            background-color: #f5f5f5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+.product-card:hover .product-image img {
+  transform: scale(1.05);
+}
 
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+.product-content {
+  padding: 1.5rem;
+}
 
-        .product-details {
-            padding: 15px;
-        }
+.product-category {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--light-gray);
+  letter-spacing: 0.5px;
+}
 
-        .product-category {
-            font-size: 12px;
-            color: var(--light-gray);
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
+.product-name {
+  margin: 0.5rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
 
-        .product-name {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: var(--text-color);
-        }
+.product-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
 
-        .product-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
+.meta-tag {
+  background-color: #f8f9fa;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  color: var(--light-gray);
+}
 
-        .meta-item {
-            background-color: #f5f5f5;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            color: var(--light-gray);
-        }
+.product-footer {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-        .product-price {
-            font-weight: bold;
-            font-size: 18px;
-            color: var(--text-color);
-            margin-bottom: 15px;
-        }
+.price-stock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
 
-        .product-stock {
-            font-size: 14px;
-            color: var(--light-gray);
-            margin-bottom: 15px;
-        }
+.product-price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
 
-        .product-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.stock-info {
+  font-size: 0.75rem;
+  color: var(--light-gray);
+}
 
-        .add-to-cart-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-weight: bold;
-        }
+.add-cart-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
-        .add-to-cart-btn:hover {
-            background-color: #e99ca9;
-        }
+.add-cart-btn:hover {
+  background-color: var(--primary-hover);
+}
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 30px 0 20px;
-        }
+.add-cart-btn:disabled {
+  background-color: var(--light-gray);
+  cursor: not-allowed;
+}
 
-        .section-title {
-            font-size: 20px;
-            color: var(--text-color);
-            position: relative;
-            padding-left: 15px;
-        }
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .header-content {
+    padding: 0 1rem;
+  }
 
-        .section-title::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 5px;
-            background-color: var(--primary-color);
-            border-radius: 3px;
-        }
+  .main-content {
+    padding: 1.5rem;
+  }
 
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                padding: 10px;
-            }
-            
-            .search-container {
-                margin: 15px 0;
-                max-width: 100%;
-            }
-            
-            .main-content {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-                border-right: none;
-                border-bottom: 2px solid var(--light-gray);
-            }
-            
-            .products-container {
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            }
-        }
-  </style>
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .carousel-slide {
+    height: 350px;
+  }
+
+  .carousel-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .search-container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  .nav-icons {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .main-content {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .sidebar {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+
+  .category-nav {
+    position: relative;
+  }
+
+  .category-menu {
+    display: flex;
+    overflow-x: auto;
+    padding: 0.5rem;
+    gap: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .category-item {
+    white-space: nowrap;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .product-image {
+    height: 200px;
+  }
+
+  .product-content {
+    padding: 1rem;
+  }
+
+  .carousel-slide {
+    height: 300px;
+  }
+
+  .carousel-content {
+    padding: 1.5rem;
+  }
+
+  .carousel-title {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 1.25rem;
+  }
+
+  .user-name {
+    display: none;
+  }
+
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-card {
+    max-width: 100%;
+  }
+
+  .carousel-slide {
+    height: 250px;
+  }
+
+  .carousel-title {
+    font-size: 1.5rem;
+  }
+
+  .carousel-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .product-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .add-cart-btn {
+    width: 100%;
+  }
+
+  .meta-tag {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Add smooth loading animation to products */
+.product-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Improve focus styles for accessibility */
+:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
+}
