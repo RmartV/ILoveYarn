@@ -1,96 +1,128 @@
 <template>
-  <div>
-    <header class="header">
-      <div class="logo-container">
-        <router-link to="/home">
-        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img"><
-        <h1 class="logo-text">I LOVE YARN PH</h1>
-        </router-link>
-      </div>
-      <div class="search-container">
-        <input type="text" class="search-input" placeholder="What are you looking for?">
-        <button class="search-btn">
-          <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
-        </button>
-      </div>
-      <div class="nav-icons">
-        <div class="nav-icon cart-icon">
-  <router-link to="/user-cart">
-    <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-    <span class="cart-count">{{ cartCount }}</span>
-  </router-link>
-</div>
-        <router-link to="/user-details">
-        <div class="nav-icon user-info">
-
-            <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
-            <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
-          
+  <div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-pink-200 p-4 shadow-md">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <router-link to="/home" class="flex items-center gap-4">
+            <img :src="require('../views/images/homelogo.jpg')" alt="Logo" class="w-12 h-12 rounded-full">
+            <h1 class="text-2xl font-bold">I LOVE YARN PH</h1>
+          </router-link>
         </div>
-      </router-link>
+        
+        <!-- Centered Search Bar -->
+        <div class="flex-1 max-w-2xl mx-8">
+          <div class="relative">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="What are you looking for?"
+              class="w-full px-4 py-2 rounded-full border-2 border-pink-300 focus:outline-none focus:border-pink-400"
+            >
+            <img src="../views/images/magnifying-glass.png" alt="Search" class="absolute right-4 top-2.5 w-5 h-5">
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-6">
+          <router-link to="/user-cart" class="relative">
+            <img src="../views/images/shopping-cart.png" alt="Cart" class="w-6 h-6">
+            <span class="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+              {{ cartCount }}
+            </span>
+          </router-link>
+          <router-link to="/my-orders">
+            <img src="../views/images/package.png" alt="My Orders" class="w-6 h-6">
+          </router-link>
+          <router-link to="/user-details" class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+              {{ userAccount?.useracc_fname?.charAt(0) || 'G' }}
+            </div>
+            <span>{{ userAccount?.useracc_fname || 'Guest' }}</span>
+          </router-link>
+        </div>
       </div>
     </header>
 
-    <!----------------------------- Sidebar -------------------------------->
-    <div class="main-content">
-      <div class="sidebar">
-        <ul class="sidebar-menu">
-          <li class="sidebar-item active">Yarn</li>
-          <li class="sidebar-item">Crochet Hooks</li>
-          <li class="sidebar-item">Decorative Tape</li>
-          <li class="sidebar-item">Ribbons</li>
-          <li class="sidebar-item">Accessories</li>
-        </ul>
-      </div>
-
-      <!----------------------------- Main Area -------------------------------->
-      <div class="content-area">
-        <!-- Carousel -->
-        <section class="carousel-container" aria-label="Featured Products">
-          <div class="carousel-slides">
-            <div class="carousel-slide active">
-              <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="carousel-image">
-              <div class="carousel-overlay">
-                <h2 class="carousel-title">Discover Our Collection</h2>
-                <p class="carousel-subtitle">Premium yarns and tools for your creative projects</p>
-              </div>
+    <div class="max-w-7xl mx-auto mt-6 flex gap-6">
+      <!-- Improved Sidebar with Filters -->
+      <aside class="w-64 bg-white p-4 rounded-lg shadow-sm">
+        <h2 class="text-lg font-semibold mb-4">Categories</h2>
+        <div v-for="category in categories" :key="category.name" class="mb-4">
+          <div class="flex items-center gap-2 mb-2">
+            <input
+              type="checkbox"
+              :id="category.name"
+              v-model="selectedCategories[category.name.toLowerCase()]"
+              class="w-4 h-4 text-pink-500"
+            >
+            <label :for="category.name" class="font-medium">{{ category.name }}</label>
+          </div>
+          <div v-if="selectedCategories[category.name.toLowerCase()]" class="ml-6 space-y-2">
+            <div v-for="sub in category.subCategories" :key="sub" class="flex items-center gap-2">
+              <input type="checkbox" :id="sub" v-model="selectedSubCategories[sub]" class="w-3 h-3 text-pink-400">
+              <label :for="sub" class="text-sm">{{ sub }}</label>
             </div>
           </div>
-        </section>
+        </div>
+        
+        <div class="mt-6">
+          <h2 class="text-lg font-semibold mb-4">Price Range</h2>
+          <div class="space-y-2">
+            <input
+              type="range"
+              v-model="priceRange"
+              min="0"
+              max="1000"
+              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            >
+            <div class="flex justify-between text-sm text-gray-600">
+              <span>₱{{ priceRange[0] }}</span>
+              <span>₱{{ priceRange[1] }}</span>
+            </div>
+          </div>
+        </div>
+      </aside>
 
-        <h2 class="page-title">All Products</h2>
-        <div class="products-container">
-          <div v-for="product in products" :key="product.prod_id" class="product-card">
+      <!-- Main Content Area -->
+      <main class="flex-1 bg-white p-6 rounded-lg shadow-sm">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold">All Products</h2>
+          <select v-model="sortBy" class="border p-2 rounded-lg">
+            <option value="featured">Sort by: Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="newest">Newest</option>
+          </select>
+        </div>
+        
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div v-for="product in filteredProducts" :key="product.prod_id" class="border rounded-lg p-4 hover:shadow-lg transition-shadow">
             <div class="product-image">
-              <img :src="product.image_url || '../views/images/default.png'" alt="Product Image">
+              <img :src="product.image_url || '../views/images/default.png'" :alt="product.prod_name" class="w-full h-48 object-cover rounded-lg mb-4">
             </div>
             <div class="product-details">
-              <div class="product-category">{{ product.prod_categorytype }}</div>
-              <h3 class="product-name">{{ product.prod_name }}</h3>
-              <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
+              <div class="product-category text-gray-600 text-sm">{{ product.prod_categorytype }}</div>
+              <h3 class="font-semibold">{{ product.prod_name }}</h3>
+              <div v-if="product.prod_categorytype === 'YARN'" class="product-meta">
                 <span class="meta-item">{{ product.yarn.yarn_composition }}</span>
                 <span class="meta-item">{{ product.yarn.yarn_weight }}</span>
                 <span class="meta-item">{{ product.yarn.yarn_thickness }}</span>
               </div>
-              <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
-                <span class="meta-item">{{ product.tool.tool_material }}</span>
-                <span class="meta-item">{{ product.tool.tool_size }}</span>
-              </div>
-              <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
-              <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
-              <div class="product-actions">
-                <button @click="addToCart(product)" class="add-to-cart-btn">Add to Cart</button>
-              </div>
+              <div class="font-bold mt-2">₱{{ product.prod_price.toFixed(2) }}</div>
+              <button @click="addToCart(product)" class="w-full mt-4 bg-pink-200 hover:bg-pink-300 py-2 rounded-lg font-medium transition-colors">
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { supabase } from '../lib/supabaseClient';
 
 export default {
@@ -98,6 +130,62 @@ export default {
     const userAccount = ref(null);
     const products = ref([]);
     const cartCount = ref(0);
+    const searchQuery = ref('');
+    const sortBy = ref('featured');
+    const priceRange = ref([0, 1000]);
+
+    const categories = [
+      { name: 'Yarn', subCategories: ['Cotton', 'Acrylic', 'Wool', 'Blend'] },
+      { name: 'Hooks', subCategories: ['Aluminum', 'Plastic', 'Steel'] },
+      { name: 'Tape', subCategories: ['Washi', 'Decorative', 'Pattern'] },
+      { name: 'Ribbons', subCategories: ['Satin', 'Grosgrain', 'Velvet'] },
+      { name: 'Accessories', subCategories: ['Stitch Markers', 'Scissors', 'Needles'] }
+    ];
+
+    const selectedCategories = ref({
+      yarn: false,
+      hooks: false,
+      tape: false,
+      ribbons: false,
+      accessories: false
+    });
+
+    const selectedSubCategories = ref({});
+
+    const filteredProducts = computed(() => {
+      return products.value.filter(product => {
+        // Apply search filter
+        if (searchQuery.value && !product.prod_name.toLowerCase().includes(searchQuery.value.toLowerCase())) {
+          return false;
+        }
+        
+        // Apply category filter
+        if (Object.values(selectedCategories.value).some(val => val)) {
+          if (!selectedCategories.value[product.prod_categorytype.toLowerCase()]) {
+            return false;
+          }
+        }
+        
+        // Apply price filter
+        if (product.prod_price < priceRange.value[0] || product.prod_price > priceRange.value[1]) {
+          return false;
+        }
+        
+        return true;
+      }).sort((a, b) => {
+        // Apply sorting
+        switch (sortBy.value) {
+          case 'price-asc':
+            return a.prod_price - b.prod_price;
+          case 'price-desc':
+            return b.prod_price - a.prod_price;
+          case 'newest':
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          default:
+            return 0;
+        }
+      });
+    });
 
     const fetchUserAccount = async () => {
       try {
@@ -197,12 +285,39 @@ export default {
       await fetchCartCount();
     });
 
-    return { userAccount, products, addToCart, cartCount };
+    return {
+      userAccount,
+      products,
+      cartCount,
+      searchQuery,
+      sortBy,
+      priceRange,
+      categories,
+      selectedCategories,
+      selectedSubCategories,
+      filteredProducts,
+      addToCart
+    };
   }
 };
 </script>
-  
-  <style>
+
+<style>
+.product-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.meta-item {
+  background-color: #f5f5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #646464;
+}
+
         :root {
             --primary-color: #feb1bf;
             --background-color: #F2F2F2;
