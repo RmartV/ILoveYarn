@@ -144,7 +144,8 @@ export default {
               useracc_lname: lastname.value,
               useracc_email: email.value,
               useracc_phone: phoneNum.value,
-              useracc_address: address.value
+              useracc_address: address.value,
+              useracc_password: password.value
             }
           ]);
 
