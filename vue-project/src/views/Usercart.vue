@@ -1,33 +1,86 @@
 <template>
   <div>
-    <!-- Header (same as home.vue) -->
-    
+    <header class="header">
+      <div class="logo-container">
+        <router-link to="/home">
+        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
+        <h1 class="logo-text">I LOVE YARN PH</h1>
+      </router-link>
+      </div>
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="What are you looking for?">
+        <button class="search-btn">
+          <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
+        </button>
+      </div>
+      <div class="nav-icons">
+        <div class="nav-icon cart-icon">
+          <router-link to="/user-cart">
+            <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
+            <span class="cart-count">{{ cartCount }}</span>
+          </router-link>
+        </div>
+        <router-link to="/user-details">
+          <div class="nav-icon user-info">
+            <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
+            <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
+          </div>
+        </router-link>
+      </div>
+    </header>
+
     <div class="cart-container">
       <h1 class="cart-title">Your Shopping Cart</h1>
-      <div v-if="loading">Loading...</div>
+      <div v-if="loading" class="loading-spinner">⏳ Loading...</div>
       <div v-else>
         <div v-if="cartItems.length === 0" class="empty-cart">
-          <img src="../views/images/shopping-cart.png" alt="Empty cart">
-          <p>Your cart is empty</p>
+          <img src="../views/images/shopping-cart.png" alt="Empty cart" class="empty-cart-img">
+          <p class="empty-cart-text">Your cart is feeling lonely!</p>
+          <router-link to="/" class="continue-shopping-btn">Continue Shopping</router-link>
         </div>
         <div v-else>
-          <div v-for="item in cartItems" :key="item.cart_item_id" class="cart-item">
-            <img :src="item.product.image_url" :alt="item.product.prod_name">
-            <div class="item-details">
-              <h3>{{ item.product.prod_name }}</h3>
-              <p>₱{{ (item.product.prod_price * item.items_quantity).toFixed(2) }}</p>
-              <div class="quantity-controls">
-                <button @click="updateQuantity(item, -1)" :disabled="item.items_quantity <= 1">-</button>
-                <span>{{ item.items_quantity }}</span>
-                <button @click="updateQuantity(item, 1)">+</button>
+          <div class="cart-items">
+            <div v-for="item in cartItems" :key="item.cart_item_id" class="cart-item">
+              <img 
+                :src="item.product.image_url || '../views/images/default-product.png'" 
+                :alt="item.product.prod_name" 
+                class="product-image"
+              >
+              <div class="item-details">
+                <h3 class="product-name">{{ item.product.prod_name }}</h3>
+                <p class="product-category">{{ item.product.prod_categorytype }}</p>
+                <div class="price-quantity">
+                  <p class="product-price">₱{{ (item.product.prod_price * item.quantity).toFixed(2) }}</p>
+                  <div class="quantity-controls">
+                    <button 
+                      @click="updateQuantity(item, -1)" 
+                      class="quantity-btn"
+                      :disabled="item.quantity <= 1"
+                    >-</button>
+                    <span class="quantity">{{ item.quantity }}</span>
+                    <button @click="updateQuantity(item, 1)" class="quantity-btn">+</button>
+                  </div>
+                </div>
+                <button @click="removeItem(item)" class="remove-btn">
+                  <img src="../views/images/recycle-bin.png" alt="Remove" class="remove-icon">
+                </button>
               </div>
-              <button @click="removeItem(item)">Remove</button>
             </div>
           </div>
+          
           <div class="cart-summary">
-            <p>Total Items: {{ totalItems }}</p>
-            <p>Total Price: ₱{{ totalPrice.toFixed(2) }}</p>
-            <button class="checkout-btn">Checkout</button>
+            <div class="summary-content">
+              <h2 class="summary-title">Order Summary</h2>
+              <div class="summary-row">
+                <span>Total Items:</span>
+                <span>{{ totalItems }}</span>
+              </div>
+              <div class="summary-row total">
+                <span>Total Price:</span>
+                <span>₱{{ totalPrice.toFixed(2) }}</span>
+              </div>
+              <button class="checkout-btn">Proceed to Checkout →</button>
+            </div>
           </div>
         </div>
       </div>
