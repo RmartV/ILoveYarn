@@ -1,114 +1,93 @@
 <template>
-<div class="shop-container">
-      <header class="header">
-        <div class="header-content">
-          <div class="logo-container">
-            <router-link to="/home" class="logo-link">
-              <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
-              <h1 class="logo-text">I LOVE YARN PH</h1>
-            </router-link>
-          </div>
+  <div>
+    <header class="header">
+      <div class="logo-container">
+        <router-link to="/home">
+        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img"><
+        <h1 class="logo-text">I LOVE YARN PH</h1>
+        </router-link>
+      </div>
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="What are you looking for?">
+        <button class="search-btn">
+          <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
+        </button>
+      </div>
+      <div class="nav-icons">
+        <div class="nav-icon cart-icon">
+  <router-link to="/user-cart">
+    <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
+    <span class="cart-count">{{ cartCount }}</span>
+  </router-link>
+</div>
+        <router-link to="/user-details">
+        <div class="nav-icon user-info">
+
+            <div class="user-avatar">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</div>
+            <span>{{ userAccount?.useracc_fname || 'Guest' }}</span>
+
           
-          <div class="search-container">
-            <input 
-              v-model="searchQuery"
-              type="text" 
-              class="search-input" 
-              placeholder="What are you looking for?"
-            >
-            <button class="search-btn">
-              <img class="search-icon" src="../views/images/magnifying-glass.png" alt="Search">
-            </button>
-          </div>
-
-          <div class="nav-icons">
-            <router-link to="/user-cart" class="cart-icon">
-              <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-              <span class="cart-count" v-if="cartCount > 0">{{ cartCount }}</span>
-            </router-link>
-            
-            <router-link to="/user-details" class="user-info">
-              <div class="user-avatar">
-                {{ userAccount?.useracc_fname?.charAt(0) || 'G' }}
-              </div>
-              <span class="user-name">{{ userAccount?.useracc_fname || 'Guest' }}</span>
-            </router-link>
-          </div>
         </div>
-      </header>
+      </router-link>
+      </div>
+    </header>
 
-      <div class="main-content">
-        <aside class="sidebar">
-          <nav class="category-nav">
-            <h2 class="nav-title">Categories</h2>
-            <ul class="category-menu">
-              <li class="category-item active">Yarn</li>
-              <li class="category-item">Crochet Hooks</li>
-              <li class="category-item">Decorative Tape</li>
-              <li class="category-item">Ribbons</li>
-              <li class="category-item">Accessories</li>
-            </ul>
-          </nav>
-        </aside>
+    <!----------------------------- Sidebar -------------------------------->
+    <div class="main-content">
+      <div class="sidebar">
+        <ul class="sidebar-menu">
+          <li class="sidebar-item active">Yarn</li>
+          <li class="sidebar-item">Crochet Hooks</li>
+          <li class="sidebar-item">Decorative Tape</li>
+          <li class="sidebar-item">Ribbons</li>
+          <li class="sidebar-item">Accessories</li>
+        </ul>
+      </div>
 
-        <main class="content-area">
-          <section class="hero-carousel" aria-label="Featured Products">
-            <div class="carousel-slide">
+      <!----------------------------- Main Area -------------------------------->
+      <div class="content-area">
+        <!-- Carousel -->
+        <section class="carousel-container" aria-label="Featured Products">
+          <div class="carousel-slides">
+            <div class="carousel-slide active">
               <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="carousel-image">
-              <div class="carousel-content">
+              <div class="carousel-overlay">
                 <h2 class="carousel-title">Discover Our Collection</h2>
                 <p class="carousel-subtitle">Premium yarns and tools for your creative projects</p>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          <section class="products-section">
-            <h2 class="section-title">All Products</h2>
-            <div class="products-grid">
-              <article 
-                v-for="product in products" 
-                :key="product.prod_id" 
-                class="product-card"
-              >
-                <div class="product-image">
-                  <img :src="product.image_url || '../views/images/default.png'" :alt="product.prod_name">
-                </div>
-                
-                <div class="product-content">
-                  <span class="product-category">{{ product.prod_categorytype }}</span>
-                  <h3 class="product-name">{{ product.prod_name }}</h3>
-                  
-                  <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
-                    <span class="meta-tag">{{ product.yarn.yarn_composition }}</span>
-                    <span class="meta-tag">{{ product.yarn.yarn_weight }}</span>
-                    <span class="meta-tag">{{ product.yarn.yarn_thickness }}</span>
-                  </div>
-                  
-                  <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
-                    <span class="meta-tag">{{ product.tool.tool_material }}</span>
-                    <span class="meta-tag">{{ product.tool.tool_size }}</span>
-                  </div>
-                  
-                  <div class="product-footer">
-                    <div class="price-stock">
-                      <span class="product-price">₱{{ product.prod_price.toFixed(2) }}</span>
-                      <span class="stock-info">{{ product.prod_stock }} in stock</span>
-                    </div>
-                    <button 
-                      @click="addToCart(product)" 
-                      class="add-cart-btn"
-                      :disabled="product.prod_stock === 0"
-                    >
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </article>
+        <h2 class="page-title">All Products</h2>
+        <div class="products-container">
+          <div v-for="product in products" :key="product.prod_id" class="product-card">
+            <div class="product-image">
+              <img :src="product.image_url || '../views/images/default.png'" alt="Product Image">
             </div>
-          </section>
-        </main>
+            <div class="product-details">
+              <div class="product-category">{{ product.prod_categorytype }}</div>
+              <h3 class="product-name">{{ product.prod_name }}</h3>
+              <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
+                <span class="meta-item">{{ product.yarn.yarn_composition }}</span>
+                <span class="meta-item">{{ product.yarn.yarn_weight }}</span>
+                <span class="meta-item">{{ product.yarn.yarn_thickness }}</span>
+              </div>
+              <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
+                <span class="meta-item">{{ product.tool.tool_material }}</span>
+                <span class="meta-item">{{ product.tool.tool_size }}</span>
+              </div>
+              <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
+              <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
+              <div class="product-actions">
+                <button @click="addToCart(product)" class="add-to-cart-btn">Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
