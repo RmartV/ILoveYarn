@@ -113,11 +113,11 @@ export default {
 
         const { data } = await supabase
           .from('user_account')
-          .select('*')
+          .select('useracc_fname')
           .eq('useracc_email', user.email)
           .single();
 
-        useracc.value = data;
+        userAccount.value = data;
       } catch (error) {
         console.error('Error fetching user:', error);
       }
