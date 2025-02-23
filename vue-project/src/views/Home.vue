@@ -232,7 +232,7 @@
             :root {
     --primary-color: #feb1bf;
     --primary-hover: #e99ca9;
-    --background-color: #f8f9fae7;
+    --background-color: #e9e9e9e7;
     --text-color: #2d3436;
     --light-gray: #a0a0a0;
     --success-color: #77c275;
@@ -243,102 +243,123 @@
     --container-max-width: 1400px;
   }
   
-  /* Header Styles */
-  .header {
-  background-color: var(--primary-color);
+/* Header Styles */
+.header {
+  background-color: #ffb6c1; /* Light pink color matching screenshot */
   padding: 0.75rem 2rem;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-content {
-  max-width: var(--container-max-width);
-  margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Main header container */
+.header-content {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 2rem;
 }
 
-/* Logo Container */
+/* Logo section */
 .logo-container {
   display: flex;
   align-items: center;
-  min-width: 200px; /* Ensure minimum width for logo */
-}
-
-.logo-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: var(--text-color);
+  gap: 1rem;
 }
 
 .logo-img {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   object-fit: contain;
 }
 
 .logo-text {
-  font-size: 1.5rem;
-  margin-left: 0.75rem;
-  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: black;
+  text-decoration: none;
   white-space: nowrap;
 }
 
-/* Search Container */
+/* Search section */
 .search-container {
-  flex: 1;
-  max-width: 500px;
-  margin: 0 2rem;
-  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 400px;
+  width: 100%;
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .search-input {
   width: 100%;
-  padding: 0.75rem 1rem;
-  padding-right: 3rem;
-  border-radius: 20px;
-  border: none;
-  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  font-size: 0.9rem;
 }
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+  border-color: #ccc;
 }
 
 .search-btn {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
+  background: white;
+  border: 1px solid #ddd;
+  border-left: none;
+  padding: 0.5rem 1rem;
   cursor: pointer;
-  padding: 0.5rem;
+  border-radius: 0 4px 4px 0;
 }
 
 .search-icon {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   opacity: 0.6;
 }
 
-/* Nav Icons */
+/* Cart section */
 .nav-icons {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  min-width: 200px; /* Ensure minimum width for nav icons */
-  justify-content: flex-end;
+  gap: 1rem;
 }
 
 .cart-icon {
   position: relative;
   text-decoration: none;
+}
+
+.nav-img-icon {
+  height: 20px;
+  opacity: 0.7;
+}
+
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.currency-text {
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.7);
 }
 
 .nav-img-icon {
@@ -805,45 +826,35 @@
     background: var(--primary-hover);
   }
 
-  @media (max-width: 992px) {
+  @media (max-width: 768px) {
   .header {
     padding: 0.75rem 1rem;
   }
   
-  .search-container {
-    margin: 0 1rem;
-  }
-}
-
-@media (max-width: 768px) {
   .header-content {
     gap: 1rem;
   }
-
-  .logo-container {
-    min-width: auto;
+  
+  .logo-text {
+    font-size: 1.1rem;
   }
-
-  .nav-icons {
-    min-width: auto;
-  }
-
-  .user-name {
-    display: none;
+  
+  .search-container {
+    max-width: 300px;
   }
 }
 
 @media (max-width: 480px) {
   .header {
-    padding: 0.75rem;
+    padding: 0.75rem 0.5rem;
   }
-
+  
   .logo-text {
     display: none;
   }
-
+  
   .search-container {
-    margin: 0 0.5rem;
+    max-width: none;
   }
 }
   
