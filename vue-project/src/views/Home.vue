@@ -826,35 +826,45 @@
     background: var(--primary-hover);
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 992px) {
   .header {
     padding: 0.75rem 1rem;
   }
   
+  .search-container {
+    margin: 0 1rem;
+  }
+}
+
+@media (max-width: 768px) {
   .header-content {
     gap: 1rem;
   }
-  
-  .logo-text {
-    font-size: 1.1rem;
+
+  .logo-container {
+    min-width: auto;
   }
-  
-  .search-container {
-    max-width: 300px;
+
+  .nav-icons {
+    min-width: auto;
+  }
+
+  .user-name {
+    display: none;
   }
 }
 
 @media (max-width: 480px) {
   .header {
-    padding: 0.75rem 0.5rem;
+    padding: 0.75rem;
   }
-  
+
   .logo-text {
     display: none;
   }
-  
+
   .search-container {
-    max-width: none;
+    margin: 0 0.5rem;
   }
 }
   

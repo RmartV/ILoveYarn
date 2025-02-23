@@ -125,6 +125,28 @@ export default {
       }
     };
 
+    const fetchProducts = async () => {
+        const { data, error } = await supabase
+          .from('product')
+          .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
+  
+        if (!error) {
+          products.value = data.map(product => ({
+            ...product,
+            image_url: getProductImage(product)
+          }));
+        }
+      };
+  
+      const getProductImage = (product) => {
+        if (product.prod_id === 101) {
+          return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
+        } else if (product.prod_id === 201) {
+          return supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
+        }
+        return '../views/images/default.png';
+      };
+
     const calculateTotals = () => {
       totalItems.value = cartItems.value.reduce((sum, item) => sum + item.items_quantity, 0);
       totalPrice.value = cartItems.value.reduce(
@@ -167,7 +189,7 @@ export default {
       }
     };
 
-    onMounted(fetchCartItems);
+    onMounted(fetchCartItems, fetchProducts);
 
     return { cartItems, totalPrice, totalItems, loading, updateQuantity, removeItem };
   }
