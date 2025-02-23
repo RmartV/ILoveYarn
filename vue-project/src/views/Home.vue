@@ -24,11 +24,8 @@
 </div>
         
         <div class="nav-icon user-info">
-          
             <div class="user-avatar"><router-link to="/user-details">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</router-link></div>
             <span><router-link to="/user-details">{{ userAccount?.useracc_fname || 'Guest' }}</router-link></span>
-
-          
         </div>
       </div>
     </header>
@@ -293,7 +290,7 @@ export default {
 
         .nav-icons {
             display: flex;
-            gap: 20px;
+            gap: 30px;
             align-items: center;
         }
 
@@ -327,6 +324,7 @@ export default {
         }
 
         .user-info {
+          margin-right: 10px;
             width: 30px;
             display: flex;
             align-items: center;
