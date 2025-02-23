@@ -22,8 +22,8 @@
         </div>
         <router-link to="/user-details">
           <div class="nav-icon user-info">
-            <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
-            <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
+            <div class="user-avatar">{{ useracc?.useracc_fname?.charAt(0) || 'G' }}</div>
+            <span>{{ useracc?.useracc_fname || 'Guest' }}</span>
           </div>
         </router-link>
       </div>
@@ -99,22 +99,22 @@ export default {
     const totalItems = ref(0);
     const loading = ref(true);
     const cartCount = ref(0);
-    const userInfo = ref(null);
+    const useracc = ref(null);
 
-    const fetchUserInfo = async () => {
+    const fetchUseracc = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
         const { data } = await supabase
-          .from('userinfo')
-          .select('userinfo_fname')
-          .eq('userinfo_email', user.email)
+          .from('user_account')
+          .select('useracc_fname')
+          .eq('useracc_email', user.email)
           .single();
 
-        userInfo.value = data;
+        useracc.value = data;
       } catch (error) {
-        console.error('Error fetching user info:', error);
+        console.error('Error fetching user:', error);
       }
     };
 
@@ -133,9 +133,9 @@ export default {
         if (!user) throw new Error('User not logged in');
 
         const { data: userData } = await supabase
-          .from('userinfo')
-          .select('userinfo_id')
-          .eq('userinfo_email', user.email)
+          .from('user_account')
+          .select('useracc_id')
+          .eq('useracc_email', user.email)
           .single();
 
         const { data } = await supabase
@@ -148,7 +148,7 @@ export default {
               tool(tool_material, tool_size)
             )
           `)
-          .eq('userinfo_id', userData.userinfo_id);
+          .eq('useracc_id', userData.useracc_id);
 
         cartItems.value = data.map(item => ({
           ...item,
@@ -166,24 +166,24 @@ export default {
     };
 
     const calculateTotals = () => {
-      totalItems.value = cartItems.value.reduce((sum, item) => sum + item.quantity, 0);
+      totalItems.value = cartItems.value.reduce((sum, item) => sum + item.items_quantity, 0);
       totalPrice.value = cartItems.value.reduce(
-        (sum, item) => sum + (item.quantity * item.product.prod_price), 0
+        (sum, item) => sum + (item.items_quantity * item.product.prod_price), 0
       );
     };
 
     const updateQuantity = async (item, change) => {
-      const newQuantity = item.quantity + change;
+      const newQuantity = item.items_quantity + change;
       if (newQuantity < 1) return;
 
       try {
         const { error } = await supabase
           .from('cartitems')
-          .update({ quantity: newQuantity })
+          .update({ items_quantity: newQuantity })
           .eq('cart_item_id', item.cart_item_id);
 
         if (!error) {
-          item.quantity = newQuantity;
+          item.items_quantity = newQuantity;
           calculateTotals();
         }
       } catch (error) {
@@ -213,15 +213,15 @@ export default {
         if (!user) return;
 
         const { data: userData } = await supabase
-          .from('userinfo')
-          .select('userinfo_id')
-          .eq('userinfo_email', user.email)
+          .from('user_account')
+          .select('useracc_id')
+          .eq('useracc_email', user.email)
           .single();
 
         const { count } = await supabase
           .from('cartitems')
           .select('*', { count: 'exact', head: true })
-          .eq('userinfo_id', userData.userinfo_id);
+          .eq('useracc_id', userData.useracc_id);
 
         cartCount.value = count || 0;
       } catch (error) {
@@ -230,7 +230,7 @@ export default {
     };
 
     onMounted(async () => {
-      await fetchUserInfo();
+      await fetchUseracc();
       await fetchCartItems();
       await fetchCartCount();
     });
@@ -243,7 +243,7 @@ export default {
       updateQuantity, 
       removeItem, 
       cartCount,
-      userInfo
+      useracc
     };
   }
 };
