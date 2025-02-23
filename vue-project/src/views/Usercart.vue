@@ -22,9 +22,8 @@
         </div>
         <router-link to="/user-details">
           <div class="nav-icon user-info">
-            <div class="user-avatar">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</div>
-            <span>{{ userAccount?.useracc_fname || 'Guest' }}</span>
-
+            <div class="user-avatar">{{ userInfo?.userinfo_fname?.charAt(0) || 'G' }}</div>
+            <span>{{ userInfo?.userinfo_fname || 'Guest' }}</span>
           </div>
         </router-link>
       </div>
@@ -99,24 +98,65 @@ export default {
     const totalPrice = ref(0);
     const totalItems = ref(0);
     const loading = ref(true);
+    const cartCount = ref(0);
+    const userInfo = ref(null);
+
+    const fetchUserInfo = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data } = await supabase
+          .from('userinfo')
+          .select('userinfo_fname')
+          .eq('userinfo_email', user.email)
+          .single();
+
+        userInfo.value = data;
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
+    };
+
+    const getProductImage = (product) => {
+      if (product.prod_id === 101) {
+        return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
+      } else if (product.prod_id === 201) {
+        return supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
+      }
+      return '../views/images/default-product.png';
+    };
 
     const fetchCartItems = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('Not logged in');
+        if (!user) throw new Error('User not logged in');
 
         const { data: userData } = await supabase
-          .from('user_account')
-          .select('useracc_id')
-          .eq('useracc_email', user.email)
+          .from('userinfo')
+          .select('userinfo_id')
+          .eq('userinfo_email', user.email)
           .single();
 
         const { data } = await supabase
           .from('cartitems')
-          .select('*, product:prod_id(*)')
-          .eq('useracc_id', userData.useracc_id);
+          .select(`
+            *, 
+            product:prod_id(
+              *,
+              yarn(yarn_composition, yarn_weight, yarn_thickness),
+              tool(tool_material, tool_size)
+            )
+          `)
+          .eq('userinfo_id', userData.userinfo_id);
 
-        cartItems.value = data || [];
+        cartItems.value = data.map(item => ({
+          ...item,
+          product: {
+            ...item.product,
+            image_url: getProductImage(item.product)
+          }
+        })) || [];
         calculateTotals();
       } catch (error) {
         console.error('Error fetching cart:', error);
@@ -126,28 +166,28 @@ export default {
     };
 
     const calculateTotals = () => {
-      totalItems.value = cartItems.value.reduce((sum, item) => sum + item.items_quantity, 0);
+      totalItems.value = cartItems.value.reduce((sum, item) => sum + item.quantity, 0);
       totalPrice.value = cartItems.value.reduce(
-        (sum, item) => sum + (item.items_quantity * item.product.prod_price), 0
+        (sum, item) => sum + (item.quantity * item.product.prod_price), 0
       );
     };
 
     const updateQuantity = async (item, change) => {
-      const newQuantity = item.items_quantity + change;
+      const newQuantity = item.quantity + change;
       if (newQuantity < 1) return;
 
       try {
         const { error } = await supabase
           .from('cartitems')
-          .update({ items_quantity: newQuantity })
+          .update({ quantity: newQuantity })
           .eq('cart_item_id', item.cart_item_id);
 
         if (!error) {
-          item.items_quantity = newQuantity;
+          item.quantity = newQuantity;
           calculateTotals();
         }
       } catch (error) {
-        console.error('Update error:', error);
+        console.error('Error updating quantity:', error);
       }
     };
 
@@ -163,13 +203,48 @@ export default {
           calculateTotals();
         }
       } catch (error) {
-        console.error('Delete error:', error);
+        console.error('Error removing item:', error);
       }
     };
 
-    onMounted(fetchCartItems);
+    const fetchCartCount = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-    return { cartItems, totalPrice, totalItems, loading, updateQuantity, removeItem };
+        const { data: userData } = await supabase
+          .from('userinfo')
+          .select('userinfo_id')
+          .eq('userinfo_email', user.email)
+          .single();
+
+        const { count } = await supabase
+          .from('cartitems')
+          .select('*', { count: 'exact', head: true })
+          .eq('userinfo_id', userData.userinfo_id);
+
+        cartCount.value = count || 0;
+      } catch (error) {
+        console.error('Error fetching cart count:', error);
+      }
+    };
+
+    onMounted(async () => {
+      await fetchUserInfo();
+      await fetchCartItems();
+      await fetchCartCount();
+    });
+
+    return { 
+      cartItems, 
+      totalPrice, 
+      totalItems, 
+      loading, 
+      updateQuantity, 
+      removeItem, 
+      cartCount,
+      userInfo
+    };
   }
 };
 </script>

@@ -51,9 +51,9 @@
           }
   
           const { data, error: fetchError } = await supabase
-            .from('userinfo')
+            .from('user_account')
             .select('*')
-            .eq('userinfo_email', user.email)
+            .eq('useracc_email', user.email)
             .single();
   
           if (fetchError) throw fetchError;
