@@ -77,6 +77,20 @@
                 <span class="meta-item">{{ product.tool.tool_material }}</span>
                 <span class="meta-item">{{ product.tool.tool_size }}</span>
               </div>
+              <div class="product-meta" v-if="product.prod_categorytype === 'TAPE'">
+                <span class="meta-item">{{ product.tape.tape_type}}</span>
+                <span class="meta-item">{{ product.tape.tape_length }}</span>
+                <span class="meta-item">{{ product.tape.tape_size }}</span>
+              </div>
+              <div class="product-meta" v-if="product.prod_categorytype === 'ACCESSORIES'">
+                <span class="meta-item">{{ product.accs.accs_category }}</span>
+                <span class="meta-item">{{ product.accs.accs_quantity }}</span>
+              </div>
+              <div class="product-meta" v-if="product.prod_categorytype === 'RIBBONS'">
+                <span class="meta-item">{{ product.ribbons.ribbons_length }}</span>
+                <span class="meta-item">{{ product.ribbons.ribbons_thickness }}</span>
+                <span class="meta-item">{{ product.ribbons.ribbons_material }}</span>
+              </div>
               <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
               <div class="product-stock">In stock: {{ product.prod_stock }} pcs</div>
               <div class="product-actions">
@@ -121,7 +135,7 @@ export default {
     const fetchProducts = async () => {
       const { data, error } = await supabase
         .from('product')
-        .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size)');
+        .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size), tape(tape_type, tape_length, tape_size), ribbons(ribbons_length, ribbons_thickness, ribbons_material), accessories(accs_category, accs_quantity)');
 
       if (!error) {
         products.value = data.map(product => ({
