@@ -234,8 +234,8 @@ export default {
         body {
             background-color: var(--background-color);
         }
-router-link{
-text-decoration: none;
+        router-link a{
+    text-decoration: none !important;
 }
         .header {
     background-color: var(--primary-color);

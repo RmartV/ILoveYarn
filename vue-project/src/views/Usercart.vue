@@ -113,7 +113,7 @@ export default {
 
         const { data } = await supabase
           .from('user_account')
-          .select('useracc_fname')
+          .select('*')
           .eq('useracc_email', user.email)
           .single();
 
@@ -298,7 +298,9 @@ export default {
             font-size: 24px;
             font-weight: bold;
         }
-
+        router-link a{
+    text-decoration: none !important;
+}
         .search-container {
             flex-grow: 1;
             max-width: 500px;

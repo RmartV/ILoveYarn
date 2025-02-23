@@ -27,7 +27,7 @@
           </div>
           <div class="info-item">
             <label>Account Created:</label>
-            <p>{{ new Date(userInfo.useracc_createdAt).toLocaleDateString() }}</p>
+            <p>{{ new Date(userInfo.useracc_createdAt) }}</p>
           </div>
         </div>
       </div>
