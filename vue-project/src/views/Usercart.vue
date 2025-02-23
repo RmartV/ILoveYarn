@@ -4,8 +4,10 @@
       <div class="logo-container">
         <router-link to="/home">
         <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
-        <h1 class="logo-text">I LOVE YARN PH</h1>
       </router-link>
+      <router-link to="/home">
+        <h1 class="logo-text">I LOVE YARN PH</h1>
+        </router-link>
       </div>
       <div class="search-container">
         <input type="text" class="search-input" placeholder="What are you looking for?">
@@ -15,17 +17,20 @@
       </div>
       <div class="nav-icons">
         <div class="nav-icon cart-icon">
-          <router-link to="/user-cart">
-            <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-            <span class="cart-count">{{ cartCount }}</span>
-          </router-link>
-        </div>
+  <router-link to="/user-cart">
+    <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
+    <span class="cart-count">{{ cartCount }}</span>
+  </router-link>
+</div>
         <router-link to="/user-details">
-          <div class="nav-icon user-info">
-            <div class="user-avatar">{{ useracc?.useracc_fname?.charAt(0) || 'G' }}</div>
-            <span>{{ useracc?.useracc_fname || 'Guest' }}</span>
-          </div>
-        </router-link>
+        <div class="nav-icon user-info">
+
+            <div class="user-avatar">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</div>
+            <span>{{ userAccount?.useracc_fname || 'Guest' }}</span>
+
+          
+        </div>
+      </router-link>
       </div>
     </header>
 
