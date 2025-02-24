@@ -3,7 +3,9 @@
     <header>
         <div class="logo-container">
           <router-link to="/home">
-            <div class="logo"><img src="../views/images/homelogo.jpg"></div>
+            <div class="logo">
+              <img src="../views/images/homelogo.jpg" alt="ILoveYarnPH" class="logo-img">
+            </div>
             <div class="store-name">ILoveYarnPH</div>
           </router-link>
         </div>
@@ -12,10 +14,16 @@
         </div>
         <div class="user-actions">
             <div class="icon-container">
-                <div class="icon"><img src="../views/images/package.png"></div>
+                <div class="icon">
+                  <img src="../views/images/package.png" alt="Package" class="action-icon">
+                </div>
             </div>
             <div class="icon-container">
-                <div class="icon"><router-link to="/user-cart"><img src="../views/images/shopping-cart.png" alt="Cart"></router-link></div>
+                <div class="icon">
+                  <router-link to="/user-cart">
+                    <img src="../views/images/shopping-cart.png" alt="Cart" class="action-icon">
+                  </router-link>
+                </div>
                 <div class="cart-count">{{ cartCount }}</div>
             </div>
             <div class="user-name"><router-link to="/user-details">{{ userAccount?.useracc_fname || 'Guest' }}</router-link></div>
@@ -308,24 +316,41 @@ export default {
             z-index: 100;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
 
-        .logo {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #f0c4e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #8a2be2;
-            font-weight: bold;
-            font-size: 20px;
-        }
+.action-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f0c4e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-container a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
 
         .store-name {
             font-size: 22px;
@@ -353,23 +378,23 @@ export default {
         }
 
         .user-actions {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
-        .icon-container {
-            position: relative;
-            cursor: pointer;
-        }
+.icon-container {
+    position: relative;
+    cursor: pointer;
+}
 
-        .icon {
-            width: 25px;
-            height: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+.icon {
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
         .cart-count {
             position: absolute;
