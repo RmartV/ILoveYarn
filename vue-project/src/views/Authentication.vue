@@ -37,7 +37,9 @@
     --input-color: #F3F0FF;
     --stroke-color: #c38592;
   }
-  
+  template{
+    background-color: white;
+  }
   .page {
     margin: 0;
     padding: 0;
