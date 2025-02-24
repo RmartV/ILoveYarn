@@ -43,17 +43,16 @@
                 <li><a href="#">ACCESSORIES</a></li>
             </ul>
         </div>
-        <section class="carousel-container" aria-label="Featured Products">
-          <div class="carousel-slides">
-            <div class="carousel-slide active">
-              <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="carousel-image">
-              <div class="carousel-overlay">
-                <h2 class="carousel-title">Discover Our Collection</h2>
-                <p class="carousel-subtitle">Premium yarns and tools for your creative projects</p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <section class="welcome-board-container" aria-label="Welcome">
+      <div class="welcome-board">
+        <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="welcome-image">
+        <div class="welcome-overlay">
+          <h2 class="welcome-title">Welcome to ILoveYarnPH</h2>
+          <p class="welcome-subtitle">Premium yarns and tools for your creative projects</p>
+          <button class="shop-now-button">Shop Now</button>
+        </div>
+      </div>
+    </section>
         <!-- Product Display -->
         <div class="product-container">
             <h2 class="product-heading">Featured Products</h2>
@@ -407,44 +406,76 @@ export default {
     justify-content: center;
 }
 
-.carousel-container {
-  margin-bottom: 2rem;
+.welcome-board-container {
+  margin: 1.5rem;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--card-shadow);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  height: 350px;
+  width: calc(100% - 3rem);
 }
 
-.carousel-slide {
-  height: 400px;
+.welcome-board {
+  height: 100%;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
-.carousel-image {
+.welcome-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.carousel-overlay {
+.welcome-overlay {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   right: 0;
-  padding: 3rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  bottom: 0;
+  padding: 2.5rem;
+  background: linear-gradient(to right, rgba(0,0,0,0.7) 20%, transparent 70%);
   color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 
-.carousel-title {
+.welcome-title {
   font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  max-width: 60%;
 }
 
-.carousel-subtitle {
-  font-size: 1.1rem;
+.welcome-subtitle {
+  font-size: 1.2rem;
   opacity: 0.9;
+  margin-bottom: 1.5rem;
+  max-width: 50%;
 }
+
+.shop-now-button {
+  background-color: var(--highlights);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.shop-now-button:hover {
+  background-color: #ff7a92;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
 
         .cart-count {
             position: absolute;
@@ -465,6 +496,7 @@ export default {
           text-decoration: none;
         }
         .user-name {
+            color:white;
             font-size: 14px;
             font-weight: bold;
         }
@@ -702,4 +734,40 @@ export default {
             border-top: 1px solid #555;
             font-size: 14px;
         }
+
+        
+@media (max-width: 768px) {
+  .welcome-board-container {
+    height: 300px;
+  }
+  
+  .welcome-title {
+    font-size: 2rem;
+    max-width: 80%;
+  }
+  
+  .welcome-subtitle {
+    font-size: 1rem;
+    max-width: 70%;
+  }
+}
+@media (max-width: 480px) {
+  .welcome-board-container {
+    height: 250px;
+  }
+  
+  .welcome-overlay {
+    background: linear-gradient(to right, rgba(0,0,0,0.8) 40%, transparent 100%);
+  }
+  
+  .welcome-title {
+    font-size: 1.5rem;
+    max-width: 100%;
+  }
+  
+  .welcome-subtitle {
+    font-size: 0.9rem;
+    max-width: 100%;
+  }
+}
   </style>
