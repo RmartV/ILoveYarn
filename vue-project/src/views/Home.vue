@@ -286,6 +286,7 @@ export default {
   <style>
         :root {
             --primary-color: #feb1bf;
+            --highlights: #ff8da1;
             --background-color: #F2F2F2;
             --text-color: rgb(0, 0, 0);
             --light-gray: #646464;
@@ -309,7 +310,7 @@ export default {
             justify-content: space-between;
             align-items: center;
             padding: 15px 30px;
-            background-color: #ffffff;
+            background-color: var(--primary-color);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
@@ -355,7 +356,7 @@ export default {
         .store-name {
             font-size: 22px;
             font-weight: bold;
-            color: #8a2be2;
+            color: var(--background-color);
         }
 
         .search-container {
@@ -374,7 +375,7 @@ export default {
         }
 
         .search-bar:focus {
-            border-color: #8a2be2;
+            border-color: var(--highlights);
         }
 
         .user-actions {
@@ -433,7 +434,7 @@ export default {
         .sidebar h3 {
             font-size: 18px;
             margin-bottom: 15px;
-            color: #8a2be2;
+            color: var(--highlights);
             border-bottom: 2px solid #f0c4e0;
             padding-bottom: 10px;
         }
@@ -456,7 +457,7 @@ export default {
         }
 
         .sidebar a:hover {
-            color: #8a2be2;
+            color: var(--highlights);
         }
 
         /* Product Display Styles */
@@ -537,7 +538,7 @@ export default {
 
         .product-type {
             font-size: 13px;
-            color: #8a2be2;
+            color: var(--highlights);
             margin-bottom: 8px;
         }
 
@@ -573,7 +574,7 @@ export default {
         }
 
         .product-button {
-            background-color: #8a2be2;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             padding: 8px 15px;
@@ -586,7 +587,7 @@ export default {
         }
 
         .product-button:hover {
-            background-color: #7926a8;
+            background-color: var(--highlights);
         }
 
         /* Footer Styles */
@@ -612,7 +613,7 @@ export default {
             font-size: 18px;
             margin-bottom: 15px;
             color: #f0c4e0;
-            border-bottom: 2px solid #8a2be2;
+            border-bottom: 2px solid var(--highlights);
             padding-bottom: 10px;
             display: inline-block;
         }
