@@ -2,21 +2,23 @@
     <!-- Header -->
     <header>
         <div class="logo-container">
-            <div class="logo">Y</div>
+          <router-link to="/home">
+            <div class="logo"><img src="../views/images/homelogo.jpg"></div>
             <div class="store-name">ILoveYarnPH</div>
+          </router-link>
         </div>
         <div class="search-container">
             <input type="text" class="search-bar" placeholder="Search for yarn products...">
         </div>
         <div class="user-actions">
             <div class="icon-container">
-                <div class="icon">📦</div>
+                <div class="icon"><img src="../views/images/package.png"></div>
             </div>
             <div class="icon-container">
-                <div class="icon">🛒</div>
-                <div class="cart-count">3</div>
+                <div class="icon"><router-link to="/user-cart"><img src="../views/images/shopping-cart.png" alt="Cart"></router-link></div>
+                <div class="cart-count">{{ cartCount }}</div>
             </div>
-            <div class="user-name">Maria Santos</div>
+            <div class="user-name"><router-link to="/user-details">{{ userAccount?.useracc_fname || 'Guest' }}</router-link></div>
         </div>
     </header>
 
@@ -47,9 +49,26 @@
                         <div class="product-description" v-if="product.prod_categorytype === 'YARN'">
                           {{ product.yarn.yarn_composition }} • {{ product.yarn.yarn_weight }} • {{ product.yarn.yarn_thickness }}
                         </div>
-                        <div class="product-stock">In stock: {{ product.prod_stock }}</div>
+
+                        <div class="product-description" v-if="product.prod_categorytype === 'TOOL'">
+                          {{ product.tool.tool_material }} • {{ product.tool.tool_size }}
+                        </div>
+
+                        <div class="product-description" v-if="product.prod_categorytype === 'TAPE'">
+                          {{ product.tape.tape_type}} • {{ product.tape.tape_length }} • {{ product.tape.tape_size }}
+                        </div>
+
+                        <div class="product-description" v-if="product.prod_categorytype === 'ACCESSORIES'">
+                          {{ product.accs.accs_category }} • {{ product.accs.accs_quantity }}
+                        </div>
+
+                        <div class="product-description" v-if="product.prod_categorytype === 'RIBOONS'">
+                          {{ product.ribbons.ribbons_length }} • {{ product.ribbons.ribbons_thickness }} • {{ product.ribbons.ribbons_material }}
+                        </div>
+
+                        <div class="stock-info">In stock: {{ product.prod_stock }}</div>
                         <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
-                        <button class="product-button">Add to Cart</button>
+                        <button  @click="addToCart(product)" class="product-button">Add to Cart</button>
                     </div>
                 </div>
             </div>
@@ -439,6 +458,9 @@ export default {
             overflow: hidden;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .product-card:hover {
@@ -446,16 +468,39 @@ export default {
         }
 
         .product-image {
-            height: 180px;
+            height: 200px;
             background-color: #f5f5f5;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #aaa;
+            color: #666;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .image-dimensions {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 10px;
+            padding: 2px 5px;
+            border-radius: 3px;
         }
 
         .product-details {
             padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .product-name {
@@ -496,6 +541,12 @@ export default {
             margin-bottom: 10px;
         }
 
+        .stock-info {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
         .product-button {
             background-color: #8a2be2;
             color: white;
@@ -506,6 +557,7 @@ export default {
             font-size: 14px;
             transition: background-color 0.3s;
             width: 100%;
+            margin-top: auto;
         }
 
         .product-button:hover {
