@@ -128,6 +128,54 @@ export default {
         return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
       } else if (product.prod_id === 201) {
         return supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
+      } else if (product.prod_id === 102) {
+        return supabase.storage.from('product_images').getPublicUrl('102.png').data.publicUrl;
+      } else if (product.prod_id === 103) {
+        return supabase.storage.from('product_images').getPublicUrl('103.png').data.publicUrl;      
+      } else if (product.prod_id === 104) {
+        return supabase.storage.from('product_images').getPublicUrl('104.png').data.publicUrl;
+      } else if (product.prod_id === 105) {
+        return supabase.storage.from('product_images').getPublicUrl('105.png').data.publicUrl;         
+      } else if (product.prod_id === 106) {
+        return supabase.storage.from('product_images').getPublicUrl('106.png').data.publicUrl;         
+      } else if (product.prod_id === 107) {
+        return supabase.storage.from('product_images').getPublicUrl('107.png').data.publicUrl;         
+      } else if (product.prod_id === 108) {
+        return supabase.storage.from('product_images').getPublicUrl('108.png').data.publicUrl;
+      } else if (product.prod_id === 109) {
+        return supabase.storage.from('product_images').getPublicUrl('109.png').data.publicUrl; 
+      } else if (product.prod_id === 110) {
+        return supabase.storage.from('product_images').getPublicUrl('110.png').data.publicUrl;
+      } else if (product.prod_id === 111) {
+        return supabase.storage.from('product_images').getPublicUrl('111.png').data.publicUrl;
+      } else if (product.prod_id === 112) {
+        return supabase.storage.from('product_images').getPublicUrl('112.png').data.publicUrl;
+      } else if (product.prod_id === 113) {
+        return supabase.storage.from('product_images').getPublicUrl('113.png').data.publicUrl;      
+      } else if (product.prod_id === 114) {
+        return supabase.storage.from('product_images').getPublicUrl('114.png').data.publicUrl;     
+      } else if (product.prod_id === 115) {
+        return supabase.storage.from('product_images').getPublicUrl('115.png').data.publicUrl;
+      } else if (product.prod_id === 116) {
+        return supabase.storage.from('product_images').getPublicUrl('116.png').data.publicUrl; 
+      } else if (product.prod_id === 117) {
+        return supabase.storage.from('product_images').getPublicUrl('117.png').data.publicUrl;
+      } else if (product.prod_id === 118) {
+        return supabase.storage.from('product_images').getPublicUrl('118.png').data.publicUrl;      
+      } else if (product.prod_id === 119) {
+        return supabase.storage.from('product_images').getPublicUrl('119.png').data.publicUrl;     
+      } else if (product.prod_id === 120) {
+        return supabase.storage.from('product_images').getPublicUrl('120.png').data.publicUrl;
+      } else if (product.prod_id === 121) {
+        return supabase.storage.from('product_images').getPublicUrl('121.png').data.publicUrl; 
+      } else if (product.prod_id === 125) {
+        return supabase.storage.from('product_images').getPublicUrl('125.png').data.publicUrl; 
+      } else if (product.prod_id === 202) {
+        return supabase.storage.from('product_images').getPublicUrl('202.png').data.publicUrl; 
+      } else if (product.prod_id === 203) {
+        return supabase.storage.from('product_images').getPublicUrl('203.png').data.publicUrl; 
+      } else if (product.prod_id === 204) {
+        return supabase.storage.from('product_images').getPublicUrl('204.png').data.publicUrl; 
       }
       return '../views/images/default-product.png';
     };
