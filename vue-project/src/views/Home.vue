@@ -290,7 +290,7 @@ export default {
             --background-color: #F2F2F2;
             --text-color: rgb(0, 0, 0);
             --light-gray: #646464;
-            --highlightgreen: #77c275;
+            --green: #77c275;
         }
 
         * {
