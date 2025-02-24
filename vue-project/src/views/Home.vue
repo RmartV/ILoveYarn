@@ -26,16 +26,11 @@
         <div class="sidebar">
             <h3>Categories</h3>
             <ul>
-                <li><a href="#">Acrylic Yarn</a></li>
-                <li><a href="#">Cotton Yarn</a></li>
-                <li><a href="#">Wool Yarn</a></li>
-                <li><a href="#">Specialty Yarn</a></li>
-                <li><a href="#">Yarn Packs</a></li>
-                <li><a href="#">Crochet Hooks</a></li>
-                <li><a href="#">Knitting Needles</a></li>
-                <li><a href="#">Accessories</a></li>
-                <li><a href="#">Pattern Books</a></li>
-                <li><a href="#">Kits for Beginners</a></li>
+                <li><a href="#">YARN</a></li>
+                <li><a href="#">TOOLS</a></li>
+                <li><a href="#">DECORATIVE TAPE</a></li>
+                <li><a href="#">RIBBONS</a></li>
+                <li><a href="#">ACCESSORIES</a></li>
             </ul>
         </div>
 
@@ -44,89 +39,16 @@
             <h2 class="product-heading">Featured Products</h2>
             <div class="products-grid">
                 <!-- Product 1 -->
-                <div class="product-card">
-                    <div class="product-image">Soft Cotton Yarn</div>
+                <div v-for="product in products" :key="product.prod_id" class="product-card">
+                    <div class="product-image"><img :src="product.image_url || '../views/images/default.png'" alt="Product Image"></div>
                     <div class="product-details">
-                        <div class="product-name">Premium Soft Cotton Yarn</div>
-                        <div class="product-price">PHP 199.00</div>
-                        <div class="product-rating">★★★★★</div>
-                        <button class="product-button">Add to Cart</button>
-                    </div>
-                </div>
-
-                <!-- Product 2 -->
-                <div class="product-card">
-                    <div class="product-image">Colorful Acrylic Yarn</div>
-                    <div class="product-details">
-                        <div class="product-name">Rainbow Acrylic Yarn Bundle</div>
-                        <div class="product-price">PHP 299.00</div>
-                        <div class="product-rating">★★★★☆</div>
-                        <button class="product-button">Add to Cart</button>
-                    </div>
-                </div>
-
-                <!-- Product 3 -->
-                <div class="product-card">
-                    <div class="product-image">Merino Wool Skein</div>
-                    <div class="product-details">
-                        <div class="product-name">Soft Merino Wool - Navy Blue</div>
-                        <div class="product-price">PHP 349.00</div>
-                        <div class="product-rating">★★★★★</div>
-                        <button class="product-button">Add to Cart</button>
-                    </div>
-                </div>
-
-                <!-- Product 4 -->
-                <div class="product-card">
-                    <div class="product-image">Bamboo Crochet Hooks</div>
-                    <div class="product-details">
-                        <div class="product-name">Bamboo Crochet Hook Set</div>
-                        <div class="product-price">PHP 499.00</div>
-                        <div class="product-rating">★★★★☆</div>
-                        <button class="product-button">Add to Cart</button>
-                    </div>
-                </div>
-
-                <!-- Product 5 -->
-                <div class="product-card">
-                    <div class="product-image">Baby Yarn Collection</div>
-                    <div class="product-details">
-                        <div class="product-name">Baby Soft Yarn Set - Pastels</div>
-                        <div class="product-price">PHP 399.00</div>
-                        <div class="product-rating">★★★★★</div>
-                        <button class="product-button">Add to Cart</button>
-                    </div>
-                </div>
-
-                <!-- Product 6 -->
-                <div class="product-card">
-                    <div class="product-image">Chunky Yarn</div>
-                    <div class="product-details">
-                        <div class="product-name">Super Chunky Yarn - Grey</div>
-                        <div class="product-price">PHP 259.00</div>
-                        <div class="product-rating">★★★★☆</div>
-                        <button class="product-button">Add to Cart</button>
-                    </div>
-                </div>
-
-                <!-- Product 7 -->
-                <div class="product-card">
-                    <div class="product-image">Knitting Needles</div>
-                    <div class="product-details">
-                        <div class="product-name">Aluminum Knitting Needle Set</div>
-                        <div class="product-price">PHP 599.00</div>
-                        <div class="product-rating">★★★★★</div>
-                        <button class="product-button">Add to Cart</button>
-                    </div>
-                </div>
-
-                <!-- Product 8 -->
-                <div class="product-card">
-                    <div class="product-image">Beginner's Kit</div>
-                    <div class="product-details">
-                        <div class="product-name">Crochet Starter Kit</div>
-                        <div class="product-price">PHP 799.00</div>
-                        <div class="product-rating">★★★★☆</div>
+                        <div class="product-name">{{ product.prod_name }}</div>
+                        <div class="product-type">{{ product.prod_categorytype }}</div>
+                        <div class="product-description" v-if="product.prod_categorytype === 'YARN'">
+                          {{ product.yarn.yarn_composition }} • {{ product.yarn.yarn_weight }} • {{ product.yarn.yarn_thickness }}
+                        </div>
+                        <div class="product-stock">In stock: {{ product.prod_stock }}</div>
+                        <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
                         <button class="product-button">Add to Cart</button>
                     </div>
                 </div>
@@ -349,6 +271,7 @@ export default {
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
         }
+
         body {
             background-color: #f9f9f9;
         }
@@ -542,6 +465,23 @@ export default {
             color: #333;
         }
 
+        .product-type {
+            font-size: 13px;
+            color: #8a2be2;
+            margin-bottom: 8px;
+        }
+
+        .product-description {
+            background-color: #f9f5fd;
+            border: 1px solid #e6d5f5;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
         .product-price {
             font-size: 18px;
             font-weight: bold;
@@ -632,5 +572,4 @@ export default {
             border-top: 1px solid #555;
             font-size: 14px;
         }
-
   </style>
