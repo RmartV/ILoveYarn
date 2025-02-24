@@ -99,6 +99,7 @@
 import { ref, computed } from 'vue';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'vue-router';
+import bcrypt from 'bcryptjs';
 
 export default {
   setup() {
@@ -121,11 +122,14 @@ export default {
       
       try {
         if (password.value !== repeatPassword.value) {
-          errorMessage.value = "Passwords do not match.";
-          return;
+          throw new Error("Passwords do not match");
         }
 
-        // Sign up with Supabase Authentication
+        // Hash password
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = bcrypt.hashSync(password.value, salt);
+
+        // Create Supabase auth user
         const { data, error } = await supabase.auth.signUp({
           email: email.value,
           password: password.value,
@@ -134,18 +138,18 @@ export default {
         if (error) throw error;
         if (!data.user) throw new Error("Signup failed, please try again.");
 
-        // Insert user details into the UserInfo table
+        // Insert into custom user table
         const { error: insertError } = await supabase
           .from("user_account")
           .insert([
-          {
-              useracc_id: data.user.id,
+            {
+              supabase_uid: data.user.id,
               useracc_fname: firstname.value,
               useracc_lname: lastname.value,
               useracc_email: email.value,
               useracc_phone: phoneNum.value,
               useracc_address: address.value,
-              useracc_password: password.value
+              useracc_password_hash: hashedPassword
             }
           ]);
 
