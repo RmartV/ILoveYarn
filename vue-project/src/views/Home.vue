@@ -43,7 +43,17 @@
                 <li><a href="#">ACCESSORIES</a></li>
             </ul>
         </div>
-
+        <section class="carousel-container" aria-label="Featured Products">
+          <div class="carousel-slides">
+            <div class="carousel-slide active">
+              <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="carousel-image">
+              <div class="carousel-overlay">
+                <h2 class="carousel-title">Discover Our Collection</h2>
+                <p class="carousel-subtitle">Premium yarns and tools for your creative projects</p>
+              </div>
+            </div>
+          </div>
+        </section>
         <!-- Product Display -->
         <div class="product-container">
             <h2 class="product-heading">Featured Products</h2>
@@ -344,7 +354,7 @@ export default {
 .logo-container {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 15px;
 }
 
 .logo-container a {
@@ -397,6 +407,45 @@ export default {
     justify-content: center;
 }
 
+.carousel-container {
+  margin-bottom: 2rem;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.carousel-slide {
+  height: 400px;
+  position: relative;
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 3rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: white;
+}
+
+.carousel-title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.carousel-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
         .cart-count {
             position: absolute;
             top: -8px;
@@ -412,9 +461,12 @@ export default {
             justify-content: center;
         }
 
+        .user-name a{
+          text-decoration: none;
+        }
         .user-name {
             font-size: 14px;
-            font-weight: 500;
+            font-weight: bold;
         }
 
         /* Main Content Styles */
