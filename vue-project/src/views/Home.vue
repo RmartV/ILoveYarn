@@ -1,102 +1,173 @@
 <template>
-  <div>
-    <header class="header">
-    <div class="logo-container">
-      <router-link to="/home" class="logo-link">
-        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
-        <h1 class="logo-text">I LOVE YARN PH</h1>
-      </router-link>
-    </div>
-
-    <div class="search-container">
-      <input type="text" class="search-input" placeholder="What are you looking for?">
-      <button class="search-btn">
-        <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
-      </button>
-    </div>
-
-    <div class="nav-icons">
-      <router-link to="/user-cart" class="nav-icon cart-icon">
-        <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-        <span class="cart-count">{{ cartCount }}</span>
-      </router-link>
-
-      <router-link to="/user-details" class="nav-icon user-info">
-        <span class="user-name">{{ userAccount?.useracc_fname || 'Guest' }}</span>
-      </router-link>
-    </div>
-  </header>
-
-    <!----------------------------- Sidebar -------------------------------->
-    <div class="main-content">
-      <div class="sidebar">
-        <ul class="sidebar-menu">
-          <li class="sidebar-item active">Yarn</li>
-          <li class="sidebar-item">Crochet Hooks</li>
-          <li class="sidebar-item">Decorative Tape</li>
-          <li class="sidebar-item">Ribbons</li>
-          <li class="sidebar-item">Accessories</li>
-        </ul>
-      </div>
-
-      <!----------------------------- Main Area -------------------------------->
-      <div class="content-area">
-        <!-- Carousel -->
-        <section class="carousel-container" aria-label="Featured Products">
-          <div class="carousel-slides">
-            <div class="carousel-slide active">
-              <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="carousel-image">
-              <div class="carousel-overlay">
-                <h2 class="carousel-title">Discover Our Collection</h2>
-                <p class="carousel-subtitle">Premium yarns and tools for your creative projects</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <h2 class="page-title">All Products</h2>
-        <div class="products-container">
-          <div v-for="product in products" :key="product.prod_id" class="product-card">
-            <div class="product-image">
-              <img :src="product.image_url || '../views/images/default.png'" alt="Product Image">
-            </div>
-            <div class="product-details">
-              <div class="product-category">{{ product.prod_categorytype }}</div>
-              <h3 class="product-name">{{ product.prod_name }}</h3>
-              <div class="product-meta" v-if="product.prod_categorytype === 'YARN'">
-                <span class="meta-item">{{ product.yarn.yarn_composition }}</span>
-                <span class="meta-item">{{ product.yarn.yarn_weight }}</span>
-                <span class="meta-item">{{ product.yarn.yarn_thickness }}</span>
-              </div>
-              <div class="product-meta" v-if="product.prod_categorytype === 'TOOL'">
-                <span class="meta-item">{{ product.tool.tool_material }}</span>
-                <span class="meta-item">{{ product.tool.tool_size }}</span>
-              </div>
-              <div class="product-meta" v-if="product.prod_categorytype === 'TAPE'">
-                <span class="meta-item">{{ product.tape.tape_type}}</span>
-                <span class="meta-item">{{ product.tape.tape_length }}</span>
-                <span class="meta-item">{{ product.tape.tape_size }}</span>
-              </div>
-              <div class="product-meta" v-if="product.prod_categorytype === 'ACCESSORIES'">
-                <span class="meta-item">{{ product.accs.accs_category }}</span>
-                <span class="meta-item">{{ product.accs.accs_quantity }}</span>
-              </div>
-              <div class="product-meta" v-if="product.prod_categorytype === 'RIBBONS'">
-                <span class="meta-item">{{ product.ribbons.ribbons_length }}</span>
-                <span class="meta-item">{{ product.ribbons.ribbons_thickness }}</span>
-                <span class="meta-item">{{ product.ribbons.ribbons_material }}</span>
-              </div>
-              <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
-              <div class="product-stock">In stock: {{ product.prod_stock }} </div>
-              <div class="product-actions">
-                <button @click="addToCart(product)" class="add-to-cart-btn">Add to Cart</button>
-              </div>
-            </div>
-          </div>
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <div class="logo">Y</div>
+            <div class="store-name">ILoveYarnPH</div>
         </div>
-      </div>
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Search for yarn products...">
+        </div>
+        <div class="user-actions">
+            <div class="icon-container">
+                <div class="icon">📦</div>
+            </div>
+            <div class="icon-container">
+                <div class="icon">🛒</div>
+                <div class="cart-count">3</div>
+            </div>
+            <div class="user-name">Maria Santos</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h3>Categories</h3>
+            <ul>
+                <li><a href="#">Acrylic Yarn</a></li>
+                <li><a href="#">Cotton Yarn</a></li>
+                <li><a href="#">Wool Yarn</a></li>
+                <li><a href="#">Specialty Yarn</a></li>
+                <li><a href="#">Yarn Packs</a></li>
+                <li><a href="#">Crochet Hooks</a></li>
+                <li><a href="#">Knitting Needles</a></li>
+                <li><a href="#">Accessories</a></li>
+                <li><a href="#">Pattern Books</a></li>
+                <li><a href="#">Kits for Beginners</a></li>
+            </ul>
+        </div>
+
+        <!-- Product Display -->
+        <div class="product-container">
+            <h2 class="product-heading">Featured Products</h2>
+            <div class="products-grid">
+                <!-- Product 1 -->
+                <div class="product-card">
+                    <div class="product-image">Soft Cotton Yarn</div>
+                    <div class="product-details">
+                        <div class="product-name">Premium Soft Cotton Yarn</div>
+                        <div class="product-price">PHP 199.00</div>
+                        <div class="product-rating">★★★★★</div>
+                        <button class="product-button">Add to Cart</button>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card">
+                    <div class="product-image">Colorful Acrylic Yarn</div>
+                    <div class="product-details">
+                        <div class="product-name">Rainbow Acrylic Yarn Bundle</div>
+                        <div class="product-price">PHP 299.00</div>
+                        <div class="product-rating">★★★★☆</div>
+                        <button class="product-button">Add to Cart</button>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card">
+                    <div class="product-image">Merino Wool Skein</div>
+                    <div class="product-details">
+                        <div class="product-name">Soft Merino Wool - Navy Blue</div>
+                        <div class="product-price">PHP 349.00</div>
+                        <div class="product-rating">★★★★★</div>
+                        <button class="product-button">Add to Cart</button>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="product-card">
+                    <div class="product-image">Bamboo Crochet Hooks</div>
+                    <div class="product-details">
+                        <div class="product-name">Bamboo Crochet Hook Set</div>
+                        <div class="product-price">PHP 499.00</div>
+                        <div class="product-rating">★★★★☆</div>
+                        <button class="product-button">Add to Cart</button>
+                    </div>
+                </div>
+
+                <!-- Product 5 -->
+                <div class="product-card">
+                    <div class="product-image">Baby Yarn Collection</div>
+                    <div class="product-details">
+                        <div class="product-name">Baby Soft Yarn Set - Pastels</div>
+                        <div class="product-price">PHP 399.00</div>
+                        <div class="product-rating">★★★★★</div>
+                        <button class="product-button">Add to Cart</button>
+                    </div>
+                </div>
+
+                <!-- Product 6 -->
+                <div class="product-card">
+                    <div class="product-image">Chunky Yarn</div>
+                    <div class="product-details">
+                        <div class="product-name">Super Chunky Yarn - Grey</div>
+                        <div class="product-price">PHP 259.00</div>
+                        <div class="product-rating">★★★★☆</div>
+                        <button class="product-button">Add to Cart</button>
+                    </div>
+                </div>
+
+                <!-- Product 7 -->
+                <div class="product-card">
+                    <div class="product-image">Knitting Needles</div>
+                    <div class="product-details">
+                        <div class="product-name">Aluminum Knitting Needle Set</div>
+                        <div class="product-price">PHP 599.00</div>
+                        <div class="product-rating">★★★★★</div>
+                        <button class="product-button">Add to Cart</button>
+                    </div>
+                </div>
+
+                <!-- Product 8 -->
+                <div class="product-card">
+                    <div class="product-image">Beginner's Kit</div>
+                    <div class="product-details">
+                        <div class="product-name">Crochet Starter Kit</div>
+                        <div class="product-price">PHP 799.00</div>
+                        <div class="product-rating">★★★★☆</div>
+                        <button class="product-button">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About ILoveYarnPH</h3>
+                <p>We are a Philippine-based yarn store dedicated to providing high-quality yarns and accessories for all your crafting needs. Established in 2020, we've been serving the Filipino crafting community with love.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: info@iloveyarnph.com</p>
+                <p>Phone: +63 912 345 6789</p>
+                <p>Address: 123 Craft Street, Manila, Philippines</p>
+            </div>
+            <div class="footer-section">
+                <h3>Subscribe</h3>
+                <p>Subscribe to our newsletter for updates on new products and promotions.</p>
+                <input type="email" placeholder="Your email" style="padding: 8px; width: 100%; margin-top: 10px; border: none; border-radius: 4px;">
+                <button style="background-color: #8a2be2; color: white; border: none; padding: 8px 15px; border-radius: 4px; margin-top: 10px; cursor: pointer;">Subscribe</button>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ILoveYarnPH. All Rights Reserved.</p>
+        </div>
+    </footer>
 </template>
 
 <script>
@@ -278,429 +349,288 @@ export default {
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
         }
-
         body {
-            background-color: var(--background-color);
-        }
-        router-link a{
-    text-decoration: none !important;
-}
-.header {
-  background-color: var(--primary-color);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px 30px;
-  border-bottom: 2px solid var(--light-gray);
-  height: 80px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  min-width: 200px;
-}
-
-.logo-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-}
-
-.logo-img {
-  width: 50px;
-  height: 50px;
-  margin-right: 10px;
-  object-fit: contain;
-}
-
-.logo-text {
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.search-container {
-  flex: 0 1 500px;
-  margin: 0 40px;
-  position: relative;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 40px 10px 15px;
-  border-radius: 20px;
-  border: 2px solid #ddd;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.search-input:focus {
-  border-color: var(--highlights);
-}
-
-.search-btn {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.nav-icons {
-  display: flex;
-  gap: 30px;
-  align-items: center;
-  min-width: 150px;
-}
-
-.nav-icon {
-  color: white;
-  text-decoration: none;
-  cursor: pointer;
-  position: relative;
-  transition: opacity 0.2s;
-}
-
-.nav-icon:hover {
-  opacity: 0.8;
-}
-
-.cart-icon {
-  position: relative;
-}
-
-.cart-count {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  background-color: var(--highlights);
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-}
-
-.nav-img-icon {
-  height: 25px;
-  width: auto;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-avatar {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  background-color: #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 16px;
-  color: var(--primary-color);
-}
-
-.user-name {
-  font-weight: bold;
-  color: white;
-  font-size: 14px;
-}
-
-@media (max-width: 768px) {
-  .header {
-    padding: 15px;
-  }
-
-  .logo-text {
-    align-items: center;
-    justify-content: center;
-    display: none;
-  }
-
-  .search-container {
-    margin: 0 20px;
-  }
-
-  .user-name {
-    display: none;
-  }
-
-  .nav-icons {
-    gap: 15px;
-  }
-}
-
-        .main-content {
-            display: flex;
+            background-color: #f9f9f9;
         }
 
-        .sidebar {
-            height: 100vh;
-            width: 350px;
-            padding: 20px;
-            background-color: var(--background-color);
-            border-right: 2px solid var(--light-gray);
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-item {
-            color: var(--text-color);
-            padding: 12px 15px;
-            cursor: pointer;
+        /* Header Styles */
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-radius: 8px;
-            transition: background-color 0.3s;
+            padding: 15px 30px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .sidebar-item:first-child {
-            margin-top: 80px;
-        }
-
-        .sidebar-item:hover {
-            background-color: rgba(254, 177, 191, 0.2);
-        }
-
-        .sidebar-item.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .carousel-container {
-  margin-bottom: 2rem;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--card-shadow);
-}
-
-.carousel-slide {
-  height: 400px;
-  position: relative;
-}
-
-.carousel-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.carousel-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 3rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-  color: white;
-}
-
-.carousel-title {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-}
-
-.carousel-subtitle {
-  font-size: 1.1rem;
-  opacity: 0.9;
-}
-
-
-        .content-area {
-            flex-grow: 1;
-            padding: 20px;
-            min-height: 100vh;
-        }
-
-        .page-title {
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: var(--text-color);
+        .logo-container {
             display: flex;
             align-items: center;
+            gap: 10px;
         }
 
-        .page-title::before {
-            content: '';
-            width: 5px;
-            height: 24px;
-            background-color: var(--primary-color);
-            margin-right: 10px;
-            border-radius: 3px;
+        .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #f0c4e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8a2be2;
+            font-weight: bold;
+            font-size: 20px;
         }
 
-        .products-container {
+        .store-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #8a2be2;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 30px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .search-bar:focus {
+            border-color: #8a2be2;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .icon-container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .icon {
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ff4081;
+            color: white;
+            font-size: 12px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Main Content Styles */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 140px);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #8a2be2;
+            border-bottom: 2px solid #f0c4e0;
+            padding-bottom: 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #555;
+            font-size: 16px;
+            transition: color 0.3s;
+            display: block;
+            padding: 5px 0;
+        }
+
+        .sidebar a:hover {
+            color: #8a2be2;
+        }
+
+        /* Product Display Styles */
+        .product-container {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .product-heading {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 25px;
-            margin-bottom: 40px;
         }
 
         .product-card {
-            background-color: white;
-            border-radius: 10px;
+            background-color: #ffffff;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
         }
 
         .product-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
         }
 
         .product-image {
-            height: 200px;
-            width: 100%;
+            height: 180px;
             background-color: #f5f5f5;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-        }
-
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            color: #aaa;
         }
 
         .product-details {
             padding: 15px;
         }
 
-        .product-category {
-            font-size: 12px;
-            color: var(--light-gray);
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-
         .product-name {
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 500;
             margin-bottom: 8px;
-            color: var(--text-color);
-        }
-
-        .product-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .meta-item {
-            background-color: #f5f5f5;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            color: var(--light-gray);
+            color: #333;
         }
 
         .product-price {
-            font-weight: bold;
             font-size: 18px;
-            color: var(--text-color);
-            margin-bottom: 15px;
+            font-weight: bold;
+            color: #8a2be2;
+            margin-bottom: 10px;
         }
 
-        .product-stock {
-            font-size: 14px;
-            color: var(--light-gray);
-            margin-bottom: 15px;
-        }
-
-        .product-actions {
+        .product-rating {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            color: #ffc107;
+            font-size: 14px;
+            margin-bottom: 10px;
         }
 
-        .add-to-cart-btn {
-            background-color: var(--primary-color);
+        .product-button {
+            background-color: #8a2be2;
             color: white;
             border: none;
             padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 14px;
             transition: background-color 0.3s;
-            font-weight: bold;
+            width: 100%;
         }
 
-        .add-to-cart-btn:hover {
-            background-color: #e99ca9;
+        .product-button:hover {
+            background-color: #7926a8;
         }
 
-        .section-header {
+        /* Footer Styles */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 30px 50px;
+        }
+
+        .footer-content {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin: 30px 0 20px;
+            flex-wrap: wrap;
+            gap: 30px;
         }
 
-        .section-title {
-            font-size: 20px;
-            color: var(--text-color);
-            position: relative;
-            padding-left: 15px;
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
         }
 
-        .section-title::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 5px;
-            background-color: var(--primary-color);
-            border-radius: 3px;
+        .footer-section h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #f0c4e0;
+            border-bottom: 2px solid #8a2be2;
+            padding-bottom: 10px;
+            display: inline-block;
         }
 
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                padding: 10px;
-            }
-            
-            .search-container {
-                margin: 15px 0;
-                max-width: 100%;
-            }
-            
-            .main-content {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-                border-right: none;
-                border-bottom: 2px solid var(--light-gray);
-            }
-            
-            .products-container {
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            }
+        .footer-section p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+            font-size: 14px;
         }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 8px;
+        }
+
+        .footer-section a {
+            text-decoration: none;
+            color: #ddd;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #f0c4e0;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #555;
+            font-size: 14px;
+        }
+
   </style>
