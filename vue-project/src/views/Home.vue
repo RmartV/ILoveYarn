@@ -375,7 +375,7 @@ export default {
         }
 
         .search-bar:focus {
-            border-color: var(--highlights);
+            border-color: #ff8da1;
         }
 
         .user-actions {
@@ -434,7 +434,7 @@ export default {
         .sidebar h3 {
             font-size: 18px;
             margin-bottom: 15px;
-            color: var(--highlights);
+            color: #ff8da1;
             border-bottom: 2px solid #f0c4e0;
             padding-bottom: 10px;
         }
@@ -457,7 +457,7 @@ export default {
         }
 
         .sidebar a:hover {
-            color: var(--highlights);
+            color: #ff8da1;
         }
 
         /* Product Display Styles */
@@ -538,7 +538,7 @@ export default {
 
         .product-type {
             font-size: 13px;
-            color: var(--highlights);
+            color: #ff8da1;
             margin-bottom: 8px;
         }
 
@@ -587,7 +587,7 @@ export default {
         }
 
         .product-button:hover {
-            background-color: var(--highlights);
+            background-color: #ff8da1;
         }
 
         /* Footer Styles */
@@ -613,7 +613,7 @@ export default {
             font-size: 18px;
             margin-bottom: 15px;
             color: #f0c4e0;
-            border-bottom: 2px solid var(--highlights);
+            border-bottom: 2px solid #ff8da1;
             padding-bottom: 10px;
             display: inline-block;
         }
