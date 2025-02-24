@@ -43,49 +43,54 @@
                 <li><a href="#">ACCESSORIES</a></li>
             </ul>
         </div>
-        <section class="welcome-board-container" aria-label="Welcome">
-      <div class="welcome-board">
-        <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="welcome-image">
-        <div class="welcome-overlay">
-          <h2 class="welcome-title">Welcome to ILoveYarnPH</h2>
-          <p class="welcome-subtitle">Premium yarns and tools for your creative projects</p>
-          <button class="shop-now-button">Shop Now</button>
-        </div>
-      </div>
-    </section>
-        <!-- Product Display -->
-        <div class="product-container">
-            <h2 class="product-heading">Featured Products</h2>
-            <div class="products-grid">
-                <!-- Product 1 -->
-                <div v-for="product in products" :key="product.prod_id" class="product-card">
-                    <div class="product-image"><img :src="product.image_url || '../views/images/default.png'" alt="Product Image"></div>
-                    <div class="product-details">
-                        <div class="product-name">{{ product.prod_name }}</div>
-                        <div class="product-type">{{ product.prod_categorytype }}</div>
-                        <div class="product-description" v-if="product.prod_categorytype === 'YARN'">
-                          {{ product.yarn.yarn_composition }} • {{ product.yarn.yarn_weight }} • {{ product.yarn.yarn_thickness }}
-                        </div>
+        
+        <div class="content-area">
+            <!-- Welcome Board (Formerly Carousel) -->
+            <section class="welcome-board-container" aria-label="Welcome">
+              <div class="welcome-board">
+                <img src="../views/images/slide1.png" alt="Featured Yarn Collection" class="welcome-image">
+                <div class="welcome-overlay">
+                  <h2 class="welcome-title">Welcome to ILoveYarnPH</h2>
+                  <p class="welcome-subtitle">Premium yarns and tools for your creative projects</p>
+                  <button class="shop-now-button">Shop Now</button>
+                </div>
+              </div>
+            </section>
+            
+            <!-- Product Display -->
+            <div class="product-container">
+                <h2 class="product-heading">Featured Products</h2>
+                <div class="products-grid">
+                    <!-- Product 1 -->
+                    <div v-for="product in products" :key="product.prod_id" class="product-card">
+                        <div class="product-image"><img :src="product.image_url || '../views/images/default.png'" alt="Product Image"></div>
+                        <div class="product-details">
+                            <div class="product-name">{{ product.prod_name }}</div>
+                            <div class="product-type">{{ product.prod_categorytype }}</div>
+                            <div class="product-description" v-if="product.prod_categorytype === 'YARN'">
+                              {{ product.yarn.yarn_composition }} • {{ product.yarn.yarn_weight }} • {{ product.yarn.yarn_thickness }}
+                            </div>
 
-                        <div class="product-description" v-if="product.prod_categorytype === 'TOOL'">
-                          {{ product.tool.tool_material }} • {{ product.tool.tool_size }}
-                        </div>
+                            <div class="product-description" v-if="product.prod_categorytype === 'TOOL'">
+                              {{ product.tool.tool_material }} • {{ product.tool.tool_size }}
+                            </div>
 
-                        <div class="product-description" v-if="product.prod_categorytype === 'TAPE'">
-                          {{ product.tape.tape_type}} • {{ product.tape.tape_length }} • {{ product.tape.tape_size }}
-                        </div>
+                            <div class="product-description" v-if="product.prod_categorytype === 'TAPE'">
+                              {{ product.tape.tape_type}} • {{ product.tape.tape_length }} • {{ product.tape.tape_size }}
+                            </div>
 
-                        <div class="product-description" v-if="product.prod_categorytype === 'ACCESSORIES'">
-                          {{ product.accs.accs_category }} • {{ product.accs.accs_quantity }}
-                        </div>
+                            <div class="product-description" v-if="product.prod_categorytype === 'ACCESSORIES'">
+                              {{ product.accs.accs_category }} • {{ product.accs.accs_quantity }}
+                            </div>
 
-                        <div class="product-description" v-if="product.prod_categorytype === 'RIBBONS'">
-                          {{ product.ribbons.ribbons_length }} • {{ product.ribbons.ribbons_thickness }} • {{ product.ribbons.ribbons_material }}
-                        </div>
+                            <div class="product-description" v-if="product.prod_categorytype === 'RIBBONS'">
+                              {{ product.ribbons.ribbons_length }} • {{ product.ribbons.ribbons_thickness }} • {{ product.ribbons.ribbons_material }}
+                            </div>
 
-                        <div class="stock-info">In stock: {{ product.prod_stock }}</div>
-                        <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
-                        <button  @click="addToCart(product)" class="product-button">Add to Cart</button>
+                            <div class="stock-info">In stock: {{ product.prod_stock }}</div>
+                            <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
+                            <button @click="addToCart(product)" class="product-button">Add to Cart</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -326,6 +331,7 @@ export default {
             z-index: 100;
         }
 
+
         .logo-img {
     width: 100%;
     height: 100%;
@@ -406,76 +412,87 @@ export default {
     justify-content: center;
 }
 
+.main-container {
+    display: flex;
+    min-height: calc(100vh - 140px);
+}
+
+.content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 250px);
+}
+
 .welcome-board-container {
-  margin: 1.5rem;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  height: 350px;
-  width: calc(100% - 3rem);
+    margin: 1.5rem;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    height: 350px;
+    width: calc(100% - 3rem);
 }
 
 .welcome-board {
-  height: 100%;
-  position: relative;
-  display: flex;
-  align-items: center;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .welcome-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .welcome-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 2.5rem;
-  background: linear-gradient(to right, rgba(0,0,0,0.7) 20%, transparent 70%);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 2.5rem;
+    background: linear-gradient(to right, rgba(0,0,0,0.7) 20%, transparent 70%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 .welcome-title {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-  max-width: 60%;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    max-width: 60%;
 }
 
 .welcome-subtitle {
-  font-size: 1.2rem;
-  opacity: 0.9;
-  margin-bottom: 1.5rem;
-  max-width: 50%;
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+    max-width: 50%;
 }
 
 .shop-now-button {
-  background-color: var(--highlights);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 30px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: var(--highlights);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .shop-now-button:hover {
-  background-color: #ff7a92;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    background-color: #ff7a92;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
-
 
         .cart-count {
             position: absolute;
@@ -502,18 +519,15 @@ export default {
         }
 
         /* Main Content Styles */
-        .main-container {
-            display: flex;
-            min-height: calc(100vh - 140px);
-        }
 
         /* Sidebar Styles */
         .sidebar {
-            width: 250px;
-            background-color: #ffffff;
-            padding: 20px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-        }
+    width: 250px;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+}
 
         .sidebar h3 {
             font-size: 18px;
@@ -546,9 +560,9 @@ export default {
 
         /* Product Display Styles */
         .product-container {
-            flex: 1;
-            padding: 20px;
-        }
+    padding: 20px;
+    width: 100%;
+}
 
         .product-heading {
             font-size: 24px;
@@ -736,38 +750,51 @@ export default {
         }
 
         
-@media (max-width: 768px) {
-  .welcome-board-container {
-    height: 300px;
-  }
-  
-  .welcome-title {
-    font-size: 2rem;
-    max-width: 80%;
-  }
-  
-  .welcome-subtitle {
-    font-size: 1rem;
-    max-width: 70%;
-  }
+        @media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+    }
+    
+    .content-area {
+        width: 100%;
+    }
+    
+    .welcome-board-container {
+        height: 300px;
+    }
+    
+    .welcome-title {
+        font-size: 2rem;
+        max-width: 80%;
+    }
+    
+    .welcome-subtitle {
+        font-size: 1rem;
+        max-width: 70%;
+    }
 }
+
 @media (max-width: 480px) {
-  .welcome-board-container {
-    height: 250px;
-  }
-  
-  .welcome-overlay {
-    background: linear-gradient(to right, rgba(0,0,0,0.8) 40%, transparent 100%);
-  }
-  
-  .welcome-title {
-    font-size: 1.5rem;
-    max-width: 100%;
-  }
-  
-  .welcome-subtitle {
-    font-size: 0.9rem;
-    max-width: 100%;
-  }
+    .welcome-board-container {
+        height: 250px;
+    }
+    
+    .welcome-overlay {
+        background: linear-gradient(to right, rgba(0,0,0,0.8) 40%, transparent 100%);
+    }
+    
+    .welcome-title {
+        font-size: 1.5rem;
+        max-width: 100%;
+    }
+    
+    .welcome-subtitle {
+        font-size: 0.9rem;
+        max-width: 100%;
+    }
 }
   </style>
