@@ -14,10 +14,9 @@ const routes = [
   { path: '/profile-setup', component: ProfileSetup },
   { path: '/authentication', component: Authentication },
   { path: '/user-details', component: UserAccount},
-  {path:  '/user-cart', component: Usercart},
+  { path:  '/user-cart', component: Usercart},
   {
     path: '/transaction/:transactionId',
-    component: () => import('./views/Transaction.vue'),
     props: true
   },
   { path: '/home', component: Home } // Home page after login
