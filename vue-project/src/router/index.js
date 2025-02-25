@@ -16,7 +16,7 @@ const routes = [
   { path: '/user-details', component: UserAccount},
   { path:  '/user-cart', component: Usercart},
   {
-    path: '/transaction/:transactionId',
+    path: '/transaction/:transactionId', component: Transaction,
     props: true
   },
   { path: '/home', component: Home } // Home page after login
