@@ -1,37 +1,33 @@
 <template>
   <div>
-    <header class="header">
-      <div class="logo-container">
-        <router-link to="/home">
-        <img src="../views/images/homelogo.jpg" alt="I LOVE YARN PH Logo" class="logo-img">
-      </router-link>
-      <router-link to="/home">
-        <h1 class="logo-text">I LOVE YARN PH</h1>
-        </router-link>
-      </div>
-      <div class="search-container">
-        <input type="text" class="search-input" placeholder="What are you looking for?">
-        <button class="search-btn">
-          <img class="nav-img-icon" src="../views/images/magnifying-glass.png" alt="Search">
-        </button>
-      </div>
-      <div class="nav-icons">
-        <div class="nav-icon cart-icon">
-  <router-link to="/user-cart">
-    <img class="nav-img-icon" src="../views/images/shopping-cart.png" alt="Cart">
-    <span class="cart-count">{{ cartCount }}</span>
-  </router-link>
-</div>
-        <router-link to="/user-details">
-        <div class="nav-icon user-info">
-
-            <div class="user-avatar">{{ userAccount?.useracc_fname?.charAt(0) || 'G' }}</div>
-            <span>{{ userAccount?.useracc_fname || 'Guest' }}</span>
-
-          
+    <header>
+        <div class="logo-container">
+          <router-link to="/home">
+            <div class="logo">
+              <img src="../views/images/homelogo.jpg" alt="ILoveYarnPH" class="logo-img">
+            </div>
+            <div class="store-name">ILoveYarnPH | Shopping cart</div>
+          </router-link>
         </div>
-      </router-link>
-      </div>
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Search for yarn products...">
+        </div>
+        <div class="user-actions">
+            <div class="icon-container">
+                <div class="icon">
+                  <img src="../views/images/package.png" alt="Package" class="action-icon">
+                </div>
+            </div>
+            <div class="icon-container">
+                <div class="icon">
+                  <router-link to="/user-cart">
+                    <img src="../views/images/shopping-cart.png" alt="Cart" class="action-icon">
+                  </router-link>
+                </div>
+                <div class="cart-count">{{ cartCount }}</div>
+            </div>
+            <div class="user-name"><router-link to="/user-details">{{ userAccount?.useracc_fname || 'Guest' }}</router-link></div>
+        </div>
     </header>
 
     <div class="cart-container">
@@ -321,122 +317,97 @@ export default {
             padding: 0;
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
-        }
-       .header {
-            background-color: var(--primary-color);
+            header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
             padding: 15px 30px;
-            border-bottom: 2px solid var(--light-gray);
+            background-color: var(--primary-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-        }
 
         .logo-img {
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
-        }
-
-        .logo-text {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        router-link a{
-    text-decoration: none !important;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
-        .search-container {
-            flex-grow: 1;
-            max-width: 500px;
-            margin: 0 20px;
-            position: relative;
+
+.action-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f0c4e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-container a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+        .store-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--background-color);
         }
 
-        .search-input {
+        .search-container {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 30px;
+        }
+
+        .search-bar {
             width: 100%;
             padding: 10px 15px;
-            border-radius: 20px;
-            border: 2px solid #ddd;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
             outline: none;
+            font-size: 16px;
         }
 
-        .search-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
+        .search-bar:focus {
+            border-color: #ff8da1;
         }
 
-        .nav-icons {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .nav-icon {
-            color: var(--text-color);
-            cursor: pointer;
-            position: relative;
-        }
-
-        .cart-icon {
-            position: relative;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: var(--highlights);
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-
-        .nav-img-icon {
-            height: 25px;
-        }
-
-        .user-info {
-            width: 30px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .user-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background-color: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        .cart-container {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+        .user-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-.cart-title {
-  font-size: 2rem;
-  color: var(--primary-color);
-  margin-bottom: 2rem;
-  text-align: center;
+.icon-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.icon {
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .empty-cart {
@@ -617,4 +588,5 @@ export default {
 .checkout-btn:hover {
   transform: translateY(-2px);
 }
+
 </style>
