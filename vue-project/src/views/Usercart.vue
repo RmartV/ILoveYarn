@@ -9,9 +9,6 @@
             <div class="store-name">ILoveYarnPH | Shopping</div>
           </router-link>
         </div>
-        <div class="search-container">
-            <input type="text" class="search-bar" placeholder="Search for yarn products...">
-        </div>
         <div class="user-actions">
             <div class="icon-container">
                 <div class="icon">
@@ -80,7 +77,7 @@
                 <span>Total Price:</span>
                 <span>₱{{ totalPrice.toFixed(2) }}</span>
               </div>
-              <button class="checkout-btn">Proceed to Checkout →</button>
+              <button class="checkout-btn" @click="checkout">Proceed to Checkout →</button>
             </div>
           </div>
         </div>
@@ -283,6 +280,44 @@ export default {
       }
     };
 
+    const checkout = async () => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not logged in');
+
+    // Update cart items status
+    const { error: updateError } = await supabase
+      .from('cartitems')
+      .update({ cartitems_status: 'purchase confirmed' })
+      .eq('useracc_id', userAccount.value.useracc_id)
+      .eq('cartitems_status', 'purchase pending');
+
+    if (updateError) throw updateError;
+
+    // Create transaction record
+    const { data: transactionData, error: transactionError } = await supabase
+      .from('transaction')
+      .insert([{
+        transaction_totalitems: totalItems.value,
+        transaction_totalamount: totalPrice.value,
+        transaction_methodtype: 'PROCESSING', // Temporary value
+        transaction_status: 'PROCESSING',
+        useracc_id: userAccount.value.useracc_id
+      }])
+      .select()
+      .single();
+
+    if (transactionError) throw transactionError;
+
+    // Redirect to transaction page
+    router.push(`/transaction/${transactionData.transaction_id}`);
+    
+  } catch (error) {
+    console.error('Checkout error:', error);
+    alert('Error during checkout: ' + error.message);
+  }
+};
+
     onMounted(async () => {
       await fetchUseracc();
       await fetchCartItems();
@@ -297,6 +332,7 @@ export default {
       updateQuantity, 
       removeItem, 
       cartCount,
+      checkout,
       userAccount 
     };
   }
