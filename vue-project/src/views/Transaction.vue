@@ -14,105 +14,107 @@
       </div>
     </header>
 
-    <div class="checkout-container">
-      <div class="checkout-content">
-        <!-- Order Summary -->
-        <div class="order-summary">
-          <h2>Order Summary</h2>
-          <div class="order-items">
-            <div v-for="item in cartItems" :key="item.cart_item_id" class="order-item">
-              <img :src="item.product.image_url" :alt="item.product.prod_name" class="product-image">
-              <div class="item-info">
-                <h3>{{ item.product.prod_name }}</h3>
-                <p>Quantity: {{ item.quantity }}</p>
-                <p>₱{{ (item.product.prod_price * item.quantity).toFixed(2) }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="total-summary">
-            <div class="total-row">
-              <span>Subtotal:</span>
-              <span>₱{{ subtotal.toFixed(2) }}</span>
-            </div>
-            <div class="total-row">
-              <span>Total Items:</span>
-              <span>{{ totalItems }}</span>
-            </div>
-            <div class="total-row grand-total">
-              <span>Grand Total:</span>
-              <span>₱{{ grandTotal.toFixed(2) }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Payment Method -->
-        <div class="payment-section">
-          <h2>Payment Method</h2>
-          <form @submit.prevent="handlePayment" class="payment-form">
-            <div class="payment-methods">
-              <label class="payment-option">
-                <input 
-                  type="radio" 
-                  v-model="paymentMethod" 
-                  value="COD" 
-                  required
-                >
-                <div class="payment-card">
-                  <span>Cash on Delivery</span>
-                </div>
-              </label>
-
-              <label class="payment-option">
-                <input 
-                  type="radio" 
-                  v-model="paymentMethod" 
-                  value="E-WALLET" 
-                  required
-                >
-                <div class="payment-card">
-                  <span>E-Wallet</span>
-                </div>
-              </label>
-            </div>
-
-            <div v-if="paymentMethod === 'E-WALLET'" class="ewallet-details">
-              <div class="form-group">
-                <label>Phone Number</label>
-                <input 
-                  type="tel" 
-                  v-model="phoneNumber" 
-                  placeholder="0912 345 6789" 
-                  pattern="[0-9]{11}"
-                  required
-                  class="form-input"
-                >
-              </div>
-            </div>
-
-            <button 
-              type="submit" 
-              class="confirm-button"
-              :disabled="processing"
-            >
-              {{ processing ? 'Processing...' : 'Confirm Payment' }}
-            </button>
-          </form>
-
-          <div v-if="transactionStatus === 'PROCESSING'" class="status-controls">
-            <p>Complete the transaction:</p>
-            <div class="status-buttons">
-              <button @click="completeTransaction(true)" class="success-button">
-                Mark as Successful
-              </button>
-              <button @click="completeTransaction(false)" class="cancel-button">
-                Cancel Transaction
-              </button>
-            </div>
+<div class="checkout-container">
+  <div class="checkout-content">
+    <!-- Order Summary Section -->
+    <div class="order-summary">
+      <h2>Order Summary</h2>
+      <div class="order-items">
+        <div v-for="item in cartItems" :key="item.cart_item_id" class="order-item">
+          <img :src="item.product.image_url" :alt="item.product.prod_name" class="product-image">
+          <div class="item-info">
+            <h3>{{ item.product.prod_name }}</h3>
+            <p>Quantity: {{ item.quantity }}</p>
+            <p>₱{{ (item.product.prod_price * item.quantity).toFixed(2) }}</p>
           </div>
         </div>
       </div>
+      <div class="total-summary">
+        <div class="total-row">
+          <span>Subtotal:</span>
+          <span>₱{{ subtotal.toFixed(2) }}</span>
+        </div>
+        <div class="total-row">
+          <span>Shipping Fee:</span>
+          <span>₱{{ transactionShippingFee.toFixed(2) }}</span>
+        </div>
+        <div class="total-row grand-total">
+          <span>Grand Total:</span>
+          <span>₱{{ grandTotal.toFixed(2) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shipping and Payment Section -->
+    <div class="payment-section">
+      <!-- Shipping Address Edit -->
+      <div class="shipping-address">
+        <h2>Shipping Address</h2>
+        <div class="address-form">
+          <div class="form-group">
+            <label>Full Address</label>
+            <textarea 
+              v-model="userAddress"
+              rows="3"
+              required
+              class="form-input"
+              placeholder="Enter full address including street, city, and zip code"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input 
+              type="tel"
+              v-model="userPhone"
+              pattern="[0-9]{11}"
+              required
+              class="form-input"
+              placeholder="09XXXXXXXXX"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Method Selection -->
+      <h2>Payment Method</h2>
+      <form @submit.prevent="handlePayment" class="payment-form">
+        <div class="payment-methods">
+          <label class="payment-option">
+            <input 
+              type="radio" 
+              v-model="paymentMethod" 
+              value="COD" 
+              required
+            >
+            <div class="payment-card">
+              <span>Cash on Delivery</span>
+            </div>
+          </label>
+          <label class="payment-option">
+            <input 
+              type="radio" 
+              v-model="paymentMethod" 
+              value="E-WALLET" 
+              required
+            >
+            <div class="payment-card">
+              <span>E-Wallet</span>
+            </div>
+          </label>
+        </div>
+
+        <button 
+          type="submit" 
+          class="confirm-button"
+          :disabled="processing"
+        >
+          {{ processing ? 'Processing...' : 'Confirm Payment' }}
+        </button>
+      </form>
     </div>
   </div>
+</div>
+</div>
 </template>
 
 <script>
@@ -121,172 +123,207 @@ import { supabase } from '../lib/supabaseClient';
 import { useRoute, useRouter } from 'vue-router';
 
 export default {
-  setup() {
-    const route = useRoute();
-    const router = useRouter();
-    const cartId = route.params.cartId;
-    
-    const cartItems = ref([]);
-    const paymentMethod = ref('');
-    const phoneNumber = ref('');
-    const transactionStatus = ref('');
-    const processing = ref(false);
-    const subtotal = ref(0);
-    const totalItems = ref(0);
-    const grandTotal = ref(0);
+setup() {
+const route = useRoute();
+const router = useRouter();
+const cartId = route.params.cartId;
 
-    const getProductImage = (product) => {
-      if (product.prod_id === 101) return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
-      if (product.prod_id === 201) return supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
-      // Add all your product image mappings here
-      return '../views/images/default-product.png';
-    };
+// Reactive data
+const cartItems = ref([]);
+const paymentMethod = ref('');
+const transactionStatus = ref('');
+const processing = ref(false);
+const subtotal = ref(0);
+const grandTotal = ref(0);
+const transactionShippingFee = ref(50.00);
+const userAddress = ref('');
+const userPhone = ref('');
 
-    const fetchCartItems = async () => {
-      try {
-        const { data } = await supabase
-          .from('cart_item')
-          .select(`
-            quantity,
-            product:prod_id (*)
-          `)
-          .eq('cart_id', cartId);
+// Fetch user data
+const fetchUserData = async () => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
-        cartItems.value = data.map(item => ({
-          ...item,
-          product: {
-            ...item.product,
-            image_url: getProductImage(item.product)
-          }
-        })) || [];
-        
-        calculateTotals();
-      } catch (error) {
-        console.error('Error fetching cart items:', error);
-      }
-    };
+    const { data } = await supabase
+      .from('user_account')
+      .select('useracc_address, useracc_phone')
+      .eq('useracc_id', user.id)
+      .single();
 
-    const calculateTotals = () => {
-      subtotal.value = cartItems.value.reduce((sum, item) => 
-        sum + (item.product.prod_price * item.quantity), 0);
-      totalItems.value = cartItems.value.reduce((sum, item) => sum + item.quantity, 0);
-      grandTotal.value = subtotal.value;
-    };
-
-    const handlePayment = async () => {
-      processing.value = true;
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('User not logged in');
-
-        // Create transaction
-        const transactionData = {
-          useracc_id: user.id,
-          total_amount: grandTotal.value,
-          payment_method: paymentMethod.value,
-          status: 'PROCESSING',
-          phone_number: paymentMethod.value === 'E-WALLET' ? phoneNumber.value : null,
-          reference_number: paymentMethod.value === 'E-WALLET' 
-            ? 'REF-' + Math.random().toString(36).substr(2, 9).toUpperCase()
-            : null
-        };
-
-        const { data: transaction, error } = await supabase
-          .from('transaction')
-          .insert(transactionData)
-          .select()
-          .single();
-
-        if (error) throw error;
-
-        // Create transaction items
-        const transactionItems = cartItems.value.map(item => ({
-          transaction_id: transaction.transaction_id,
-          prod_id: item.product.prod_id,
-          quantity: item.quantity,
-          price: item.product.prod_price
-        }));
-
-        await supabase.from('transaction_item').insert(transactionItems);
-
-        // Update stock
-        for (const item of cartItems.value) {
-          const { error } = await supabase.rpc('decrement_stock', {
-            product_id: item.product.prod_id,
-            decrement_by: item.quantity
-          });
-          if (error) throw error;
-        }
-
-        // Clear cart
-        await supabase
-          .from('cart_item')
-          .delete()
-          .eq('cart_id', cartId);
-
-        transactionStatus.value = 'PROCESSING';
-      } catch (error) {
-        console.error('Payment error:', error);
-        alert('Payment failed: ' + error.message);
-      } finally {
-        processing.value = false;
-      }
-    };
-
-    const completeTransaction = async (success) => {
-      try {
-        const { data: transaction } = await supabase
-          .from('transaction')
-          .select('transaction_id')
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
-
-        const status = success ? 'SUCCESS' : 'CANCELLED';
-        await supabase
-          .from('transaction')
-          .update({ status })
-          .eq('transaction_id', transaction.transaction_id);
-
-        if (!success) {
-          // Restore stock
-          for (const item of cartItems.value) {
-            await supabase.rpc('increment_stock', {
-              product_id: item.product.prod_id,
-              increment_by: item.quantity
-            });
-          }
-          router.push('/cart');
-        } else {
-          router.push('/order-confirmation');
-        }
-      } catch (error) {
-        console.error('Transaction error:', error);
-        alert('Error completing transaction: ' + error.message);
-      }
-    };
-
-    onMounted(async () => {
-      await fetchCartItems();
-    });
-
-    return {
-      cartItems,
-      paymentMethod,
-      phoneNumber,
-      transactionStatus,
-      processing,
-      subtotal,
-      totalItems,
-      grandTotal,
-      handlePayment,
-      completeTransaction
-    };
+    if (data) {
+      userAddress.value = data.useracc_address || '';
+      userPhone.value = data.useracc_phone || '';
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error);
   }
+};
+
+// Update user address and phone
+const updateUserDetails = async () => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { error } = await supabase
+      .from('user_account')
+      .update({
+        useracc_address: userAddress.value,
+        useracc_phone: userPhone.value
+      })
+      .eq('useracc_id', user.id);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error updating details:', error);
+    throw error;
+  }
+};
+
+// Cart and payment handling
+const fetchCartItems = async () => {
+  try {
+    const { data } = await supabase
+      .from('cart_item')
+      .select(`
+        quantity,
+        product:prod_id (*)
+      `)
+      .eq('cart_id', cartId);
+
+    cartItems.value = data || [];
+    calculateTotals();
+  } catch (error) {
+    console.error('Error fetching cart items:', error);
+  }
+};
+
+const calculateTotals = () => {
+  subtotal.value = cartItems.value.reduce((sum, item) => 
+    sum + (item.product.prod_price * item.quantity), 0);
+  grandTotal.value = subtotal.value + transactionShippingFee.value;
+};
+
+const handlePayment = async () => {
+  processing.value = true;
+  try {
+    // Update user details first
+    await updateUserDetails();
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not logged in');
+
+    // Create transaction
+    const transactionData = {
+      useracc_id: user.id,
+      total_amount: grandTotal.value,
+      payment_method: paymentMethod.value,
+      status: 'PROCESSING',
+      shipping_fee: transactionShippingFee.value,
+      shipping_address: userAddress.value,
+      reference_number: paymentMethod.value === 'E-WALLET' 
+        ? 'REF-' + Math.random().toString(36).substr(2, 9).toUpperCase()
+        : null
+    };
+
+    const { data: transaction, error } = await supabase
+      .from('transaction')
+      .insert(transactionData)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Create transaction items
+    const transactionItems = cartItems.value.map(item => ({
+      transaction_id: transaction.transaction_id,
+      prod_id: item.product.prod_id,
+      quantity: item.quantity,
+      price: item.product.prod_price
+    }));
+
+    await supabase.from('transaction_item').insert(transactionItems);
+
+    // Update stock
+    for (const item of cartItems.value) {
+      await supabase.rpc('decrement_stock', {
+        product_id: item.product.prod_id,
+        decrement_by: item.quantity
+      });
+    }
+
+    // Clear cart
+    await supabase
+      .from('cart_item')
+      .delete()
+      .eq('cart_id', cartId);
+
+    router.push('/order-confirmation');
+
+  } catch (error) {
+    console.error('Payment error:', error);
+    alert('Payment failed: ' + error.message);
+  } finally {
+    processing.value = false;
+  }
+};
+
+onMounted(async () => {
+  await fetchUserData();
+  await fetchCartItems();
+});
+
+return {
+  cartItems,
+  paymentMethod,
+  processing,
+  subtotal,
+  grandTotal,
+  transactionShippingFee,
+  userAddress,
+  userPhone,
+  handlePayment
+};
+}
 };
 </script>
 
 <style scoped>
+/* Add your existing styles here */
+.shipping-address {
+margin-bottom: 2rem;
+padding: 1.5rem;
+background: #fff;
+border-radius: 8px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.address-form {
+display: grid;
+gap: 1rem;
+margin-top: 1rem;
+}
+
+.form-group label {
+display: block;
+margin-bottom: 0.5rem;
+font-weight: 500;
+}
+
+.form-input {
+width: 100%;
+padding: 0.8rem;
+border: 1px solid #ddd;
+border-radius: 8px;
+font-size: 1rem;
+}
+
+textarea.form-input {
+resize: vertical;
+min-height: 100px;
+}
+
 .checkout-container {
   max-width: 1200px;
   margin: 2rem auto;
