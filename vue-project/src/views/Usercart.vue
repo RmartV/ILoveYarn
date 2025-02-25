@@ -292,7 +292,6 @@ export default {
         console.error('Error fetching cart count:', error);
       }
     };
-    
 
     onMounted(async () => {
       await fetchUseracc();
