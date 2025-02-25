@@ -144,6 +144,7 @@ export default {
     const cartCount = ref(0);
     const searchQuery = ref('');
 
+    // Get user account info
     const fetchUserAccount = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
@@ -161,6 +162,69 @@ export default {
       }
     };
 
+    // Get active cart ID
+    const getActiveCart = async (userId) => {
+      const { data } = await supabase
+        .from('cart')
+        .select('cart_id')
+        .eq('useracc_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      return data?.[0]?.cart_id;
+    };
+
+    // Add to cart function
+    const addToCart = async (product) => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('Please login to add items to cart');
+
+        // Get user ID
+        const userId = userAccount.value.useracc_id;
+        
+        // Get or create cart
+        let cartId = await getActiveCart(userId);
+        if (!cartId) {
+          const { data: newCart, error } = await supabase
+            .from('cart')
+            .insert([{ useracc_id: userId }])
+            .select();
+          
+          if (error) throw error;
+          cartId = newCart[0].cart_id;
+        }
+
+        // Add/update item in cart
+        const { error } = await supabase
+          .from('cart_item')
+          .upsert({
+            cart_id: cartId,
+            prod_id: product.prod_id,
+            quantity: 1
+          }, {
+            onConflict: 'unique_cart_product', // Match the constraint name
+            ignoreDuplicates: false
+          });
+
+        if (error) throw error;
+        
+        // Update cart count
+        const { count } = await supabase
+          .from('cart_item')
+          .select('*', { count: 'exact', head: true })
+          .eq('cart_id', cartId);
+
+        cartCount.value = count || 0;
+        
+        alert(`${product.prod_name} added to cart!`);
+      } catch (error) {
+        console.error('Cart error:', error);
+        alert(error.message);
+      }
+    };
+
+    // Get product image (your existing version)
     const getProductImage = (product) => {
       if (product.prod_id === 101) {
         return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
@@ -218,10 +282,11 @@ export default {
       return '../views/images/default.png';
     };
 
+    // Fetch products
     const fetchProducts = async () => {
       const { data, error } = await supabase
         .from('product')
-        .select('*, yarn(*), tool(*), tape(*), ribbons(*), accessories(*)');
+        .select('*');
 
       if (!error) {
         products.value = data.map(product => ({
@@ -231,90 +296,18 @@ export default {
       }
     };
 
-    const getActiveCart = async (userId) => {
-      const { data, error } = await supabase
-        .from('cart')
-        .select('cart_id')
-        .eq('useracc_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      return data?.[0]?.cart_id;
-    };
-
-    const addToCart = async (product) => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('Please login to add items to cart');
-
-        const userId = userAccount.value.useracc_id;
-        let cartId = await getActiveCart(userId);
-
-        if (!cartId) {
-          const { data: newCart, error } = await supabase
-            .from('cart')
-            .insert([{ useracc_id: userId }])
-            .select();
-          
-          if (error) throw error;
-          cartId = newCart[0].cart_id;
-        }
-
-        const { error: upsertError } = await supabase
-          .from('cart_item')
-          .upsert({
-            cart_id: cartId,
-            prod_id: product.prod_id,
-            quantity: 1
-          }, {
-            onConflict: 'cart_id,prod_id',
-            ignoreDuplicates: false
-          });
-
-        if (upsertError) throw upsertError;
-        
-        await fetchCartCount(userId);
-        alert(`${product.prod_name} added to cart!`);
-      } catch (error) {
-        console.error('Cart error:', error);
-        alert(error.message);
-      }
-    };
-
-    const fetchCartCount = async (userId) => {
-      try {
-        const cartId = await getActiveCart(userId);
-        if (!cartId) {
-          cartCount.value = 0;
-          return;
-        }
-
-        const { count, error } = await supabase
-          .from('cart_item')
-          .select('*', { count: 'exact', head: true })
-          .eq('cart_id', cartId);
-
-        if (error) throw error;
-        cartCount.value = count || 0;
-      } catch (error) {
-        console.error('Cart count error:', error);
-      }
-    };
-
+    // Initial load
     onMounted(async () => {
       await fetchUserAccount();
       await fetchProducts();
-      if (userAccount.value) {
-        await fetchCartCount(userAccount.value.useracc_id);
-      }
     });
 
-    return { 
-      userAccount, 
-      products, 
-      addToCart, 
-      cartCount, 
-      searchQuery 
+    return {
+      userAccount,
+      products,
+      addToCart,
+      cartCount,
+      searchQuery
     };
   }
 };

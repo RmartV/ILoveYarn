@@ -94,12 +94,9 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { supabase } from '../lib/supabaseClient';
-import { useRouter } from 'vue-router';
-
 
 export default {
   setup() {
-    const router = useRouter();
     const cartItems = ref([]);
     const totalPrice = ref(0);
     const totalItems = ref(0);
@@ -107,8 +104,9 @@ export default {
     const cartCount = ref(0);
     const userAccount = ref(null);
 
+    // Get active cart
     const getActiveCart = async (userId) => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('cart')
         .select('cart_id')
         .eq('useracc_id', userId)
@@ -118,24 +116,91 @@ export default {
       return data?.[0]?.cart_id;
     };
 
-    const fetchUseracc = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+    const fetchProducts = async () => {
+      const { data, error } = await supabase
+        .from('product')
+        .select('*');
 
-        const { data } = await supabase
-          .from('user_account')
-          .select('useracc_id, useracc_fname')
-          .eq('useracc_email', user.email)
-          .single();
-
-        userAccount.value = data;
-        return data.useracc_id;
-      } catch (error) {
-        console.error('User fetch error:', error);
+      if (!error) {
+        products.value = data.map(product => ({
+          ...product,
+          image_url: getProductImage(product)
+        }));
       }
     };
 
+
+    // Fetch cart items
+    const fetchCartItems = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('Please login');
+
+        const { data: userData } = await supabase
+          .from('user_account')
+          .select('useracc_id')
+          .eq('useracc_email', user.email)
+          .single();
+
+        const cartId = await getActiveCart(userData.useracc_id);
+        if (!cartId) return;
+
+        const { data } = await supabase
+          .from('cart_item')
+          .select(`
+            cart_item_id, quantity,
+            product:prod_id (*)
+          `)
+          .eq('cart_id', cartId);
+
+        cartItems.value = data || [];
+        calculateTotals();
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    // Calculate totals
+    const calculateTotals = () => {
+      totalItems.value = cartItems.value.reduce((sum, item) => sum + item.quantity, 0);
+      totalPrice.value = cartItems.value.reduce((sum, item) => 
+        sum + (item.quantity * item.product.prod_price), 0);
+    };
+
+    // Update quantity
+    const updateQuantity = async (item, change) => {
+      const newQuantity = item.quantity + change;
+      if (newQuantity < 1) return;
+
+      try {
+        await supabase
+          .from('cart_item')
+          .update({ quantity: newQuantity })
+          .eq('cart_item_id', item.cart_item_id);
+
+        item.quantity = newQuantity;
+        calculateTotals();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    // Remove item
+    const removeItem = async (item) => {
+      try {
+        await supabase
+          .from('cart_item')
+          .delete()
+          .eq('cart_item_id', item.cart_item_id);
+
+        cartItems.value = cartItems.value.filter(i => i.cart_item_id !== item.cart_item_id);
+        calculateTotals();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
     const getProductImage = (product) => {
       if (product.prod_id === 101) {
         return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
@@ -193,125 +258,10 @@ export default {
       return '../views/images/default.png';
     };
 
-    const fetchCartItems = async () => {
-      try {
-        const userId = await fetchUseracc();
-        if (!userId) return;
-
-        const cartId = await getActiveCart(userId);
-        if (!cartId) {
-          cartItems.value = [];
-          loading.value = false;
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from('cart_item')
-          .select(`
-            cart_item_id, quantity,
-            product:prod_id (
-              *,
-              yarn(yarn_composition, yarn_weight, yarn_thickness),
-              tool(tool_material, tool_size)
-          `)
-          .eq('cart_id', cartId);
-
-        if (error) throw error;
-
-        cartItems.value = data.map(item => ({
-          ...item,
-          product: {
-            ...item.product,
-            image_url: getProductImage(item.product)
-          }
-        }));
-
-        calculateTotals();
-      } catch (error) {
-        console.error('Cart fetch error:', error);
-      } finally {
-        loading.value = false;
-      }
-    };
-
-    const calculateTotals = () => {
-      totalItems.value = cartItems.value.reduce(
-        (sum, item) => sum + item.quantity, 
-        0
-      );
-      
-      totalPrice.value = cartItems.value.reduce(
-        (sum, item) => sum + (item.quantity * item.product.prod_price), 
-        0
-      );
-    };
-
-    const updateQuantity = async (item, change) => {
-      const newQuantity = item.quantity + change;
-      if (newQuantity < 1) return;
-
-      try {
-        const { error } = await supabase
-          .from('cart_item')
-          .update({ quantity: newQuantity })
-          .eq('cart_item_id', item.cart_item_id);
-
-        if (!error) {
-          item.quantity = newQuantity;
-          calculateTotals();
-          await fetchCartCount();
-        }
-      } catch (error) {
-        console.error('Quantity update error:', error);
-      }
-    };
-
-    const removeItem = async (item) => {
-      try {
-        const { error } = await supabase
-          .from('cart_item')
-          .delete()
-          .eq('cart_item_id', item.cart_item_id);
-
-        if (!error) {
-          cartItems.value = cartItems.value.filter(i => i.cart_item_id !== item.cart_item_id);
-          calculateTotals();
-          await fetchCartCount();
-        }
-      } catch (error) {
-        console.error('Item removal error:', error);
-      }
-    };
-
-    const fetchCartCount = async () => {
-      try {
-        const userId = userAccount.value.useracc_id;
-        const cartId = await getActiveCart(userId);
-        
-        if (!cartId) {
-          cartCount.value = 0;
-          return;
-        }
-
-        const { count, error } = await supabase
-          .from('cart_item')
-          .select('*', { count: 'exact', head: true })
-          .eq('cart_id', cartId);
-
-        if (!error) cartCount.value = count || 0;
-      } catch (error) {
-        console.error('Cart count fetch error:', error);
-      }
-    };
-
-    const handleCheckout = () => {
-      router.push('/checkout');
-    };
-
+    // Initial load
     onMounted(async () => {
-      await fetchUseracc();
       await fetchCartItems();
-      await fetchCartCount();
+      await fetchProducts();
     });
 
     return { 
@@ -322,8 +272,7 @@ export default {
       updateQuantity, 
       removeItem, 
       cartCount,
-      userAccount,
-      handleCheckout
+      userAccount 
     };
   }
 };
