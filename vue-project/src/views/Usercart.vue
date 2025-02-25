@@ -9,6 +9,7 @@
             <div class="store-name">ILoveYarnPH | Shopping</div>
           </router-link>
         </div>
+
         <div class="user-actions">
             <div class="icon-container">
                 <div class="icon">
@@ -77,7 +78,11 @@
                 <span>Total Price:</span>
                 <span>₱{{ totalPrice.toFixed(2) }}</span>
               </div>
-              <button class="checkout-btn" @click="checkout">Proceed to Checkout →</button>
+              <button 
+  @click="handleCheckout"
+  class="checkout-btn"
+  :disabled="cartItems.length === 0"
+>Proceed to Checkout →</button>
             </div>
           </div>
         </div>
@@ -89,9 +94,12 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { supabase } from '../lib/supabaseClient';
+import { useRouter } from 'vue-router';
+
 
 export default {
   setup() {
+    const router = useRouter();
     const cartItems = ref([]);
     const totalPrice = ref(0);
     const totalItems = ref(0);
@@ -99,22 +107,34 @@ export default {
     const cartCount = ref(0);
     const userAccount = ref(null);
 
+    const getActiveCart = async (userId) => {
+      const { data, error } = await supabase
+        .from('cart')
+        .select('cart_id')
+        .eq('useracc_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      return data?.[0]?.cart_id;
+    };
+
     const fetchUseracc = async () => {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-    const { data } = await supabase
-      .from('user_account')
-      .select('useracc_fname')
-      .eq('useracc_email', user.email)
-      .single();
+        const { data } = await supabase
+          .from('user_account')
+          .select('useracc_id, useracc_fname')
+          .eq('useracc_email', user.email)
+          .single();
 
-    userAccount.value = data; // Correct variable name
-  } catch (error) {
-    console.error('Error fetching user:', error);
-  }
-};
+        userAccount.value = data;
+        return data.useracc_id;
+      } catch (error) {
+        console.error('User fetch error:', error);
+      }
+    };
 
     const getProductImage = (product) => {
       if (product.prod_id === 101) {
@@ -170,31 +190,33 @@ export default {
       } else if (product.prod_id === 204) {
         return supabase.storage.from('product_images').getPublicUrl('204.png').data.publicUrl; 
       }
-      return '../views/images/default-product.png';
+      return '../views/images/default.png';
     };
 
     const fetchCartItems = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('User not logged in');
+        const userId = await fetchUseracc();
+        if (!userId) return;
 
-        const { data: userData } = await supabase
-          .from('user_account')
-          .select('useracc_id')
-          .eq('useracc_email', user.email)
-          .single();
+        const cartId = await getActiveCart(userId);
+        if (!cartId) {
+          cartItems.value = [];
+          loading.value = false;
+          return;
+        }
 
-        const { data } = await supabase
-          .from('cartitems')
+        const { data, error } = await supabase
+          .from('cart_item')
           .select(`
-            *, 
-            product:prod_id(
+            cart_item_id, quantity,
+            product:prod_id (
               *,
               yarn(yarn_composition, yarn_weight, yarn_thickness),
               tool(tool_material, tool_size)
-            )
           `)
-          .eq('useracc_id', userData.useracc_id);
+          .eq('cart_id', cartId);
+
+        if (error) throw error;
 
         cartItems.value = data.map(item => ({
           ...item,
@@ -202,121 +224,89 @@ export default {
             ...item.product,
             image_url: getProductImage(item.product)
           }
-        })) || [];
+        }));
+
         calculateTotals();
       } catch (error) {
-        console.error('Error fetching cart:', error);
+        console.error('Cart fetch error:', error);
       } finally {
         loading.value = false;
       }
     };
 
     const calculateTotals = () => {
-  totalItems.value = cartItems.value.reduce(
-    (sum, item) => sum + item.items_quantity, 
-    0
-  );
-  
-  totalPrice.value = cartItems.value.reduce(
-    (sum, item) => sum + (item.items_quantity * item.product.prod_price), 
-    0
-  );
-};
+      totalItems.value = cartItems.value.reduce(
+        (sum, item) => sum + item.quantity, 
+        0
+      );
+      
+      totalPrice.value = cartItems.value.reduce(
+        (sum, item) => sum + (item.quantity * item.product.prod_price), 
+        0
+      );
+    };
 
     const updateQuantity = async (item, change) => {
-      const newQuantity = item.items_quantity + change;
+      const newQuantity = item.quantity + change;
       if (newQuantity < 1) return;
 
       try {
         const { error } = await supabase
-          .from('cartitems')
-          .update({ items_quantity: newQuantity })
+          .from('cart_item')
+          .update({ quantity: newQuantity })
           .eq('cart_item_id', item.cart_item_id);
 
         if (!error) {
-          item.items_quantity = newQuantity;
+          item.quantity = newQuantity;
           calculateTotals();
+          await fetchCartCount();
         }
       } catch (error) {
-        console.error('Error updating quantity:', error);
+        console.error('Quantity update error:', error);
       }
     };
 
     const removeItem = async (item) => {
       try {
         const { error } = await supabase
-          .from('cartitems')
+          .from('cart_item')
           .delete()
           .eq('cart_item_id', item.cart_item_id);
 
         if (!error) {
           cartItems.value = cartItems.value.filter(i => i.cart_item_id !== item.cart_item_id);
           calculateTotals();
+          await fetchCartCount();
         }
       } catch (error) {
-        console.error('Error removing item:', error);
+        console.error('Item removal error:', error);
       }
     };
 
     const fetchCartCount = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        const userId = userAccount.value.useracc_id;
+        const cartId = await getActiveCart(userId);
+        
+        if (!cartId) {
+          cartCount.value = 0;
+          return;
+        }
 
-        const { data: userData } = await supabase
-          .from('user_account')
-          .select('useracc_id')
-          .eq('useracc_email', user.email)
-          .single();
-
-        const { count } = await supabase
-          .from('cartitems')
+        const { count, error } = await supabase
+          .from('cart_item')
           .select('*', { count: 'exact', head: true })
-          .eq('useracc_id', userData.useracc_id);
+          .eq('cart_id', cartId);
 
-        cartCount.value = count || 0;
+        if (!error) cartCount.value = count || 0;
       } catch (error) {
-        console.error('Error fetching cart count:', error);
+        console.error('Cart count fetch error:', error);
       }
     };
 
-    const checkout = async () => {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not logged in');
-
-    // Update cart items status
-    const { error: updateError } = await supabase
-      .from('cartitems')
-      .update({ cartitems_status: 'purchase confirmed' })
-      .eq('useracc_id', userAccount.value.useracc_id)
-      .eq('cartitems_status', 'purchase pending');
-
-    if (updateError) throw updateError;
-
-    // Create transaction record
-    const { data: transactionData, error: transactionError } = await supabase
-      .from('transaction')
-      .insert([{
-        transaction_totalitems: totalItems.value,
-        transaction_totalamount: totalPrice.value,
-        transaction_methodtype: 'PROCESSING', // Temporary value
-        transaction_status: 'PROCESSING',
-        useracc_id: userAccount.value.useracc_id
-      }])
-      .select()
-      .single();
-
-    if (transactionError) throw transactionError;
-
-    // Redirect to transaction page
-    router.push(`/transaction/${transactionData.transaction_id}`);
-    
-  } catch (error) {
-    console.error('Checkout error:', error);
-    alert('Error during checkout: ' + error.message);
-  }
-};
+    const handleCheckout = () => {
+      router.push('/checkout');
+    };
 
     onMounted(async () => {
       await fetchUseracc();
@@ -332,8 +322,8 @@ export default {
       updateQuantity, 
       removeItem, 
       cartCount,
-      checkout,
-      userAccount 
+      userAccount,
+      handleCheckout
     };
   }
 };

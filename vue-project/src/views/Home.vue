@@ -136,6 +136,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { supabase } from '../lib/supabaseClient';
+import { getProductImage } from '../helpers/images';
 
 export default {
   setup() {
@@ -151,26 +152,13 @@ export default {
 
         const { data } = await supabase
           .from('user_account')
-          .select('useracc_fname')
+          .select('useracc_id, useracc_fname')
           .eq('useracc_email', user.email)
           .single();
 
         userAccount.value = data;
       } catch (error) {
         console.error('Error fetching user:', error);
-      }
-    };
-
-    const fetchProducts = async () => {
-      const { data, error } = await supabase
-        .from('product')
-        .select('*, yarn(yarn_composition, yarn_weight, yarn_thickness), tool(tool_material, tool_size), tape(tape_type, tape_length, tape_size), ribbons(ribbons_length, ribbons_thickness, ribbons_material), accessories(accs_category, accs_quantity)');
-
-      if (!error) {
-        products.value = data.map(product => ({
-          ...product,
-          image_url: getProductImage(product)
-        }));
       }
     };
 
@@ -228,71 +216,107 @@ export default {
       } else if (product.prod_id === 204) {
         return supabase.storage.from('product_images').getPublicUrl('204.png').data.publicUrl; 
       }
-      
-      
       return '../views/images/default.png';
     };
 
-    const fetchCartCount = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+    const fetchProducts = async () => {
+      const { data, error } = await supabase
+        .from('product')
+        .select('*, yarn(*), tool(*), tape(*), ribbons(*), accessories(*)');
 
-        const { data: userData } = await supabase
-          .from('user_account')
-          .select('useracc_id')
-          .eq('useracc_email', user.email)
-          .single();
-
-        const { count } = await supabase
-          .from('cartitems')
-          .select('*', { count: 'exact', head: true })
-          .eq('useracc_id', userData.useracc_id);
-
-        cartCount.value = count || 0;
-      } catch (error) {
-        console.error('Error fetching cart count:', error);
+      if (!error) {
+        products.value = data.map(product => ({
+          ...product,
+          image_url: getProductImage(product)
+        }));
       }
+    };
+
+    const getActiveCart = async (userId) => {
+      const { data, error } = await supabase
+        .from('cart')
+        .select('cart_id')
+        .eq('useracc_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      return data?.[0]?.cart_id;
     };
 
     const addToCart = async (product) => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('User not logged in');
+        if (!user) throw new Error('Please login to add items to cart');
 
-        const { data: userData } = await supabase
-          .from('user_account')
-          .select('useracc_id')
-          .eq('useracc_email', user.email)
-          .single();
+        const userId = userAccount.value.useracc_id;
+        let cartId = await getActiveCart(userId);
 
-        const { error } = await supabase
-          .from('cartitems')
+        if (!cartId) {
+          const { data: newCart, error } = await supabase
+            .from('cart')
+            .insert([{ useracc_id: userId }])
+            .select();
+          
+          if (error) throw error;
+          cartId = newCart[0].cart_id;
+        }
+
+        const { error: upsertError } = await supabase
+          .from('cart_item')
           .upsert({
-            useracc_id: userData.useracc_id,
+            cart_id: cartId,
             prod_id: product.prod_id,
-            items_quantity: 1
+            quantity: 1
           }, {
-            onConflict: 'useracc_id, prod_id',
+            onConflict: 'cart_id,prod_id',
             ignoreDuplicates: false
           });
 
-        if (error) throw error;
-        await fetchCartCount();
-        alert('Added to cart successfully!');
+        if (upsertError) throw upsertError;
+        
+        await fetchCartCount(userId);
+        alert(`${product.prod_name} added to cart!`);
       } catch (error) {
-        console.error('Error adding to cart:', error);
+        console.error('Cart error:', error);
         alert(error.message);
+      }
+    };
+
+    const fetchCartCount = async (userId) => {
+      try {
+        const cartId = await getActiveCart(userId);
+        if (!cartId) {
+          cartCount.value = 0;
+          return;
+        }
+
+        const { count, error } = await supabase
+          .from('cart_item')
+          .select('*', { count: 'exact', head: true })
+          .eq('cart_id', cartId);
+
+        if (error) throw error;
+        cartCount.value = count || 0;
+      } catch (error) {
+        console.error('Cart count error:', error);
       }
     };
 
     onMounted(async () => {
       await fetchUserAccount();
       await fetchProducts();
-      await fetchCartCount();
+      if (userAccount.value) {
+        await fetchCartCount(userAccount.value.useracc_id);
+      }
     });
 
-    return { userAccount, products, addToCart, cartCount, searchQuery };
+    return { 
+      userAccount, 
+      products, 
+      addToCart, 
+      cartCount, 
+      searchQuery 
+    };
   }
 };
 </script>
