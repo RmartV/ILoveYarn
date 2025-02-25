@@ -1,7 +1,6 @@
 <template>
   <div>
     <header>
-      <!-- Reuse your existing header component -->
       <div class="logo-container">
         <router-link to="/home">
           <div class="logo">
@@ -11,7 +10,7 @@
         </router-link>
       </div>
       <div class="user-actions">
-        <!-- Reuse user actions from previous components -->
+        <!-- Reuse your header user actions -->
       </div>
     </header>
 
@@ -59,7 +58,6 @@
                   required
                 >
                 <div class="payment-card">
-                  <!-----<img src="../views/images/cash.png" alt="COD" class="payment-icon">--->
                   <span>Cash on Delivery</span>
                 </div>
               </label>
@@ -72,7 +70,6 @@
                   required
                 >
                 <div class="payment-card">
-                  <!-------<img src="../views/images/wallet.png" alt="E-Wallet" class="payment-icon">--->
                   <span>E-Wallet</span>
                 </div>
               </label>
@@ -101,7 +98,6 @@
             </button>
           </form>
 
-          <!-- Transaction Status Controls -->
           <div v-if="transactionStatus === 'PROCESSING'" class="status-controls">
             <p>Complete the transaction:</p>
             <div class="status-buttons">
@@ -122,54 +118,48 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { supabase } from '../lib/supabaseClient';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
   setup() {
+    const route = useRoute();
     const router = useRouter();
+    const cartId = route.params.cartId;
+    
     const cartItems = ref([]);
     const paymentMethod = ref('');
     const phoneNumber = ref('');
     const transactionStatus = ref('');
     const processing = ref(false);
-    const route = useRoute();
-    const cartId = route.params.cartId;
     const subtotal = ref(0);
     const totalItems = ref(0);
     const grandTotal = ref(0);
 
+    const getProductImage = (product) => {
+      if (product.prod_id === 101) return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
+      if (product.prod_id === 201) return supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
+      // Add all your product image mappings here
+      return '../views/images/default-product.png';
+    };
+
     const fetchCartItems = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data: userData } = await supabase
-          .from('user_account')
-          .select('useracc_id')
-          .eq('useracc_email', user.email)
-          .single();
-
-        const { data: cart } = await supabase
-          .from('cart')
-          .select('cart_id')
-          .eq('useracc_id', userData.useracc_id)
-          .order('created_at', { ascending: false })
-          .limit(1);
-
-        if (!cart.length) return;
-
         const { data } = await supabase
           .from('cart_item')
           .select(`
             quantity,
-            product:prod_id (
-              *,
-              yarn(yarn_composition, yarn_weight, yarn_thickness),
-              tool(tool_material, tool_size)
+            product:prod_id (*)
           `)
-          .eq('cart_id', cart[0].cart_id);
+          .eq('cart_id', cartId);
 
-        cartItems.value = data || [];
+        cartItems.value = data.map(item => ({
+          ...item,
+          product: {
+            ...item.product,
+            image_url: getProductImage(item.product)
+          }
+        })) || [];
+        
         calculateTotals();
       } catch (error) {
         console.error('Error fetching cart items:', error);
@@ -180,7 +170,7 @@ export default {
       subtotal.value = cartItems.value.reduce((sum, item) => 
         sum + (item.product.prod_price * item.quantity), 0);
       totalItems.value = cartItems.value.reduce((sum, item) => sum + item.quantity, 0);
-      grandTotal.value = subtotal.value; // Add shipping/discounts here if needed
+      grandTotal.value = subtotal.value;
     };
 
     const handlePayment = async () => {
@@ -189,15 +179,9 @@ export default {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('User not logged in');
 
-        const { data: userData } = await supabase
-          .from('user_account')
-          .select('useracc_id')
-          .eq('useracc_email', user.email)
-          .single();
-
         // Create transaction
         const transactionData = {
-          useracc_id: userData.useracc_id,
+          useracc_id: user.id,
           total_amount: grandTotal.value,
           payment_method: paymentMethod.value,
           status: 'PROCESSING',
@@ -227,31 +211,23 @@ export default {
 
         // Update stock
         for (const item of cartItems.value) {
-          await supabase.rpc('decrement_stock', {
+          const { error } = await supabase.rpc('decrement_stock', {
             product_id: item.product.prod_id,
             decrement_by: item.quantity
           });
+          if (error) throw error;
         }
 
         // Clear cart
-        const { data: cart } = await supabase
-          .from('cart')
-          .select('cart_id')
-          .eq('useracc_id', userData.useracc_id)
-          .order('created_at', { ascending: false })
-          .limit(1);
-
-        if (cart.length) {
-          await supabase
-            .from('cart_item')
-            .delete()
-            .eq('cart_id', cart[0].cart_id);
-        }
+        await supabase
+          .from('cart_item')
+          .delete()
+          .eq('cart_id', cartId);
 
         transactionStatus.value = 'PROCESSING';
       } catch (error) {
         console.error('Payment error:', error);
-        alert('Payment failed. Please try again.');
+        alert('Payment failed: ' + error.message);
       } finally {
         processing.value = false;
       }
@@ -259,13 +235,9 @@ export default {
 
     const completeTransaction = async (success) => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
         const { data: transaction } = await supabase
           .from('transaction')
           .select('transaction_id')
-          .eq('useracc_id', user.id)
           .order('created_at', { ascending: false })
           .limit(1)
           .single();
@@ -289,11 +261,14 @@ export default {
           router.push('/order-confirmation');
         }
       } catch (error) {
-        console.error('Error completing transaction:', error);
+        console.error('Transaction error:', error);
+        alert('Error completing transaction: ' + error.message);
       }
     };
 
-    onMounted(fetchCartItems);
+    onMounted(async () => {
+      await fetchCartItems();
+    });
 
     return {
       cartItems,
