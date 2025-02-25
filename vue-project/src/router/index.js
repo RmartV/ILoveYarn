@@ -15,11 +15,12 @@ const routes = [
   { path: '/authentication', component: Authentication },
   { path: '/user-details', component: UserAccount},
   { path:  '/user-cart', component: Usercart},
-  {
-    path: '/transaction/:transactionId', component: Transaction,
-    props: true
+  { path: '/home', component: Home }, // Home page after login
+  { 
+    path: '/transaction/:cartId', 
+    component: Transaction,
+    props: true 
   },
-  { path: '/home', component: Home } // Home page after login
 ];
 
 const router = createRouter({

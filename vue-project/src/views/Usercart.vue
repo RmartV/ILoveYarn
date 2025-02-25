@@ -1,31 +1,33 @@
 <template>
   <div>
     <header>
-        <div class="logo-container">
-          <router-link to="/home">
-            <div class="logo">
-              <img src="../views/images/homelogo.jpg" alt="ILoveYarnPH" class="logo-img">
-            </div>
-            <div class="store-name">ILoveYarnPH | Shopping</div>
-          </router-link>
-        </div>
+      <div class="logo-container">
+        <router-link to="/home">
+          <div class="logo">
+            <img src="../views/images/homelogo.jpg" alt="ILoveYarnPH" class="logo-img">
+          </div>
+          <div class="store-name">ILoveYarnPH | Shopping</div>
+        </router-link>
+      </div>
 
-        <div class="user-actions">
-            <div class="icon-container">
-                <div class="icon">
-                  <img src="../views/images/package.png" alt="Package" class="action-icon">
-                </div>
-            </div>
-            <div class="icon-container">
-                <div class="icon">
-                  <router-link to="/user-cart">
-                    <img src="../views/images/shopping-cart.png" alt="Cart" class="action-icon">
-                  </router-link>
-                </div>
-                <div class="cart-count">{{ cartCount }}</div>
-            </div>
-            <div class="user-name"><router-link to="/user-details">{{ userAccount?.useracc_fname || 'Guest' }}</router-link></div>
+      <div class="user-actions">
+        <div class="icon-container">
+          <div class="icon">
+            <img src="../views/images/package.png" alt="Package" class="action-icon">
+          </div>
         </div>
+        <div class="icon-container">
+          <div class="icon">
+            <router-link to="/user-cart">
+              <img src="../views/images/shopping-cart.png" alt="Cart" class="action-icon">
+            </router-link>
+          </div>
+          <div class="cart-count">{{ cartCount }}</div>
+        </div>
+        <div class="user-name">
+          <router-link to="/user-details">{{ userAccount?.useracc_fname || 'Guest' }}</router-link>
+        </div>
+      </div>
     </header>
 
     <div class="cart-container">
@@ -49,14 +51,14 @@
                 <h3 class="product-name">{{ item.product.prod_name }}</h3>
                 <p class="product-category">{{ item.product.prod_categorytype }}</p>
                 <div class="price-quantity">
-                  <p class="product-price">₱{{ (item.product.prod_price * item.items_quantity).toFixed(2) }}</p>
+                  <p class="product-price">₱{{ (item.product.prod_price * item.quantity).toFixed(2) }}</p>
                   <div class="quantity-controls">
                     <button 
                       @click="updateQuantity(item, -1)" 
                       class="quantity-btn"
-                      :disabled="item.items_quantity <= 1"
+                      :disabled="item.quantity <= 1"
                     >-</button>
-                    <span class="quantity">{{ item.items_quantity }}</span>
+                    <span class="quantity">{{ item.quantity }}</span>
                     <button @click="updateQuantity(item, 1)" class="quantity-btn">+</button>
                   </div>
                 </div>
@@ -79,10 +81,10 @@
                 <span>₱{{ totalPrice.toFixed(2) }}</span>
               </div>
               <button 
-  @click="handleCheckout"
-  class="checkout-btn"
-  :disabled="cartItems.length === 0"
->Proceed to Checkout →</button>
+                @click="handleCheckout"
+                class="checkout-btn"
+                :disabled="cartItems.length === 0"
+              >Proceed to Checkout →</button>
             </div>
           </div>
         </div>
@@ -94,9 +96,11 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { supabase } from '../lib/supabaseClient';
+import { useRouter } from 'vue-router';
 
 export default {
   setup() {
+    const router = useRouter();
     const cartItems = ref([]);
     const totalPrice = ref(0);
     const totalItems = ref(0);
@@ -104,7 +108,36 @@ export default {
     const cartCount = ref(0);
     const userAccount = ref(null);
 
-    // Get active cart
+    const getProductImage = (product) => {
+      if (product.prod_id === 101) return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
+      if (product.prod_id === 201) return supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
+      if (product.prod_id === 102) return supabase.storage.from('product_images').getPublicUrl('102.png').data.publicUrl;
+      if (product.prod_id === 103) return supabase.storage.from('product_images').getPublicUrl('103.png').data.publicUrl;
+      if (product.prod_id === 104) return supabase.storage.from('product_images').getPublicUrl('104.png').data.publicUrl;
+      if (product.prod_id === 105) return supabase.storage.from('product_images').getPublicUrl('105.png').data.publicUrl;
+      if (product.prod_id === 106) return supabase.storage.from('product_images').getPublicUrl('106.png').data.publicUrl;
+      if (product.prod_id === 107) return supabase.storage.from('product_images').getPublicUrl('107.png').data.publicUrl;
+      if (product.prod_id === 108) return supabase.storage.from('product_images').getPublicUrl('108.png').data.publicUrl;
+      if (product.prod_id === 109) return supabase.storage.from('product_images').getPublicUrl('109.png').data.publicUrl;
+      if (product.prod_id === 110) return supabase.storage.from('product_images').getPublicUrl('110.png').data.publicUrl;
+      if (product.prod_id === 111) return supabase.storage.from('product_images').getPublicUrl('111.png').data.publicUrl;
+      if (product.prod_id === 112) return supabase.storage.from('product_images').getPublicUrl('112.png').data.publicUrl;
+      if (product.prod_id === 113) return supabase.storage.from('product_images').getPublicUrl('113.png').data.publicUrl;
+      if (product.prod_id === 114) return supabase.storage.from('product_images').getPublicUrl('114.png').data.publicUrl;
+      if (product.prod_id === 115) return supabase.storage.from('product_images').getPublicUrl('115.png').data.publicUrl;
+      if (product.prod_id === 116) return supabase.storage.from('product_images').getPublicUrl('116.png').data.publicUrl;
+      if (product.prod_id === 117) return supabase.storage.from('product_images').getPublicUrl('117.png').data.publicUrl;
+      if (product.prod_id === 118) return supabase.storage.from('product_images').getPublicUrl('118.png').data.publicUrl;
+      if (product.prod_id === 119) return supabase.storage.from('product_images').getPublicUrl('119.png').data.publicUrl;
+      if (product.prod_id === 120) return supabase.storage.from('product_images').getPublicUrl('120.png').data.publicUrl;
+      if (product.prod_id === 121) return supabase.storage.from('product_images').getPublicUrl('121.png').data.publicUrl;
+      if (product.prod_id === 125) return supabase.storage.from('product_images').getPublicUrl('125.png').data.publicUrl;
+      if (product.prod_id === 202) return supabase.storage.from('product_images').getPublicUrl('202.png').data.publicUrl;
+      if (product.prod_id === 203) return supabase.storage.from('product_images').getPublicUrl('203.png').data.publicUrl;
+      if (product.prod_id === 204) return supabase.storage.from('product_images').getPublicUrl('204.png').data.publicUrl;
+      return '../views/images/default-product.png';
+    };
+
     const getActiveCart = async (userId) => {
       const { data } = await supabase
         .from('cart')
@@ -112,27 +145,57 @@ export default {
         .eq('useracc_id', userId)
         .order('created_at', { ascending: false })
         .limit(1);
-
       return data?.[0]?.cart_id;
     };
 
-    const fetchProducts = async () => {
-      const { data, error } = await supabase
-        .from('product')
-        .select('*');
+    const fetchUserAccount = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-      if (!error) {
-        products.value = data.map(product => ({
-          ...product,
-          image_url: getProductImage(product)
-        }));
+        const { data } = await supabase
+          .from('user_account')
+          .select('useracc_id, useracc_fname')
+          .eq('useracc_email', user.email)
+          .single();
+
+        userAccount.value = data;
+      } catch (error) {
+        console.error('Error fetching user:', error);
       }
     };
 
+    const updateCartCount = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-    // Fetch cart items
+        const { data: userData } = await supabase
+          .from('user_account')
+          .select('useracc_id')
+          .eq('useracc_email', user.email)
+          .single();
+
+        const cartId = await getActiveCart(userData.useracc_id);
+        if (!cartId) {
+          cartCount.value = 0;
+          return;
+        }
+
+        const { count } = await supabase
+          .from('cart_item')
+          .select('*', { count: 'exact', head: true })
+          .eq('cart_id', cartId);
+
+        cartCount.value = count || 0;
+      } catch (error) {
+        console.error('Cart count error:', error);
+      }
+    };
+
     const fetchCartItems = async () => {
       try {
+        await fetchUserAccount();
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('Please login');
 
@@ -153,7 +216,13 @@ export default {
           `)
           .eq('cart_id', cartId);
 
-        cartItems.value = data || [];
+        cartItems.value = data.map(item => ({
+          ...item,
+          product: {
+            ...item.product,
+            image_url: getProductImage(item.product)
+          }
+        })) || [];
         calculateTotals();
       } catch (error) {
         console.error('Error:', error);
@@ -162,14 +231,12 @@ export default {
       }
     };
 
-    // Calculate totals
     const calculateTotals = () => {
       totalItems.value = cartItems.value.reduce((sum, item) => sum + item.quantity, 0);
       totalPrice.value = cartItems.value.reduce((sum, item) => 
         sum + (item.quantity * item.product.prod_price), 0);
     };
 
-    // Update quantity
     const updateQuantity = async (item, change) => {
       const newQuantity = item.quantity + change;
       if (newQuantity < 1) return;
@@ -182,12 +249,12 @@ export default {
 
         item.quantity = newQuantity;
         calculateTotals();
+        await updateCartCount();
       } catch (error) {
         console.error('Error:', error);
       }
     };
 
-    // Remove item
     const removeItem = async (item) => {
       try {
         await supabase
@@ -197,71 +264,33 @@ export default {
 
         cartItems.value = cartItems.value.filter(i => i.cart_item_id !== item.cart_item_id);
         calculateTotals();
+        await updateCartCount();
       } catch (error) {
         console.error('Error:', error);
       }
     };
-    const getProductImage = (product) => {
-      if (product.prod_id === 101) {
-        return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
-      } else if (product.prod_id === 201) {
-        return supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
-      } else if (product.prod_id === 102) {
-        return supabase.storage.from('product_images').getPublicUrl('102.png').data.publicUrl;
-      } else if (product.prod_id === 103) {
-        return supabase.storage.from('product_images').getPublicUrl('103.png').data.publicUrl;      
-      } else if (product.prod_id === 104) {
-        return supabase.storage.from('product_images').getPublicUrl('104.png').data.publicUrl;
-      } else if (product.prod_id === 105) {
-        return supabase.storage.from('product_images').getPublicUrl('105.png').data.publicUrl;         
-      } else if (product.prod_id === 106) {
-        return supabase.storage.from('product_images').getPublicUrl('106.png').data.publicUrl;         
-      } else if (product.prod_id === 107) {
-        return supabase.storage.from('product_images').getPublicUrl('107.png').data.publicUrl;         
-      } else if (product.prod_id === 108) {
-        return supabase.storage.from('product_images').getPublicUrl('108.png').data.publicUrl;
-      } else if (product.prod_id === 109) {
-        return supabase.storage.from('product_images').getPublicUrl('109.png').data.publicUrl; 
-      } else if (product.prod_id === 110) {
-        return supabase.storage.from('product_images').getPublicUrl('110.png').data.publicUrl;
-      } else if (product.prod_id === 111) {
-        return supabase.storage.from('product_images').getPublicUrl('111.png').data.publicUrl;
-      } else if (product.prod_id === 112) {
-        return supabase.storage.from('product_images').getPublicUrl('112.png').data.publicUrl;
-      } else if (product.prod_id === 113) {
-        return supabase.storage.from('product_images').getPublicUrl('113.png').data.publicUrl;      
-      } else if (product.prod_id === 114) {
-        return supabase.storage.from('product_images').getPublicUrl('114.png').data.publicUrl;     
-      } else if (product.prod_id === 115) {
-        return supabase.storage.from('product_images').getPublicUrl('115.png').data.publicUrl;
-      } else if (product.prod_id === 116) {
-        return supabase.storage.from('product_images').getPublicUrl('116.png').data.publicUrl; 
-      } else if (product.prod_id === 117) {
-        return supabase.storage.from('product_images').getPublicUrl('117.png').data.publicUrl;
-      } else if (product.prod_id === 118) {
-        return supabase.storage.from('product_images').getPublicUrl('118.png').data.publicUrl;      
-      } else if (product.prod_id === 119) {
-        return supabase.storage.from('product_images').getPublicUrl('119.png').data.publicUrl;     
-      } else if (product.prod_id === 120) {
-        return supabase.storage.from('product_images').getPublicUrl('120.png').data.publicUrl;
-      } else if (product.prod_id === 121) {
-        return supabase.storage.from('product_images').getPublicUrl('121.png').data.publicUrl; 
-      } else if (product.prod_id === 125) {
-        return supabase.storage.from('product_images').getPublicUrl('125.png').data.publicUrl; 
-      } else if (product.prod_id === 202) {
-        return supabase.storage.from('product_images').getPublicUrl('202.png').data.publicUrl; 
-      } else if (product.prod_id === 203) {
-        return supabase.storage.from('product_images').getPublicUrl('203.png').data.publicUrl; 
-      } else if (product.prod_id === 204) {
-        return supabase.storage.from('product_images').getPublicUrl('204.png').data.publicUrl; 
+
+    const handleCheckout = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        const { data: userData } = await supabase
+          .from('user_account')
+          .select('useracc_id')
+          .eq('useracc_email', user.email)
+          .single();
+
+        const cartId = await getActiveCart(userData.useracc_id);
+        router.push(`/transaction/${cartId}`);
+      } catch (error) {
+        console.error('Checkout error:', error);
+        alert('Error proceeding to checkout');
       }
-      return '../views/images/default.png';
     };
 
-    // Initial load
     onMounted(async () => {
+      await fetchUserAccount();
       await fetchCartItems();
-      await fetchProducts();
+      await updateCartCount();
     });
 
     return { 
@@ -272,7 +301,8 @@ export default {
       updateQuantity, 
       removeItem, 
       cartCount,
-      userAccount 
+      userAccount,
+      handleCheckout
     };
   }
 };

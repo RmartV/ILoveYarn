@@ -132,7 +132,8 @@ export default {
     const phoneNumber = ref('');
     const transactionStatus = ref('');
     const processing = ref(false);
-    
+    const route = useRoute();
+    const cartId = route.params.cartId;
     const subtotal = ref(0);
     const totalItems = ref(0);
     const grandTotal = ref(0);
