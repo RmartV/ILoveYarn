@@ -68,23 +68,23 @@
                             <div class="product-name">{{ product.prod_name }}</div>
                             <div class="product-type">{{ product.prod_categorytype }}</div>
                             <div class="product-description" v-if="product.prod_categorytype === 'YARN'">
-                              {{ product.yarn.yarn_composition }} • {{ product.yarn.yarn_weight }} • {{ product.yarn.yarn_thickness }}
+                              {{ product.yarn?.yarn_composition }} • {{ product.yarn?.yarn_weight }} • {{ product.yarn?.yarn_thickness }}
                             </div>
 
                             <div class="product-description" v-if="product.prod_categorytype === 'TOOL'">
-                              {{ product.tool.tool_material }} • {{ product.tool.tool_size }}
+                              {{ product.tool?.tool_material }} • {{ product.tool?.tool_size }}
                             </div>
 
                             <div class="product-description" v-if="product.prod_categorytype === 'TAPE'">
-                              {{ product.tape.tape_type}} • {{ product.tape.tape_length }} • {{ product.tape.tape_size }}
+                              {{ product.tape?.tape_type}} • {{ product.tape?.tape_length }} • {{ product.tape?.tape_size }}
                             </div>
 
                             <div class="product-description" v-if="product.prod_categorytype === 'ACCESSORIES'">
-                              {{ product.accs.accs_category }} • {{ product.accs.accs_quantity }}
+                              {{ product.accs?.accs_category }} • {{ product.accs?.accs_quantity }}
                             </div>
 
                             <div class="product-description" v-if="product.prod_categorytype === 'RIBBONS'">
-                              {{ product.ribbons.ribbons_length }} • {{ product.ribbons.ribbons_thickness }} • {{ product.ribbons.ribbons_material }}
+                              {{ product.ribbons?.ribbons_length }} • {{ product.ribbons?.ribbons_thickness }} • {{ product.ribbons?.ribbons_material }}
                             </div>
 
                             <div class="stock-info">In stock: {{ product.prod_stock }}</div>
@@ -284,17 +284,24 @@ export default {
 
     // Fetch products
     const fetchProducts = async () => {
-      const { data, error } = await supabase
-        .from('product')
-        .select('*');
+  const { data, error } = await supabase
+    .from('product')
+    .select(`
+      *,
+      yarn(*),
+      tool(*),
+      tape(*),
+      ribbons(*),
+      accessories(*)
+    `);
 
-      if (!error) {
-        products.value = data.map(product => ({
-          ...product,
-          image_url: getProductImage(product)
-        }));
-      }
-    };
+  if (!error) {
+    products.value = data.map(product => ({
+      ...product,
+      image_url: getProductImage(product)
+    }));
+  }
+};
 
     // Initial load
     onMounted(async () => {
