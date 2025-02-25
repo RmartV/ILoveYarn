@@ -101,13 +101,6 @@ export default {
     const loading = ref(true);
     const cartCount = ref(0);
     const userAccount = ref(null);
-    const route = useRoute();
-    const router = useRouter();
-    const transactionId = route.params.transactionId;
-    const transactionDetails = ref({});
-    const paymentMethod = ref('');
-    const ewalletPhone = ref('');
-    const processing = ref(false);
 
     const fetchUseracc = async () => {
   try {
@@ -125,8 +118,6 @@ export default {
     console.error('Error fetching user:', error);
   }
 };
-
-
 
     const getProductImage = (product) => {
       if (product.prod_id === 101) {
@@ -269,7 +260,6 @@ export default {
         console.error('Error removing item:', error);
       }
     };
-    
 
     const fetchCartCount = async () => {
       try {
