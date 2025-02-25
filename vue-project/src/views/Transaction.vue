@@ -52,7 +52,7 @@
         <h2>Shipping Address</h2>
         <div class="address-form">
           <div class="form-group">
-            <label>Full Address</label>
+            <label>Delivery Address</label>
             <textarea 
               v-model="userAddress"
               rows="3"
@@ -123,171 +123,154 @@ import { supabase } from '../lib/supabaseClient';
 import { useRoute, useRouter } from 'vue-router';
 
 export default {
-setup() {
-const route = useRoute();
-const router = useRouter();
-const cartId = route.params.cartId;
+  setup() {
+    const route = useRoute();
+    const router = useRouter();
+    const cartId = route.params.cartId;
+    
+    // Reactive state
+    const cartItems = ref([]);
+    const paymentMethod = ref('COD');
+    const processing = ref(false);
+    const subtotal = ref(0);
+    const grandTotal = ref(0);
+    const shippingFee = ref(50.00);
+    const userAddress = ref('');
+    const userPhone = ref('');
 
-// Reactive data
-const cartItems = ref([]);
-const paymentMethod = ref('');
-const transactionStatus = ref('');
-const processing = ref(false);
-const subtotal = ref(0);
-const grandTotal = ref(0);
-const transactionShippingFee = ref(50.00);
-const userAddress = ref('');
-const userPhone = ref('');
+    // Fetch user data
+    const fetchUserData = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-// Fetch user data
-const fetchUserData = async () => {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+        const { data } = await supabase
+          .from('user_account')
+          .select('useracc_address, useracc_phone')
+          .eq('useracc_id', user.id)
+          .single();
 
-    const { data } = await supabase
-      .from('user_account')
-      .select('useracc_address, useracc_phone')
-      .eq('useracc_id', user.id)
-      .single();
-
-    if (data) {
-      userAddress.value = data.useracc_address || '';
-      userPhone.value = data.useracc_phone || '';
-    }
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-  }
-};
-
-// Update user address and phone
-const updateUserDetails = async () => {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { error } = await supabase
-      .from('user_account')
-      .update({
-        useracc_address: userAddress.value,
-        useracc_phone: userPhone.value
-      })
-      .eq('useracc_id', user.id);
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error updating details:', error);
-    throw error;
-  }
-};
-
-// Cart and payment handling
-const fetchCartItems = async () => {
-  try {
-    const { data } = await supabase
-      .from('cart_item')
-      .select(`
-        quantity,
-        product:prod_id (*)
-      `)
-      .eq('cart_id', cartId);
-
-    cartItems.value = data || [];
-    calculateTotals();
-  } catch (error) {
-    console.error('Error fetching cart items:', error);
-  }
-};
-
-const calculateTotals = () => {
-  subtotal.value = cartItems.value.reduce((sum, item) => 
-    sum + (item.product.prod_price * item.quantity), 0);
-  grandTotal.value = subtotal.value + transactionShippingFee.value;
-};
-
-const handlePayment = async () => {
-  processing.value = true;
-  try {
-    // Update user details first
-    await updateUserDetails();
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not logged in');
-
-    // Create transaction
-    const transactionData = {
-      useracc_id: user.id,
-      total_amount: grandTotal.value,
-      payment_method: paymentMethod.value,
-      status: 'PROCESSING',
-      shipping_fee: transactionShippingFee.value,
-      shipping_address: userAddress.value,
-      reference_number: paymentMethod.value === 'E-WALLET' 
-        ? 'REF-' + Math.random().toString(36).substr(2, 9).toUpperCase()
-        : null
+        if (data) {
+          userAddress.value = data.useracc_address || '';
+          userPhone.value = data.useracc_phone || '';
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        alert('Failed to load user information');
+      }
     };
 
-    const { data: transaction, error } = await supabase
-      .from('transaction')
-      .insert(transactionData)
-      .select()
-      .single();
+    // Update user address
+    const updateUserAddress = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-    if (error) throw error;
+        const { error } = await supabase
+          .from('user_account')
+          .update({
+            useracc_address: userAddress.value,
+            useracc_phone: userPhone.value
+          })
+          .eq('useracc_id', user.id);
 
-    // Create transaction items
-    const transactionItems = cartItems.value.map(item => ({
-      transaction_id: transaction.transaction_id,
-      prod_id: item.product.prod_id,
-      quantity: item.quantity,
-      price: item.product.prod_price
-    }));
+        if (error) throw error;
+      } catch (error) {
+        console.error('Error updating address:', error);
+        throw error;
+      }
+    };
 
-    await supabase.from('transaction_item').insert(transactionItems);
+    // Handle payment
+    const handlePayment = async () => {
+      processing.value = true;
+      try {
+        // Validate address
+        if (!userAddress.value.trim()) {
+          throw new Error('Please enter a valid delivery address');
+        }
 
-    // Update stock
-    for (const item of cartItems.value) {
-      await supabase.rpc('decrement_stock', {
-        product_id: item.product.prod_id,
-        decrement_by: item.quantity
-      });
-    }
+        // Update user details
+        await updateUserAddress();
 
-    // Clear cart
-    await supabase
-      .from('cart_item')
-      .delete()
-      .eq('cart_id', cartId);
+        // Get user info
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('User not authenticated');
 
-    router.push('/order-confirmation');
+        // Create transaction
+        const transactionData = {
+          useracc_id: user.id,
+          total_amount: grandTotal.value,
+          payment_method: paymentMethod.value,
+          status: 'PROCESSING',
+          shipping_fee: shippingFee.value,
+          shipping_address: userAddress.value,
+          contact_number: userPhone.value
+        };
 
-  } catch (error) {
-    console.error('Payment error:', error);
-    alert('Payment failed: ' + error.message);
-  } finally {
-    processing.value = false;
+        const { data: transaction, error } = await supabase
+          .from('transaction')
+          .insert(transactionData)
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        // Create transaction items
+        const transactionItems = cartItems.value.map(item => ({
+          transaction_id: transaction.transaction_id,
+          prod_id: item.product.prod_id,
+          quantity: item.quantity,
+          price: item.product.prod_price
+        }));
+
+        await supabase.from('transaction_item').insert(transactionItems);
+
+        // Update stock
+        for (const item of cartItems.value) {
+          await supabase.rpc('decrement_stock', {
+            product_id: item.product.prod_id,
+            decrement_by: item.quantity
+          });
+        }
+
+        // Clear cart
+        await supabase
+          .from('cart_item')
+          .delete()
+          .eq('cart_id', cartId);
+
+        router.push('/order-confirmation');
+
+      } catch (error) {
+        console.error('Payment error:', error);
+        alert(error.message || 'Payment processing failed');
+      } finally {
+        processing.value = false;
+      }
+    };
+
+    // Initial setup
+    onMounted(async () => {
+      await fetchUserData();
+      // Fetch cart items and calculate totals
+    });
+
+    return {
+      cartItems,
+      paymentMethod,
+      processing,
+      subtotal,
+      grandTotal,
+      shippingFee,
+      userAddress,
+      userPhone,
+      handlePayment
+    };
   }
 };
-
-onMounted(async () => {
-  await fetchUserData();
-  await fetchCartItems();
-});
-
-return {
-  cartItems,
-  paymentMethod,
-  processing,
-  subtotal,
-  grandTotal,
-  transactionShippingFee,
-  userAddress,
-  userPhone,
-  handlePayment
-};
-}
-};
 </script>
+
 
 <style scoped>
 /* Add your existing styles here */
