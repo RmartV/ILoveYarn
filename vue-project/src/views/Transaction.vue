@@ -59,7 +59,7 @@
                   required
                 >
                 <div class="payment-card">
-                  <img src="../views/images/cash.png" alt="COD" class="payment-icon">
+                  <!-----<img src="../views/images/cash.png" alt="COD" class="payment-icon">--->
                   <span>Cash on Delivery</span>
                 </div>
               </label>
@@ -72,7 +72,7 @@
                   required
                 >
                 <div class="payment-card">
-                  <img src="../views/images/wallet.png" alt="E-Wallet" class="payment-icon">
+                  <!-------<img src="../views/images/wallet.png" alt="E-Wallet" class="payment-icon">--->
                   <span>E-Wallet</span>
                 </div>
               </label>
