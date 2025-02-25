@@ -136,7 +136,6 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { supabase } from '../lib/supabaseClient';
-import { getProductImage } from '../helpers/images';
 
 export default {
   setup() {
