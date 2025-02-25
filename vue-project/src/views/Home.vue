@@ -203,7 +203,7 @@ export default {
             prod_id: product.prod_id,
             quantity: 1
           }, {
-            onConflict: 'unique_cart_product', // Match the constraint name
+            onConflict: 'cart_id,prod_id', // Match the constraint name
             ignoreDuplicates: false
           });
 
