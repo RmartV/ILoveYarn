@@ -6,7 +6,7 @@
             <div class="logo">
               <img src="../views/images/homelogo.jpg" alt="ILoveYarnPH" class="logo-img">
             </div>
-            <div class="store-name">ILoveYarnPH | Shopping cart</div>
+            <div class="store-name">ILoveYarnPH | Shopping</div>
           </router-link>
         </div>
         <div class="search-container">
@@ -317,7 +317,8 @@ export default {
             padding: 0;
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
-            header {
+        }
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -408,6 +409,19 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+        .cart-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.cart-title {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 .empty-cart {
@@ -588,5 +602,4 @@ export default {
 .checkout-btn:hover {
   transform: translateY(-2px);
 }
-
 </style>
