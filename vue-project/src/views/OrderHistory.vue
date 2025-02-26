@@ -25,7 +25,7 @@
 
       <div v-else>
         <div v-if="orders.length === 0" class="empty-state">
-          <img src="../views/images/empty-order.png" alt="No orders" class="empty-icon">
+          <!----<img src="../views/images/empty-order.png" alt="No orders" class="empty-icon">-->
           <p class="empty-text">You haven't placed any orders yet</p>
           <router-link to="/home" class="shop-button">
             Start Shopping
