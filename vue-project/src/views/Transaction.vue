@@ -282,7 +282,10 @@ export default {
           .delete()
           .eq('cart_id', cartId);
 
-        router.push('/order-confirmation');
+          router.push({
+      path: '/order-confirmation',
+      query: { transaction_id: transaction.transaction_id }
+    });
         
       const itemsPurchased = cartItems.value
       .map(item => `${item.product.prod_name} (${item.quantity}x)`)

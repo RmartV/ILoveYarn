@@ -29,6 +29,11 @@ const routes = [
     path: '/order-details/:orderId',
     component: () => import('@/views/OrderHistory.vue'),
     props: true
+  },
+  {
+    path: '/order-confirmation',
+    component: () => import('@/views/OrderConfirmation.vue'),
+    props: (route) => ({ transaction_id: route.query.transaction_id })
   }
 ];
 
