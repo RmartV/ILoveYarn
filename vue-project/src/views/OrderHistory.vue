@@ -99,14 +99,16 @@ export default {
         if (!user) return;
 
         // Get user's database ID
-        const { data: userData } = await supabase
+        const { data: userData, error: userError } = await supabase
           .from('user_account')
           .select('useracc_id')
           .eq('useracc_email', user.email)
           .single();
 
+          if (userError) throw userError;
+
         // Fetch orders with nested data
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('order_details')
           .select(`
             *,
@@ -114,19 +116,19 @@ export default {
               *,
               transaction_items:transaction_item (
                 *,
-                product:prod_id (
-                  *
-                )
+                product:prod_id (*)
               )
             )
           `)
           .eq('useracc_id', userData.useracc_id)
-          .order('created_at', { ascending: false });
+          .order('orderdetails_id', { ascending: false });
+
+        if (error) throw error;
 
         orders.value = data || [];
       } catch (error) {
         console.error('Error fetching orders:', error);
-        alert('Failed to load order history');
+        alert('Error loading orders: ' + error.message);
       } finally {
         loading.value = false;
       }
