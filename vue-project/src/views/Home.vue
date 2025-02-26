@@ -15,7 +15,10 @@
         <div class="user-actions">
             <div class="icon-container">
                 <div class="icon">
-                  <img src="../views/images/package.png" alt="Package" class="action-icon">
+                  <router-link to="/order-history" class="nav-link">
+                    <img src="../views/images/package.png" alt="Orders" class="action-icon">
+                    My Orders
+                  </router-link>
                 </div>
             </div>
             <div class="icon-container">

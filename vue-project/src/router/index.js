@@ -21,6 +21,15 @@ const routes = [
     component: Transaction,
     props: true 
   },
+  {
+    path: '/order-history',
+    component: () => import('@/views/OrderHistory.vue')
+  },
+  {
+    path: '/order-details/:orderId',
+    component: () => import('@/views/OrderHistory.vue'),
+    props: true
+  }
 ];
 
 const router = createRouter({

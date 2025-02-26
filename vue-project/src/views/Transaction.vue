@@ -283,6 +283,22 @@ export default {
           .eq('cart_id', cartId);
 
         router.push('/order-confirmation');
+        
+      const itemsPurchased = cartItems.value
+      .map(item => `${item.product.prod_name} (${item.quantity}x)`)
+      .join(', ');
+
+    const { error: orderError } = await supabase
+      .from('order_details')
+      .insert({
+        orderdetails_itemspurchased: itemsPurchased,
+        orderdetails_totalamount: grandTotal.value,
+        orderdetails_estimatearrival: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
+        transaction_id: transaction.transaction_id,
+        useracc_id: userData.useracc_id
+      });
+
+    if (orderError) throw orderError;
 
       } catch (error) {
         console.error('Payment error:', error);
