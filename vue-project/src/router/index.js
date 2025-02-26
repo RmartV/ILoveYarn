@@ -7,6 +7,7 @@ import Authentication from '../views/Authentication.vue';
 import UserAccount from '../views/UserAccount.vue';
 import Usercart from '@/views/Usercart.vue';
 import Transaction from '@/views/Transaction.vue';
+import { orderDetailsGuard } from './navigationGuards';
 
 const routes = [
   { path: '/', component: Login }, // Default route is Login
@@ -25,11 +26,12 @@ const routes = [
     path: '/order-history',
     component: () => import('@/views/OrderHistory.vue')
   },
-  {
-    path: '/order-details/:orderId',
-    component: () => import('@/views/OrderHistory.vue'),
-    props: true
-  },
+    {
+      path: '/order-details/:orderId',
+      component: () => import('@/views/OrderDetails.vue'),
+      props: true,
+      beforeEnter: orderDetailsGuard
+    },
   {
     path: '/order-confirmation',
     component: () => import('@/views/OrderConfirmation.vue'),

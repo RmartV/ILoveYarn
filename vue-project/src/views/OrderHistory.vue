@@ -155,8 +155,11 @@ export default {
     };
 
     const viewOrderDetails = (orderId) => {
-      router.push(`/order-details/${orderId}`);
-    };
+  router.push({
+    path: `/order-details/${orderId}`,
+    state: { fromOrderHistory: true } 
+  });
+};
 
     onMounted(() => {
       fetchOrders();

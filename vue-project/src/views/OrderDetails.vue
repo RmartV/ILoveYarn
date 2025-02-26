@@ -70,75 +70,49 @@
   </template>
   
   <script>
-  import { ref, onMounted, computed } from 'vue';
-  import { supabase } from '../lib/supabaseClient';
-  import { useRoute } from 'vue-router';
-  
-  export default {
-    setup() {
-      const route = useRoute();
-      const order = ref(null);
-      const loading = ref(true);
-  
-      const parsedItems = computed(() => {
-        return order.value?.orderdetails_itemspurchased.split(', ') || [];
-      });
-  
-      const currentStep = computed(() => {
-        if (order.value?.orderdetails_shipmentstatus === 'DELIVERED') return 3;
-        if (order.value?.orderdetails_shipmentstatus === 'ON_DELIVERY') return 2;
-        return 1;
-      });
-  
-      const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('en-PH', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
-      };
-  
-      const formatDateTime = (dateString) => {
-        return new Date(dateString).toLocaleString('en-PH', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-      };
-  
-      const fetchOrderDetails = async () => {
-        try {
-          const { data } = await supabase
-            .from('order_details')
-            .select(`
+ import { ref, onMounted } from 'vue';
+import { supabase } from '../lib/supabaseClient';
+import { useRoute } from 'vue-router';
+
+export default {
+  setup() {
+    const route = useRoute();
+    const order = ref(null);
+    const loading = ref(true);
+
+    const fetchOrderDetails = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('order_details')
+          .select(`
+            *,
+            transaction:transaction_id (
               *,
-              transaction:transaction_id (*)
-            `)
-            .eq('orderdetails_id', route.params.orderId)
-            .single();
-  
-          order.value = data;
-        } catch (error) {
-          console.error('Error fetching order details:', error);
-        } finally {
-          loading.value = false;
-        }
-      };
-  
-      onMounted(fetchOrderDetails);
-  
-      return {
-        order,
-        loading,
-        parsedItems,
-        currentStep,
-        formatDate,
-        formatDateTime
-      };
-    }
-  };
+              transaction_items:transaction_item (
+                *,
+                product:prod_id (*)
+            )
+          `)
+          .eq('orderdetails_id', route.params.orderId)
+          .single();
+
+        if (error) throw error;
+        order.value = data;
+
+      } catch (error) {
+        console.error('Error fetching order:', error);
+        alert('Order not found');
+        router.back();
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    onMounted(fetchOrderDetails);
+
+    return { order, loading };
+  }
+};
   </script>
   
   <style scoped>
