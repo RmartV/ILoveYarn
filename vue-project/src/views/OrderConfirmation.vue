@@ -8,7 +8,7 @@
         <div v-if="loading" class="loading">Loading confirmation...</div>
         <div v-else class="confirmation-content">
           <div class="success-message">
-            <img src="../views/images/success-icon.png" alt="Success" class="success-icon">
+            <!------<img src="../views/images/success-icon.png" alt="Success" class="success-icon">-->
             <h1>Order Confirmed! 🎉</h1>
             <p class="order-number">Order ID: #{{ transaction.transaction_id.slice(0, 8).toUpperCase() }}</p>
           </div>
