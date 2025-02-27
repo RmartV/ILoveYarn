@@ -10,7 +10,6 @@
         </router-link>
       </div>
       <div class="user-actions">
-        <!-- Reuse your header user actions -->
       </div>
     </header>
 
@@ -401,8 +400,8 @@ export default {
 }
 
 .product-image {
-  width: 80px;
-  height: 80px;
+  width: 400px;
+  height: 400px;
   object-fit: cover;
   border-radius: 8px;
 }
