@@ -400,8 +400,8 @@ export default {
 }
 
 .product-image {
-  width: 300px;
-  height: 300px;
+  width: 250px;
+  height: 250px;
   object-fit: cover;
   border-radius: 8px;
 }

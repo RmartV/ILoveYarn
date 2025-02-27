@@ -610,7 +610,7 @@ export default {
         }
 
         .product-image {
-            height: 400px;
+            height: 250px;
             background-color: #f5f5f5;
             display: flex;
             align-items: center;
