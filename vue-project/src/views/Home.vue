@@ -17,7 +17,6 @@
                 <div class="icon">
                   <router-link to="/order-history" class="nav-link">
                     <img src="../views/images/package.png" alt="Orders" class="action-icon">
-                    My Orders
                   </router-link>
                 </div>
             </div>
@@ -64,7 +63,7 @@
             <div class="product-container">
                 <h2 class="product-heading">Featured Products</h2>
                 <div class="products-grid">
-                    <!-- Product 1 -->
+                    <!-- Product  -->
                     <div v-for="product in products" :key="product.prod_id" class="product-card">
                         <div class="product-image"><img :src="product.image_url || '../views/images/default.png'" alt="Product Image"></div>
                         <div class="product-details">
@@ -110,11 +109,10 @@
             <div class="footer-section">
                 <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Shop</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Contact</a></li>
-                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Shopee</a></li>
+                    <li><a href="#">About us</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -122,12 +120,6 @@
                 <p>Email: info@iloveyarnph.com</p>
                 <p>Phone: +63 912 345 6789</p>
                 <p>Address: 123 Craft Street, Manila, Philippines</p>
-            </div>
-            <div class="footer-section">
-                <h3>Subscribe</h3>
-                <p>Subscribe to our newsletter for updates on new products and promotions.</p>
-                <input type="email" placeholder="Your email" style="padding: 8px; width: 100%; margin-top: 10px; border: none; border-radius: 4px;">
-                <button style="background-color: #8a2be2; color: white; border: none; padding: 8px 15px; border-radius: 4px; margin-top: 10px; cursor: pointer;">Subscribe</button>
             </div>
         </div>
         <div class="footer-bottom">
@@ -618,7 +610,7 @@ export default {
         }
 
         .product-image {
-            height: 200px;
+            height: 400px;
             background-color: #f5f5f5;
             display: flex;
             align-items: center;

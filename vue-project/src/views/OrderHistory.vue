@@ -7,16 +7,16 @@
           <div class="logo">
             <img src="../views/images/homelogo.jpg" alt="ILoveYarnPH" class="logo-img">
           </div>
-          <div class="store-name">ILoveYarnPH | Order History</div>
+          <div class="store-name">ILoveYarnPH | Track Order</div>
         </router-link>
       </div>
       <div class="user-actions">
-        <!-- Reuse your user actions from other pages -->
+        
       </div>
     </header>
 
     <div class="order-history-container">
-      <h1 class="page-title">Order History</h1>
+      <h1 class="page-title">Track Order</h1>
       
       <div v-if="loading" class="loading-message">
         <div class="spinner"></div>
