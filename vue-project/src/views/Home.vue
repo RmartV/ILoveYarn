@@ -337,7 +337,7 @@ export default {
             background-color: #f9f9f9;
         }
 
-        /* Header Styles */
+         
         header {
             display: flex;
             justify-content: space-between;
@@ -349,6 +349,17 @@ export default {
             top: 0;
             z-index: 100;
         }
+
+        .product-button.out-of-stock {
+  background-color: #cccccc !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.product-button.out-of-stock:hover {
+  transform: none;
+  box-shadow: none;
+}
 
 
         .logo-img {
