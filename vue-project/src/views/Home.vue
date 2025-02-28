@@ -13,6 +13,11 @@
             <input type="text" class="search-bar" placeholder="Search for yarn products...">
         </div>
         <div class="user-actions">
+          <div class="icon-container">
+    <router-link to="/feedback" class="nav-link">
+      <img src="../views/images/review.png" alt="Feedback" class="action-icon">
+    </router-link>
+  </div>
             <div class="icon-container">
                 <div class="icon">
                   <router-link to="/order-history" class="nav-link">
