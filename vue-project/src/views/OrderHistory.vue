@@ -101,6 +101,44 @@ export default {
     const orders = ref([]);
     const loading = ref(true);
 
+    // Add missing functions
+    const formatDate = (dateString) => {
+      return new Date(dateString).toLocaleDateString('en-PH', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    };
+
+    const formatDateTime = (dateString) => {
+      return new Date(dateString).toLocaleString('en-PH', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    };
+
+    const statusClass = (status) => {
+      return {
+        'processing': status === 'PROCESSING',
+        'on-delivery': status === 'ON_DELIVERY',
+        'delivered': status === 'DELIVERED'
+      };
+    };
+
+    const formatStatus = (status) => {
+      return status.replace('_', ' ');
+    };
+
+    const viewOrderDetails = (orderId) => {
+      router.push({
+        path: `/order-details/${orderId}`,
+        state: { fromOrderHistory: true }
+      });
+    };
+
     const getProductImage = (product) => {
       if (product.prod_id === 101) {
         return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
@@ -155,19 +193,22 @@ export default {
       } else if (product.prod_id === 204) {
         return supabase.storage.from('product_images').getPublicUrl('204.png').data.publicUrl; 
       }
-      return supabase.storage.from('product_images').getPublicUrl('default.png').data.publicUrl;
+      return '../views/images/default.png';
     };
+
 
     const fetchOrders = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        const { data: userData } = await supabase
+        const { data: userData, error: userError } = await supabase
           .from('user_account')
           .select('useracc_id')
           .eq('useracc_email', user.email)
           .single();
+
+        if (userError) throw userError;
 
         const { data, error } = await supabase
           .from('order_details')
@@ -178,6 +219,7 @@ export default {
               transaction_items:transaction_item (
                 *,
                 product:prod_id (*)
+              )
             )
           `)
           .eq('useracc_id', userData.useracc_id)
@@ -185,12 +227,12 @@ export default {
 
         if (error) throw error;
 
-  
+        // Add null checks for nested data
         orders.value = data.map(order => ({
           ...order,
           transaction: {
             ...order.transaction,
-            transaction_items: order.transaction.transaction_items.map(item => ({
+            transaction_items: (order.transaction?.transaction_items || []).map(item => ({
               ...item,
               product: {
                 ...item.product,
@@ -210,6 +252,7 @@ export default {
 
     onMounted(() => {
       fetchOrders();
+      // Remove the unnecessary getProductImage() call here
     });
 
     return {
