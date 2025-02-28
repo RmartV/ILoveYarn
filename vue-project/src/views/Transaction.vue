@@ -142,12 +142,60 @@ export default {
     const loading = ref(true);
 
     const getProductImage = (product) => {
-      // Replicate image logic from user_cart.vue
-      if (product.prod_id === 101) return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
-      if (product.prod_id === 201) return supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
-      if (product.prod_id === 102) return supabase.storage.from('product_images').getPublicUrl('102.png').data.publicUrl;
-      // Add all your product image mappings here...
-      return '../views/images/default-product.png';
+      if (product.prod_id === 101) {
+        return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
+      } else if (product.prod_id === 201) {
+        return supabase.storage.from('product_images').getPublicUrl('aluminum_hook.jpg').data.publicUrl;
+      } else if (product.prod_id === 102) {
+        return supabase.storage.from('product_images').getPublicUrl('102.png').data.publicUrl;
+      } else if (product.prod_id === 103) {
+        return supabase.storage.from('product_images').getPublicUrl('103.png').data.publicUrl;      
+      } else if (product.prod_id === 104) {
+        return supabase.storage.from('product_images').getPublicUrl('104.png').data.publicUrl;
+      } else if (product.prod_id === 105) {
+        return supabase.storage.from('product_images').getPublicUrl('105.png').data.publicUrl;         
+      } else if (product.prod_id === 106) {
+        return supabase.storage.from('product_images').getPublicUrl('106.png').data.publicUrl;         
+      } else if (product.prod_id === 107) {
+        return supabase.storage.from('product_images').getPublicUrl('107.png').data.publicUrl;         
+      } else if (product.prod_id === 108) {
+        return supabase.storage.from('product_images').getPublicUrl('108.png').data.publicUrl;
+      } else if (product.prod_id === 109) {
+        return supabase.storage.from('product_images').getPublicUrl('109.png').data.publicUrl; 
+      } else if (product.prod_id === 110) {
+        return supabase.storage.from('product_images').getPublicUrl('110.png').data.publicUrl;
+      } else if (product.prod_id === 111) {
+        return supabase.storage.from('product_images').getPublicUrl('111.png').data.publicUrl;
+      } else if (product.prod_id === 112) {
+        return supabase.storage.from('product_images').getPublicUrl('112.png').data.publicUrl;
+      } else if (product.prod_id === 113) {
+        return supabase.storage.from('product_images').getPublicUrl('113.png').data.publicUrl;      
+      } else if (product.prod_id === 114) {
+        return supabase.storage.from('product_images').getPublicUrl('114.png').data.publicUrl;     
+      } else if (product.prod_id === 115) {
+        return supabase.storage.from('product_images').getPublicUrl('115.png').data.publicUrl;
+      } else if (product.prod_id === 116) {
+        return supabase.storage.from('product_images').getPublicUrl('116.png').data.publicUrl; 
+      } else if (product.prod_id === 117) {
+        return supabase.storage.from('product_images').getPublicUrl('117.png').data.publicUrl;
+      } else if (product.prod_id === 118) {
+        return supabase.storage.from('product_images').getPublicUrl('118.png').data.publicUrl;      
+      } else if (product.prod_id === 119) {
+        return supabase.storage.from('product_images').getPublicUrl('119.png').data.publicUrl;     
+      } else if (product.prod_id === 120) {
+        return supabase.storage.from('product_images').getPublicUrl('120.png').data.publicUrl;
+      } else if (product.prod_id === 121) {
+        return supabase.storage.from('product_images').getPublicUrl('121.png').data.publicUrl; 
+      } else if (product.prod_id === 125) {
+        return supabase.storage.from('product_images').getPublicUrl('125.png').data.publicUrl; 
+      } else if (product.prod_id === 202) {
+        return supabase.storage.from('product_images').getPublicUrl('202.png').data.publicUrl; 
+      } else if (product.prod_id === 203) {
+        return supabase.storage.from('product_images').getPublicUrl('203.png').data.publicUrl; 
+      } else if (product.prod_id === 204) {
+        return supabase.storage.from('product_images').getPublicUrl('204.png').data.publicUrl; 
+      }
+      return '../views/images/default.png';
     };
 
     const fetchUserData = async () => {
@@ -195,7 +243,6 @@ export default {
           }
         })) || [];
         
-        // Calculate totals
         subtotal.value = cartItems.value.reduce((sum, item) => 
           sum + (item.quantity * item.product.prod_price), 0);
         grandTotal.value = subtotal.value + shippingFee.value;
@@ -237,31 +284,30 @@ export default {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('User not authenticated');
 
-        // Get user's database ID
         const { data: userData } = await supabase
           .from('user_account')
           .select('useracc_id')
           .eq('useracc_email', user.email)
           .single();
 
-        const transactionData = {
-          useracc_id: userData.useracc_id,
-          total_amount: grandTotal.value,
-          payment_method: paymentMethod.value,
-          status: 'PROCESSING',
-          shipping_fee: shippingFee.value,
-          shipping_address: userAddress.value,
-          contact_number: userPhone.value
-        };
-
-        const { data: transaction, error } = await supabase
+        // Create transaction
+        const { data: transaction, error: transError } = await supabase
           .from('transaction')
-          .insert(transactionData)
+          .insert({
+            useracc_id: userData.useracc_id,
+            total_amount: grandTotal.value,
+            payment_method: paymentMethod.value,
+            status: 'PROCESSING',
+            shipping_fee: shippingFee.value,
+            shipping_address: userAddress.value,
+            contact_number: userPhone.value
+          })
           .select()
           .single();
 
-        if (error) throw error;
+        if (transError) throw transError;
 
+        // Create transaction items
         const transactionItems = cartItems.value.map(item => ({
           transaction_id: transaction.transaction_id,
           prod_id: item.product.prod_id,
@@ -269,44 +315,69 @@ export default {
           price: item.product.prod_price
         }));
 
-        await supabase.from('transaction_item').insert(transactionItems);
+        const { error: itemsError } = await supabase
+          .from('transaction_item')
+          .insert(transactionItems);
 
+        if (itemsError) throw itemsError;
+
+        // Update stock
         for (const item of cartItems.value) {
-          await supabase.rpc('decrement_stock', {
-            product_id: item.product.prod_id,
-            decrement_by: item.quantity
-          });
+          const { error: stockError } = await supabase
+            .from('product')
+            .update({ prod_stock: item.product.prod_stock - item.quantity })
+            .eq('prod_id', item.product.prod_id);
+
+          if (stockError) throw stockError;
         }
 
+        // Create order details
+        const itemsPurchased = cartItems.value
+          .map(item => `${item.product.prod_name} (${item.quantity}x)`)
+          .join(', ');
+
+        const { error: orderError } = await supabase
+          .from('order_details')
+          .insert({
+            orderdetails_itemspurchased: itemsPurchased,
+            orderdetails_totalamount: grandTotal.value,
+            orderdetails_estimatearrival: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+            transaction_id: transaction.transaction_id,
+            useracc_id: userData.useracc_id
+          });
+
+        if (orderError) throw orderError;
+
+        // Update transaction status to success
+        const { error: statusError } = await supabase
+          .from('transaction')
+          .update({ status: 'SUCCESS' })
+          .eq('transaction_id', transaction.transaction_id);
+
+        if (statusError) throw statusError;
+
+        // Clear cart
         await supabase
           .from('cart_item')
           .delete()
           .eq('cart_id', cartId);
 
-          router.push({
-      path: '/order-confirmation',
-      query: { transaction_id: transaction.transaction_id }
-    });
-        
-      const itemsPurchased = cartItems.value
-      .map(item => `${item.product.prod_name} (${item.quantity}x)`)
-      .join(', ');
-
-    const { error: orderError } = await supabase
-      .from('order_details')
-      .insert({
-        orderdetails_itemspurchased: itemsPurchased,
-        orderdetails_totalamount: grandTotal.value,
-        orderdetails_estimatearrival: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
-        transaction_id: transaction.transaction_id,
-        useracc_id: userData.useracc_id
-      });
-
-    if (orderError) throw orderError;
+        router.push({
+          path: '/order-confirmation',
+          query: { transaction_id: transaction.transaction_id }
+        });
 
       } catch (error) {
         console.error('Payment error:', error);
         alert(error.message || 'Payment processing failed');
+        
+        // Rollback transaction status
+        if (transaction?.transaction_id) {
+          await supabase
+            .from('transaction')
+            .update({ status: 'FAILED' })
+            .eq('transaction_id', transaction.transaction_id);
+        }
       } finally {
         processing.value = false;
       }
