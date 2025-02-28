@@ -5,7 +5,7 @@
         <div class="logo-container">
           <router-link to="/home">
             <div class="logo">
-              <img src="../images/homelogo.jpg" alt="ILoveYarnPH" class="logo-img">
+              <img src="../views/images/homelogo.jpg" alt="ILoveYarnPH" class="logo-img">
             </div>
             <div class="store-name">ILoveYarnPH | Feedback</div>
           </router-link>
