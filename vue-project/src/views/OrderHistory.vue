@@ -101,67 +101,6 @@ export default {
     const orders = ref([]);
     const loading = ref(true);
 
-    const fetchOrders = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        // Get user's database ID
-        const { data: userData, error: userError } = await supabase
-          .from('user_account')
-          .select('useracc_id')
-          .eq('useracc_email', user.email)
-          .single();
-
-          if (userError) throw userError;
-
-        // Fetch orders with nested data
-        const { data, error } = await supabase
-          .from('order_details')
-          .select(`
-            *,
-            transaction:transaction_id (
-              *,
-              transaction_items:transaction_item (
-                *,
-                product:prod_id (*)
-              )
-            )
-          `)
-          .eq('useracc_id', userData.useracc_id)
-          .order('orderdetails_id', { ascending: false });
-
-        if (error) throw error;
-
-        orders.value = data || [];
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-        alert('Error loading orders: ' + error.message);
-      } finally {
-        loading.value = false;
-      }
-    };
-
-    const formatDate = (dateString) => {
-      return new Date(dateString).toLocaleDateString('en-PH', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    };
-
-    const statusClass = (status) => {
-      return {
-        'processing': status === 'PROCESSING',
-        'on-delivery': status === 'ON_DELIVERY',
-        'delivered': status === 'DELIVERED'
-      };
-    };
-
-    const formatStatus = (status) => {
-      return status.replace('_', ' ');
-    };
-
     const getProductImage = (product) => {
       if (product.prod_id === 101) {
         return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
@@ -216,24 +155,58 @@ export default {
       } else if (product.prod_id === 204) {
         return supabase.storage.from('product_images').getPublicUrl('204.png').data.publicUrl; 
       }
-      return '../views/images/default.png';
+      return supabase.storage.from('product_images').getPublicUrl('default.png').data.publicUrl;
     };
 
-    
+    const fetchOrders = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-    const viewOrderDetails = (orderId) => {
-  router.push({
-    path: `/order-details/${orderId}`,
-    state: { fromOrderHistory: true } 
-  });
-};
+        const { data: userData } = await supabase
+          .from('user_account')
+          .select('useracc_id')
+          .eq('useracc_email', user.email)
+          .single();
 
-if (!error) {
-    products.value = data.map(product => ({
-      ...product,
-      image_url: getProductImage(product)
-    }));
-  };
+        const { data, error } = await supabase
+          .from('order_details')
+          .select(`
+            *,
+            transaction:transaction_id (
+              *,
+              transaction_items:transaction_item (
+                *,
+                product:prod_id (*)
+            )
+          `)
+          .eq('useracc_id', userData.useracc_id)
+          .order('orderdetails_id', { ascending: false });
+
+        if (error) throw error;
+
+  
+        orders.value = data.map(order => ({
+          ...order,
+          transaction: {
+            ...order.transaction,
+            transaction_items: order.transaction.transaction_items.map(item => ({
+              ...item,
+              product: {
+                ...item.product,
+                image_url: getProductImage(item.product)
+              }
+            }))
+          }
+        }));
+
+      } catch (error) {
+        console.error('Order history error:', error);
+        alert('Failed to load order history');
+      } finally {
+        loading.value = false;
+      }
+    };
 
     onMounted(() => {
       fetchOrders();

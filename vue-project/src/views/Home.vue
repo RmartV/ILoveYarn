@@ -91,7 +91,8 @@
 
                             <div class="stock-info">In stock: {{ product.prod_stock }}</div>
                             <div class="product-price">₱{{ product.prod_price.toFixed(2) }}</div>
-                            <button @click="addToCart(product)" class="product-button">Add to Cart</button>
+                            <button @click="addToCart(product)" class="product-button":disabled="product.prod_stock === 0":class="{ 'disabled-button': product.prod_stock === 0 }">
+                            {{ product.prod_stock === 0 ? 'Out of Stock' : 'Add to Cart' }}</button>
                         </div>
                     </div>
                 </div>
@@ -219,7 +220,7 @@ export default {
       }
     };
 
-    // Get product image (your existing version)
+    // Get product image
     const getProductImage = (product) => {
       if (product.prod_id === 101) {
         return supabase.storage.from('product_images').getPublicUrl('chunky_yarn.jpg').data.publicUrl;
