@@ -1,7 +1,6 @@
 <template>
   <div>
     <header>
-      <!-- Reuse your header component from other pages -->
       <div class="logo-container">
         <router-link to="/home">
           <div class="logo">
