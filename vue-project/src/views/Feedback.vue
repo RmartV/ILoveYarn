@@ -480,6 +480,10 @@ export default {
   align-items: center;
 }
 
+.user-name{
+  color: white;
+}
+
 .avatar {
   width: 40px;
   height: 40px;
