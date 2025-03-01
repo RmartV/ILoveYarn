@@ -85,10 +85,6 @@
           <span>Loading reviews...</span>
         </div>
         
-        <div v-else-if="filteredReviews.length === 0" class="no-reviews">
-          <img src="../views/images/no-reviews.svg" alt="No reviews" class="empty-state-img">
-          <p>No reviews found</p>
-        </div>
         
         <div v-else class="review-list">
           <div v-for="feedback in filteredReviews" :key="feedback.userfeedback_id" class="review-card">
