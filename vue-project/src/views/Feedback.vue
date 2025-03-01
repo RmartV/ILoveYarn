@@ -481,7 +481,7 @@ export default {
 }
 
 .user-name{
-  color: white;
+  color: black;
 }
 
 .avatar {
