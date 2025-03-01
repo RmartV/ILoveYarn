@@ -14,7 +14,7 @@
     </header>
 
     <div class="feedback-content">
-      <h1 class="page-title">Service Feedback</h1>
+      <h1 class="page-title">Rate our service!</h1>
       
       <!-- Improved Feedback Form -->
       <div class="form-container">
@@ -263,7 +263,7 @@ export default {
 .page-title {
   text-align: center;
   margin-bottom: 2.5rem;
-  color: #6b46c1;
+  color: #ff8da1;
   font-size: 2.2rem;
   font-weight: 700;
 }
@@ -337,7 +337,7 @@ export default {
 }
 
 .comments-input:focus {
-  border-color: #6b46c1;
+  border-color: #ff8da1;
   outline: none;
   box-shadow: 0 0 0 3px rgba(107, 70, 193, 0.1);
 }
@@ -359,7 +359,7 @@ export default {
   padding: 0.75rem;
   border: none;
   border-radius: 8px;
-  background-color: #6b46c1;
+  background-color: #ff8da1;
   color: white;
   font-weight: 600;
   font-size: 1rem;
@@ -368,7 +368,7 @@ export default {
 }
 
 .submit-button:hover {
-  background-color: #553c9a;
+  background-color: #ff8da1;
 }
 
 .submit-button:disabled {
@@ -483,7 +483,7 @@ export default {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #6b46c1;
+  background-color: #ff8da1;
   color: white;
   display: flex;
   align-items: center;
