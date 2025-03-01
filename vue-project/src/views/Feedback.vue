@@ -7,7 +7,7 @@
           <div class="logo">
             <img src="../views/images/homelogo.jpg" alt="ILoveYarnPH" class="logo-img">
           </div>
-          <div class="store-name">ILoveYarnPH | Checkout</div>
+          <div class="store-name">ILoveYarnPH | User's Feedback</div>
         </router-link>
       </div>
       <div class="user-actions"></div>
