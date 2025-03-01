@@ -475,6 +475,7 @@ export default {
 }
 
 .user-info {
+  color: black;
   display: flex;
   align-items: center;
 }
