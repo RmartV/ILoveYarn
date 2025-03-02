@@ -90,7 +90,7 @@
         {{ isLoading ? 'Signing up...' : 'Signup' }}
       </button>
     </form>
-    <p>Already have an Account? <router-link to="/login">login</router-link></p>
+    <p>Already have an Account? <router-link to="/">login</router-link></p>
   </div>
 </div>
 </template>
